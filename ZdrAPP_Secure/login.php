@@ -127,16 +127,11 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     
     <!-- Navigační menu -->
     <div class="navbar" id="navbar">
-        <a href="show_data.php">Home</a>
-        <a href="upload_csv.php">Upload Data</a>
-
-        <?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true): ?>
-            <!-- Pokud je uživatel přihlášen, nebudeme zobrazovat tlačítko Login -->
-            <a href="logout.php">Logout</a>
-        <?php else: ?>
-            <!-- Pokud není uživatel přihlášen, nebude zde tlačítko Logout -->
-            <a href="login.php">Login</a>
-        <?php endif; ?>
+        <a href="show_data.php">Přehled</a>
+        <a href="upload_csv.php">Nahrát data</a>
+        <a href="add_diagnosis.php">Přidat diagnózu</a>
+        <a href="login.php">Login</a>
+        <a href="logout.php">Logout</a>
     </div>
 </div>
 <script>

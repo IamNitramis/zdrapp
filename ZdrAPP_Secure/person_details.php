@@ -10,6 +10,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
           </div>";
     exit; // Ukončení skriptu, aby uživatel neměl přístup k dalším částem stránky
 }
+
 // Připojení k databázi
 $conn = new mysqli("localhost", "root", "", "zdrapp");
 
@@ -36,36 +37,78 @@ if (!$person) {
 $noteSql = "SELECT * FROM notes WHERE person_id = $personId ORDER BY created_at DESC";
 $noteResult = $conn->query($noteSql);
 
+// Načtení seznamu diagnóz
+$diagnosesSql = "SELECT * FROM diagnoses ORDER BY name ASC";
+$diagnosesResult = $conn->query($diagnosesSql);
+$diagnoses = [];
+while ($row = $diagnosesResult->fetch_assoc()) {
+    $diagnoses[] = $row;
+}
+
+// Přidání diagnózy k osobě
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['diagnosis_id'])) {
+    $diagnosisId = $_POST['diagnosis_id'];
+    $stmt = $conn->prepare("INSERT INTO person_diagnoses (person_id, diagnosis_id, assigned_at) VALUES (?, ?, NOW())");
+    $stmt->bind_param("ii", $personId, $diagnosisId);
+    if ($stmt->execute()) {
+        header("Location: person_details.php?id=$personId&surname=$surname");
+        exit;
+    } else {
+        echo "Error: " . $conn->error;
+    }
+    $stmt->close();
+}
+
+// Načtení diagnóz přiřazených k osobě
+$sql = "SELECT d.id, d.name, pd.assigned_at 
+        FROM person_diagnoses pd 
+        JOIN diagnoses d ON pd.diagnosis_id = d.id 
+        WHERE pd.person_id = $personId";
+$personDiagnosesResult = $conn->query($sql);
+$personDiagnoses = [];
+while ($row = $personDiagnosesResult->fetch_assoc()) {
+    $personDiagnoses[] = $row;
+}
+
+// Zpracování změny času přiřazení diagnózy
+if (isset($_POST['update_assigned_at']) && isset($_POST['new_assigned_at']) && isset($_POST['diagnosis_id'])) {
+    $newAssignedAt = $_POST['new_assigned_at'];
+    $diagnosisId = $_POST['diagnosis_id'];
+
+    // Oprava formátu data a času pro SQL
+    $newAssignedAt = date('Y-m-d H:i:s', strtotime($newAssignedAt));
+
+    // SQL dotaz pro aktualizaci času přiřazení
+    $updateSql = "UPDATE person_diagnoses SET assigned_at = ? WHERE person_id = ? AND diagnosis_id = ?";
+    $stmt = $conn->prepare($updateSql);
+    $stmt->bind_param("sii", $newAssignedAt, $personId, $diagnosisId);
+
+    if ($stmt->execute()) {
+        header("Location: person_details.php?id=$personId&surname=$surname");
+        exit;
+    } else {
+        echo "Chyba při aktualizaci: " . $conn->error;
+    }
+    $stmt->close();
+}
+
+// Smazání diagnózy
+if (isset($_GET['delete_diagnosis_id'])) {
+    $diagnosisId = $_GET['delete_diagnosis_id'];
+    $deleteSql = "DELETE FROM person_diagnoses WHERE person_id = $personId AND diagnosis_id = $diagnosisId";
+    if ($conn->query($deleteSql) === TRUE) {
+        header("Location: person_details.php?id=$personId&surname=$surname");
+        exit;
+    } else {
+        echo "Error: " . $conn->error;
+    }
+}
+
 // Přidání nové poznámky
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_note'])) {
     $note = $_POST['new_note'];
     $insertSql = "INSERT INTO notes (person_id, note) VALUES ($personId, '$note')";
     if ($conn->query($insertSql) === TRUE) {
-        header("Location: person_details.php?id=$personId&surname=$surname");
-        exit;
-    } else {
-        echo "Error: " . $conn->error;
-    }
-}
-
-// Úprava poznámky
-if (isset($_POST['edit_note']) && isset($_POST['note_id'])) {
-    $noteId = $_POST['note_id'];
-    $note = $_POST['edit_note'];
-    $updateSql = "UPDATE notes SET note = '$note' WHERE id = $noteId";
-    if ($conn->query($updateSql) === TRUE) {
-        header("Location: person_details.php?id=$personId&surname=$surname");
-        exit;
-    } else {
-        echo "Error: " . $conn->error;
-    }
-}
-
-// Smazání poznámky
-if (isset($_GET['delete_note_id'])) {
-    $noteId = $_GET['delete_note_id'];
-    $deleteSql = "DELETE FROM notes WHERE id = $noteId";
-    if ($conn->query($deleteSql) === TRUE) {
         header("Location: person_details.php?id=$personId&surname=$surname");
         exit;
     } else {
@@ -85,18 +128,14 @@ $conn->close();
     <link rel="stylesheet" href="style.css">
 </head>
 <div class="header">
-    <!-- Logo jako obrázek -->
     <a href="show_data.php" class="logo">
         <img src="logo.png" alt="MyApp Logo" width="100">
     </a>
-    
-    <!-- Burger Menu -->
     <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
-    
-    <!-- Navigační menu -->
     <div class="navbar" id="navbar">
-        <a href="show_data.php">Home</a>
-        <a href="upload_csv.php">Upload Data</a>
+        <a href="show_data.php">Přehled</a>
+        <a href="upload_csv.php">Nahrát data</a>
+        <a href="add_diagnosis.php">Přidat diagnózu</a>
         <a href="login.php">Login</a>
         <a href="logout.php">Logout</a>
     </div>
@@ -104,12 +143,15 @@ $conn->close();
 <body>
     <div class="container">
         <h1><?php echo $person['first_name'] . ' ' . $person['surname']; ?></h1>
+
+        <!-- Přidání nové poznámky -->
         <h2>Přidat záznam</h2>
         <form action="" method="POST">
             <textarea name="new_note" placeholder="Vepiš zde záznam" required></textarea>
             <button type="submit">Uložit záznam</button>
         </form>
 
+        <!-- Zobrazení existujících poznámek -->
         <h2>Existující záznamy</h2>
         <ul>
             <?php
@@ -131,6 +173,55 @@ $conn->close();
             }
             ?>
         </ul>
+
+        <!-- Přidání diagnózy k osobě -->
+        <h2>Přidat diagnózu</h2>
+        <form action="" method="POST">
+            <label for="diagnosis">Vyber diagnózu:</label>
+            <select name="diagnosis_id" id="diagnosis" required>
+                <?php foreach ($diagnoses as $diagnosis): ?>
+                    <option value="<?php echo $diagnosis['id']; ?>">
+                        <?php echo htmlspecialchars($diagnosis['name']); ?>
+                    </option>
+                <?php endforeach; ?>
+            </select>
+            <button type="submit">Přiřadit diagnózu</button>
+        </form>
+
+        <!-- Přiřazené diagnózy -->
+        <h2>Přiřazené diagnózy</h2>
+        <ul>
+            <?php if (count($personDiagnoses) > 0): ?>
+                <?php foreach ($personDiagnoses as $diagnosis): ?>
+                    <li>
+                        <?php echo htmlspecialchars($diagnosis['name']); ?>
+                        <small>Datum a čas přiřazení: <?php echo $diagnosis['assigned_at']; ?></small>
+
+                        <!-- Formulář pro změnu data a času přiřazení -->
+                        <form action="" method="POST" style="display:inline;">
+                            <input type="hidden" name="diagnosis_id" value="<?php echo $diagnosis['id']; ?>">
+                            <label for="new_assigned_at">Nový datum a čas:</label>
+                            <input type="datetime-local" name="new_assigned_at" value="<?php echo date('Y-m-d\TH:i', strtotime($diagnosis['assigned_at'])); ?>" required>
+                            <button type="submit" name="update_assigned_at">Upravit</button>
+                        </form>
+
+                        <!-- Smazání diagnózy -->
+                        <form action="" method="GET" style="display:inline;">
+                            <input type="hidden" name="id" value="<?php echo $personId; ?>">
+                            <input type="hidden" name="surname" value="<?php echo $surname; ?>">
+                            <input type="hidden" name="delete_diagnosis_id" value="<?php echo $diagnosis['id']; ?>">
+                            <button type="submit">Odstranit</button>
+                        </form>
+                        
+                    </li>
+                    
+                <?php endforeach; ?>
+            <?php else: ?>
+                <li>Žádné diagnózy nebyly přiřazeny.</li>
+            <?php endif; ?>
+        </ul>
+        <br>
+            <a href="add_diagnosis.php">Přidat diagnózu do seznamu</a>
     </div>
 </body>
 </html>

@@ -82,6 +82,7 @@ $conn->close();
     <br>
     <div class="container">
     <h1 align="center">Seznam</h1>
+    <br>
         <table id="dataTable">
             <thead>
                 <tr>
@@ -115,6 +116,8 @@ $conn->close();
                 ?>
             </tbody>
         </table>
+        <br>
+        
     </div>
    
     <script>
@@ -123,33 +126,25 @@ $conn->close();
         var navbar = document.getElementById("navbar");
         navbar.classList.toggle("open");
     }
+    </script>
 
-</script>
-
-</script>
-<div class="header">
-    <!-- Logo jako obrázek -->
-    <a href="show_data.php" class="logo">
-        <img src="logo.png" alt="MyApp Logo" width="100">
-    </a>
-    
-    <!-- Burger Menu -->
-    <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
-    
-    <!-- Navigační menu -->
-    <div class="navbar" id="navbar">
-        <a href="show_data.php">Home</a>
-        <a href="upload_csv.php">Upload Data</a>
-        <a href="login.php">Login</a>
-        <a href="logout.php">Logout</a>
+    <div class="header">
+        <!-- Logo jako obrázek -->
+        <a href="show_data.php" class="logo">
+            <img src="logo.png" alt="MyApp Logo" width="100">
+        </a>
+        
+        <!-- Burger Menu -->
+        <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+        
+        <!-- Navigační menu -->
+        <div class="navbar" id="navbar">
+            <a href="show_data.php">Přehled</a>
+            <a href="upload_csv.php">Nahrát data</a>
+            <a href="add_diagnosis.php">Přidat diagnózu</a>
+            <a href="login.php">Login</a>
+            <a href="logout.php">Logout</a>
     </div>
 </div>
-<?php if (isset($_SESSION['logged_in']) && $_SESSION['logged_in'] === true): ?>
-            <!-- Pokud je uživatel přihlášen, nebudeme zobrazovat tlačítko Login -->
-            <a href="logout.php">Logout</a>
-        <?php else: ?>
-            <!-- Pokud není uživatel přihlášen, nebude zde tlačítko Logout -->
-            <a href="login.php">Login</a>
-        <?php endif; ?>
 </body>
 </html>

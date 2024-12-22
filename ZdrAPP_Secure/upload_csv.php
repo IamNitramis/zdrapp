@@ -73,8 +73,9 @@ $conn->close();
     
     <!-- Navigační menu -->
     <div class="navbar" id="navbar">
-        <a href="show_data.php">Home</a>
-        <a href="upload_csv.php">Upload Data</a>
+        <a href="show_data.php">Přehled</a>
+        <a href="add_diagnosis.php">Přidat diagnózu</a>
+        <a href="upload_csv.php">Nahrát data</a>
         <a href="login.php">Login</a>
         <a href="logout.php">Logout</a>
     </div>
