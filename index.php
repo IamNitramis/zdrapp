@@ -36,7 +36,7 @@
                 <p>Bulk upload data directly into the system using CSV files.</p>
             </div>
         </div>
-        <a href="show_data.php" class="cta-button">Get Started</a>
+        <a href="upload_csv.php" class="cta-button">Get Started</a>
     </div>
 
     <script>
