@@ -130,7 +130,6 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         <a href="show_data.php">Přehled</a>
         <a href="upload_csv.php">Nahrát data</a>
         <a href="add_diagnosis.php">Přidat diagnózu</a>
-        <a href="login.php">Login</a>
     </div>
 </div>
 <script>
