@@ -52,6 +52,20 @@ body {
     transition: background-color 0.3s;
 }
 
+.navbar a[href="logout.php"] {
+    background-color: #dc3545; /* Červená barva */
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.navbar a[href="logout.php"]:hover {
+    background-color: #c82333; /* Tmavší červená při najetí */
+    border-radius: 5px;
+}
+
 .navbar a:hover {
     background-color: #0056b3;
     border-radius: 5px;
