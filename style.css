@@ -1,0 +1,220 @@
+/* Globální nastavení */
+body {
+    font-family: Arial, sans-serif;
+    margin: 0;
+    padding: 0;
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start; /* Zajištění, že obsah nebude centrován */
+    justify-content: flex-start; /* Ujistíme se, že obsah začne od vrchu */
+    min-height: 100vh;
+    background: linear-gradient(135deg, #4facfe, #00f2fe);
+    color: #333;
+}
+
+/* Hlavička */
+.header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 15px 20px;
+    background-color: #007bff;
+    color: white;
+    width: 100%;
+    z-index: 100;
+    position: fixed; /* Fixuje hlavičku na vrchu */
+    top: 0;
+    left: 0;
+}
+
+.header .logo img {
+    width: 50px;
+    height: auto;
+}
+
+.header .logo,
+.header .navbar {
+    display: flex;
+    align-items: center;
+}
+
+.navbar {
+    display: flex;
+    align-items: center;
+}
+
+.navbar a {
+    color: white;
+    padding: 10px 20px;
+    text-decoration: none;
+    margin-right: 20px;
+    font-size: 16px;
+    transition: background-color 0.3s;
+}
+
+.navbar a:hover {
+    background-color: #0056b3;
+    border-radius: 5px;
+}
+
+.menu-icon {
+    font-size: 30px;
+    display: none;
+    cursor: pointer;
+    color: white;
+}
+
+/* Responzivita hlavičky */
+@media (max-width: 768px) {
+    .navbar {
+        display: none;
+        flex-direction: column;
+        position: absolute;
+        top: 60px;
+        left: 0;
+        width: 100%;
+        background-color: #007bff;
+        z-index: 100;
+    }
+
+    .navbar a {
+        padding: 15px 20px;
+        width: 100%;
+        text-align: left;
+    }
+
+    .menu-icon {
+        display: block;
+    }
+
+    .navbar.open {
+        display: flex;
+    }
+}
+
+/* Hlavní obsah */
+.container {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 1000px;
+    min-width: 300px;
+    overflow: auto;
+    margin-top: 80px; /* Ujistíme se, že obsah nebude překrývat hlavičku */
+    align-self: center;
+}
+
+h1 {
+    text-align: center;
+}
+
+/* Tabulky */
+table {
+    width: 100%;
+    border-collapse: collapse;
+    margin-top: 20px;
+}
+
+th, td {
+    padding: 12px;
+    text-align: left;
+    border: 1px solid #ddd;
+}
+
+th {
+    background: #f4f4f4;
+    font-weight: bold;
+}
+
+td {
+    background: #fff;
+    color: #333;
+}
+
+tr:hover {
+    background: #f0f0f0;
+}
+
+/* Tlačítka */
+button {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 10px 15px;
+    cursor: pointer;
+    border-radius: 5px;
+    font-size: 14px;
+    margin-right: 5px;
+}
+
+button:hover {
+    background-color: #0056b3;
+}
+
+button.delete {
+    background: #dc3545;
+}
+
+button.delete:hover {
+    background: #c82333;
+}
+
+button.detail {
+    background: #28a745;
+}
+
+button.detail:hover {
+    background: #218838;
+}
+
+td .buttons {
+    display: flex;
+    justify-content: space-between;
+}
+
+/* Odkazy */
+a {
+    text-decoration: none;
+    color: red;
+    margin-left: 10px;
+}
+
+a:hover {
+    text-decoration: underline;
+}
+
+/* Formuláře */
+form {
+    margin-bottom: 20px;
+}
+
+textarea {
+    width: 100%;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+    border: 1px solid #ddd;
+    resize: vertical;
+}
+
+/* Panel přihlášeného uživatele */
+.top-right {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    font-size: 16px;
+    color: white;
+}
+
+.top-right a {
+    color: white;
+    text-decoration: none;
+    margin-left: 15px;
+    font-weight: bold;
+}
+
+.top-right a:hover {
+    text-decoration: underline;
+}
