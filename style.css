@@ -47,7 +47,7 @@ body {
     color: white;
     padding: 10px 20px;
     text-decoration: none;
-    margin-right: 20px;
+    margin-right: 30px;
     font-size: 16px;
     transition: background-color 0.3s;
 }
@@ -102,7 +102,7 @@ body {
     max-width: 1000px;
     min-width: 300px;
     overflow: auto;
-    margin-top: 80px; /* Ujistíme se, že obsah nebude překrývat hlavičku */
+    margin-top: 100px; /* Ujistíme se, že obsah nebude překrývat hlavičku */
     align-self: center;
 }
 
@@ -254,4 +254,20 @@ textarea {
 
 .cta-button:hover {
     background-color: #0056b3;
+}
+/* Upload container - pro stránku pro nahrání CSV */
+.uploadcontainer {
+    background: white;
+    padding: 20px;
+    border-radius: 10px;
+    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+    width: 90%;
+    max-width: 600px; /* Zúžení šířky formuláře pro lepší vzhled */
+    min-width: 300px;
+    margin-top: 100px; /* Ujistíme se, že obsah nebude překrývat hlavičku */
+    align-self: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
 }
