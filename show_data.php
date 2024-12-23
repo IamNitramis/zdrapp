@@ -79,10 +79,8 @@ $conn->close();
 </head>
 
 <body>
-    <br>
     <div class="container">
     <h1 align="center">Seznam</h1>
-    <br>
         <table id="dataTable">
             <thead>
                 <tr>
