@@ -74,9 +74,8 @@ $conn->close();
     <!-- Navigační menu -->
     <div class="navbar" id="navbar">
         <a href="show_data.php">Přehled</a>
-        <a href="add_diagnosis.php">Přidat diagnózu</a>
         <a href="upload_csv.php">Nahrát data</a>
-        <a href="login.php">Login</a>
+        <a href="add_diagnosis.php">Přidat diagnózu</a>
         <a href="logout.php">Logout</a>
     </div>
 </div>
@@ -88,7 +87,7 @@ $conn->close();
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
-    <div class="container">
+    <div class="uploadcontainer">
         <h1>Upload CSV File</h1>
         <form action="upload_csv.php" method="POST" enctype="multipart/form-data">
             <label for="csv_file">Choose CSV file:</label>
