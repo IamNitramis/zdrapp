@@ -118,6 +118,10 @@ body {
     overflow: auto;
     margin-top: 100px; /* Ujistíme se, že obsah nebude překrývat hlavičku */
     align-self: center;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center; /* Tohle zarovná obsah na střed */
 }
 
 h1 {
@@ -269,6 +273,7 @@ textarea {
 .cta-button:hover {
     background-color: #0056b3;
 }
+
 /* Upload container - pro stránku pro nahrání CSV */
 .uploadcontainer {
     background: white;
