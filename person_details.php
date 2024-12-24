@@ -3,12 +3,11 @@ session_start(); // Spustí session, aby bylo možné kontrolovat přihlášení
 
 // Kontrola, zda je uživatel přihlášen
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    // Zobrazení chybové zprávy
     echo "<div style='text-align: center; padding: 50px;'>
             <h2>You must be logged in to access this page.</h2>
             <p><a href='login.php'>Click here to login</a></p>
           </div>";
-    exit; // Ukončení skriptu, aby uživatel neměl přístup k dalším částem stránky
+    exit;
 }
 
 // Připojení k databázi
@@ -60,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['diagnosis_id'])) {
 }
 
 // Načtení diagnóz přiřazených k osobě
-$sql = "SELECT d.id, d.name, pd.assigned_at 
+$sql = "SELECT pd.id AS record_id, d.id, d.name, pd.assigned_at 
         FROM person_diagnoses pd 
         JOIN diagnoses d ON pd.diagnosis_id = d.id 
         WHERE pd.person_id = $personId";
@@ -74,14 +73,11 @@ while ($row = $personDiagnosesResult->fetch_assoc()) {
 if (isset($_POST['update_assigned_at']) && isset($_POST['new_assigned_at']) && isset($_POST['diagnosis_id'])) {
     $newAssignedAt = $_POST['new_assigned_at'];
     $diagnosisId = $_POST['diagnosis_id'];
-
-    // Oprava formátu data a času pro SQL
     $newAssignedAt = date('Y-m-d H:i:s', strtotime($newAssignedAt));
 
-    // SQL dotaz pro aktualizaci času přiřazení
-    $updateSql = "UPDATE person_diagnoses SET assigned_at = ? WHERE person_id = ? AND diagnosis_id = ?";
+    $updateSql = "UPDATE person_diagnoses SET assigned_at = ? WHERE id = ?";
     $stmt = $conn->prepare($updateSql);
-    $stmt->bind_param("sii", $newAssignedAt, $personId, $diagnosisId);
+    $stmt->bind_param("si", $newAssignedAt, $diagnosisId);
 
     if ($stmt->execute()) {
         header("Location: person_details.php?id=$personId&surname=$surname");
@@ -94,8 +90,8 @@ if (isset($_POST['update_assigned_at']) && isset($_POST['new_assigned_at']) && i
 
 // Smazání diagnózy
 if (isset($_GET['delete_diagnosis_id'])) {
-    $diagnosisId = $_GET['delete_diagnosis_id'];
-    $deleteSql = "DELETE FROM person_diagnoses WHERE person_id = $personId AND diagnosis_id = $diagnosisId";
+    $recordId = $_GET['delete_diagnosis_id'];
+    $deleteSql = "DELETE FROM person_diagnoses WHERE id = $recordId";
     if ($conn->query($deleteSql) === TRUE) {
         header("Location: person_details.php?id=$personId&surname=$surname");
         exit;
@@ -116,6 +112,34 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_note'])) {
     }
 }
 
+// Zpracování úprav poznámek
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_note']) && isset($_POST['note_id'])) {
+    $updatedNote = $_POST['updated_note'];
+    $noteId = $_POST['note_id'];
+
+    $updateSql = "UPDATE notes SET note = ? WHERE id = ?";
+    $stmt = $conn->prepare($updateSql);
+    $stmt->bind_param("si", $updatedNote, $noteId);
+
+    if ($stmt->execute()) {
+        header("Location: person_details.php?id=$personId&surname=$surname");
+        exit;
+    } else {
+        echo "Chyba při aktualizaci poznámky: " . $conn->error;
+    }
+    $stmt->close();
+}
+
+if (isset($_GET['delete_note_id'])) {
+    $noteId = $_GET['delete_note_id'];
+    $deleteSql = "DELETE FROM notes WHERE id = $noteId";
+    if ($conn->query($deleteSql) === TRUE) {
+        header("Location: person_details.php?id=$personId&surname=$surname");
+        exit;
+    } else {
+        echo "Error: " . $conn->error;
+    }
+}
 $conn->close();
 ?>
 
@@ -143,14 +167,12 @@ $conn->close();
     <div class="container">
         <h1><?php echo $person['first_name'] . ' ' . $person['surname']; ?></h1>
 
-        <!-- Přidání nové poznámky -->
         <h2>Přidat záznam</h2>
         <form action="" method="POST">
             <textarea name="new_note" placeholder="Vepiš zde záznam" required></textarea>
             <button type="submit">Uložit záznam</button>
         </form>
 
-        <!-- Zobrazení existujících poznámek -->
         <h2>Existující záznamy</h2>
         <ul>
             <?php
@@ -173,7 +195,6 @@ $conn->close();
             ?>
         </ul>
 
-        <!-- Přidání diagnózy k osobě -->
         <h2>Přidat diagnózu</h2>
         <form action="" method="POST">
             <label for="diagnosis">Vyber diagnózu:</label>
@@ -187,7 +208,6 @@ $conn->close();
             <button type="submit">Přiřadit diagnózu</button>
         </form>
 
-        <!-- Přiřazené diagnózy -->
         <h2>Přiřazené diagnózy</h2>
         <ul>
             <?php if (count($personDiagnoses) > 0): ?>
@@ -195,32 +215,26 @@ $conn->close();
                     <li>
                         <?php echo htmlspecialchars($diagnosis['name']); ?>
                         <small>Datum a čas přiřazení: <?php echo $diagnosis['assigned_at']; ?></small>
-
-                        <!-- Formulář pro změnu data a času přiřazení -->
                         <form action="" method="POST" style="display:inline;">
-                            <input type="hidden" name="diagnosis_id" value="<?php echo $diagnosis['id']; ?>">
+                            <input type="hidden" name="diagnosis_id" value="<?php echo $diagnosis['record_id']; ?>">
                             <label for="new_assigned_at">Nový datum a čas:</label>
                             <input type="datetime-local" name="new_assigned_at" value="<?php echo date('Y-m-d\TH:i', strtotime($diagnosis['assigned_at'])); ?>" required>
                             <button type="submit" name="update_assigned_at">Upravit</button>
                         </form>
-
-                        <!-- Smazání diagnózy -->
                         <form action="" method="GET" style="display:inline;">
                             <input type="hidden" name="id" value="<?php echo $personId; ?>">
                             <input type="hidden" name="surname" value="<?php echo $surname; ?>">
-                            <input type="hidden" name="delete_diagnosis_id" value="<?php echo $diagnosis['id']; ?>">
+                            <input type="hidden" name="delete_diagnosis_id" value="<?php echo $diagnosis['record_id']; ?>">
                             <button type="submit">Odstranit</button>
                         </form>
-                        
                     </li>
-                    
                 <?php endforeach; ?>
             <?php else: ?>
                 <li>Žádné diagnózy nebyly přiřazeny.</li>
             <?php endif; ?>
         </ul>
         <br>
-            <a href="add_diagnosis.php">Přidat diagnózu do seznamu</a>
+        <a href="add_diagnosis.php">Přidat diagnózu do seznamu</a>
     </div>
 </body>
 </html>
