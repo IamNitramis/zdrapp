@@ -209,30 +209,35 @@ $conn->close();
         </form>
 
         <h2>Přiřazené diagnózy</h2>
-        <ul>
-            <?php if (count($personDiagnoses) > 0): ?>
-                <?php foreach ($personDiagnoses as $diagnosis): ?>
-                    <li>
-                        <?php echo htmlspecialchars($diagnosis['name']); ?>
-                        <small>Datum a čas přiřazení: <?php echo $diagnosis['assigned_at']; ?></small>
-                        <form action="" method="POST" style="display:inline;">
-                            <input type="hidden" name="diagnosis_id" value="<?php echo $diagnosis['record_id']; ?>">
-                            <label for="new_assigned_at">Nový datum a čas:</label>
-                            <input type="datetime-local" name="new_assigned_at" value="<?php echo date('Y-m-d\TH:i', strtotime($diagnosis['assigned_at'])); ?>" required>
-                            <button type="submit" name="update_assigned_at">Upravit</button>
-                        </form>
-                        <form action="" method="GET" style="display:inline;">
-                            <input type="hidden" name="id" value="<?php echo $personId; ?>">
-                            <input type="hidden" name="surname" value="<?php echo $surname; ?>">
-                            <input type="hidden" name="delete_diagnosis_id" value="<?php echo $diagnosis['record_id']; ?>">
-                            <button type="submit">Odstranit</button>
-                        </form>
-                    </li>
-                <?php endforeach; ?>
-            <?php else: ?>
-                <li>Žádné diagnózy nebyly přiřazeny.</li>
-            <?php endif; ?>
-        </ul>
+<div style="display: flex; flex-direction: column; gap: 1rem;">
+    <?php if (count($personDiagnoses) > 0): ?>
+        <?php foreach ($personDiagnoses as $diagnosis): ?>
+            <div style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 5px;">
+                <strong><?php echo htmlspecialchars($diagnosis['name']); ?></strong>
+                <div style="margin-top: 0.5rem;">
+                    <small>Datum: <?php echo htmlspecialchars($diagnosis['assigned_at']); ?></small>
+                </div>
+                <div style="margin-top: 0.5rem; display: flex; gap: 0.5rem; flex-wrap: wrap;">
+                    <form action="" method="POST" style="display: flex; align-items: center; gap: 0.5rem;">
+                        <input type="hidden" name="diagnosis_id" value="<?php echo htmlspecialchars($diagnosis['record_id']); ?>">
+                        <label for="new_assigned_at" style="font-size: 0.9rem;">Nový datum a čas:</label>
+                        <input type="datetime-local" name="new_assigned_at" value="<?php echo date('Y-m-d\TH:i', strtotime($diagnosis['assigned_at'])); ?>" required>
+                        <button type="submit" name="update_assigned_at" style="background-color: #007bff; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 3px; cursor: pointer;">Upravit</button>
+                    </form>
+                    <form action="" method="GET" style="display: flex; align-items: center;">
+                        <input type="hidden" name="id" value="<?php echo htmlspecialchars($personId); ?>">
+                        <input type="hidden" name="surname" value="<?php echo htmlspecialchars($surname); ?>">
+                        <input type="hidden" name="delete_diagnosis_id" value="<?php echo htmlspecialchars($diagnosis['record_id']); ?>">
+                        <button type="submit" style="background-color: #dc3545; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 3px; cursor: pointer;">Odstranit</button>
+                    </form>
+                </div>
+            </div>
+        <?php endforeach; ?>
+    <?php else: ?>
+        <div style="font-style: italic;">Žádné diagnózy nebyly přiřazeny.</div>
+    <?php endif; ?>
+</div>
+
         <br>
         <a href="add_diagnosis.php">Přidat diagnózu do seznamu</a>
     </div>
