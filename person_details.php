@@ -174,26 +174,53 @@ $conn->close();
         </form>
 
         <h2>Existující záznamy</h2>
-        <ul>
-            <?php
-            if ($noteResult->num_rows > 0) {
-                while ($note = $noteResult->fetch_assoc()) {
-                    echo "<li>";
-                    echo "<p>" . htmlspecialchars($note['note']) . "</p>";
-                    echo "<small>Vytvořeno: " . $note['created_at'] . "</small>";
-                    echo "<form action='' method='POST' style='display:inline;'>
-                            <input type='hidden' name='note_id' value='" . $note['id'] . "'>
-                            <input type='text' name='updated_note' value='" . htmlspecialchars($note['note']) . "'>
-                            <button type='submit' name='update_note'>Upravit</button>
-                          </form>";
-                    echo " <a href='?id=$personId&surname=$surname&delete_note_id=" . $note['id'] . "'>Odstranit</a>";
-                    echo "</li>";
-                }
-            } else {
-                echo "<li>Žádné existující záznamy</li>";
-            }
-            ?>
-        </ul>
+<div style="display: flex; flex-direction: column; gap: 1rem;">
+    <?php if ($noteResult->num_rows > 0): ?>
+        <?php while ($note = $noteResult->fetch_assoc()): ?>
+            <div style="padding: 1rem; border: 1px solid #ccc; border-radius: 5px;" id="note-<?php echo $note['id']; ?>">
+                <p style="margin: 0 0 0.5rem; font-size: 1rem;" id="note-text-<?php echo $note['id']; ?>">
+                    <?php echo htmlspecialchars($note['note']); ?>
+                </p>
+                <small style="display: block; margin-bottom: 0.5rem; color: #666;">Vytvořeno: <?php echo htmlspecialchars($note['created_at']); ?></small>
+                <div style="display: flex; gap: 0.5rem; align-items: center; flex-wrap: wrap;">
+                    <button 
+                        type="button" 
+                        onclick="showEditForm(<?php echo $note['id']; ?>)" 
+                        style="background-color: #007bff; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 3px; cursor: pointer;">
+                        Upravit
+                    </button>
+                    <a href="?id=<?php echo htmlspecialchars($personId); ?>&surname=<?php echo htmlspecialchars($surname); ?>&delete_note_id=<?php echo htmlspecialchars($note['id']); ?>"
+                       style="color: #dc3545; text-decoration: none; font-weight: bold;">Odstranit</a>
+                </div>
+                <form action="" method="POST" id="edit-form-<?php echo $note['id']; ?>" style="display: none; margin-top: 1rem;">
+                    <input type="hidden" name="note_id" value="<?php echo htmlspecialchars($note['id']); ?>">
+                    <input type="text" name="updated_note" value="<?php echo htmlspecialchars($note['note']); ?>" 
+                           style="padding: 0.5rem; border: 1px solid #ccc; border-radius: 3px; width: 100%;">
+                    <button type="submit" name="update_note" 
+                            style="background-color: #007bff; color: #fff; border: none; padding: 0.5rem 1rem; border-radius: 3px; cursor: pointer; margin-top: 0.5rem;">
+                        Uložit
+                    </button>
+                </form>
+            </div>
+        <?php endwhile; ?>
+    <?php else: ?>
+        <div style="font-style: italic; color: #666;">Žádné existující záznamy</div>
+    <?php endif; ?>
+</div>
+
+<script>
+    function showEditForm(noteId) {
+        // Skryje text a zobrazí formulář pro úpravu
+        const noteText = document.getElementById('note-text-' + noteId);
+        const editForm = document.getElementById('edit-form-' + noteId);
+        
+        if (noteText && editForm) {
+            noteText.style.display = 'none';
+            editForm.style.display = 'block';
+        }
+    }
+</script>
+
 
         <h2>Přidat diagnózu</h2>
         <form action="" method="POST">
