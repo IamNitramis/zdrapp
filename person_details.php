@@ -183,8 +183,8 @@ $conn->close();
                     echo "<small>Vytvořeno: " . $note['created_at'] . "</small>";
                     echo "<form action='' method='POST' style='display:inline;'>
                             <input type='hidden' name='note_id' value='" . $note['id'] . "'>
-                            <input type='text' name='edit_note' value='" . htmlspecialchars($note['note']) . "'>
-                            <button type='submit'>Upravit</button>
+                            <input type='text' name='updated_note' value='" . htmlspecialchars($note['note']) . "'>
+                            <button type='submit' name='update_note'>Upravit</button>
                           </form>";
                     echo " <a href='?id=$personId&surname=$surname&delete_note_id=" . $note['id'] . "'>Odstranit</a>";
                     echo "</li>";
