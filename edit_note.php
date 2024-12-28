@@ -24,8 +24,13 @@ if (!isset($_GET['id'])) {
 
 $noteId = intval($_GET['id']);
 
-// Načtení existující poznámky
-$sql = "SELECT * FROM diagnosis_notes WHERE id = ?";
+// Načtení existující poznámky a diagnózy (JOIN mezi diagnosis_notes a diagnoses)
+$sql = "
+    SELECT dn.note, d.name, dn.created_at 
+    FROM diagnosis_notes dn
+    JOIN diagnoses d ON dn.id = d.id
+    WHERE dn.id = ?
+";
 $stmt = $conn->prepare($sql);
 $stmt->bind_param("i", $noteId);
 $stmt->execute();
@@ -78,7 +83,8 @@ $conn->close();
     <div class="container">
         <h1>Upravit poznámku pro <?php echo htmlspecialchars($_GET['first_name']); echo " "; ?><?php echo htmlspecialchars($_GET['surname']); ?></h1>
         <p>
-            TODO: Přidat Diagnózu a její datum vytvoření
+            <strong>Diagnóza:</strong> <?php echo htmlspecialchars($note['name']); ?><br>
+            <strong>Datum přiřazení:</strong> <?php echo htmlspecialchars(date("d.m.Y H:i", strtotime($note['created_at']))); ?>
         </p>
         <form action="" method="POST">
             <textarea name="updated_note" required><?php echo htmlspecialchars($note['note']); ?></textarea>
