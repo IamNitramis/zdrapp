@@ -4,7 +4,7 @@ session_start(); // Spustí session, aby bylo možné kontrolovat přihlášení
 // Kontrola, zda je uživatel přihlášen (např. administrátor)
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     // Zobrazení chybové zprávy
-    echo "<div style='text-align: center; padding: 50px;' >
+    echo "<div class='alert'>
             <h2>You must be logged in to access this page.</h2>
             <p><a href='login.php'>Click here to login</a></p>
           </div>";
@@ -79,20 +79,88 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Přidat novou diagnózu</title>
     <link rel="stylesheet" href="style.css">
+    <style>
+        /* Stylování pro lepší vzhled */
+        .logo img {
+            max-width: 100px;
+        }
+
+        form {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 30px;
+        }
+
+        input[type="text"] {
+            padding: 8px;
+            font-size: 16px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        a {
+            color: #0044cc;
+            text-decoration: none;
+        }
+
+        a:hover {
+            text-decoration: underline;
+        }
+
+        .alert {
+            text-align: center;
+            padding: 50px;
+            background-color: #f8d7da;
+            border: 1px solid #f5c6cb;
+            border-radius: 5px;
+            color: #721c24;
+        }
+
+        .alert a {
+            color: #721c24;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+
+        ul li {
+            background-color: #f9f9f9;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        ul li form {
+            display: inline;
+            margin-right: 10px;
+        }
+
+        ul li a {
+            color: #e74c3c;
+            font-weight: bold;
+        }
+    </style>
 </head>
-<div class="header">
-    <a href="show_data.php" class="logo">
-        <img src="logo.png" alt="MyApp Logo" width="100">
-    </a>
-    <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
-    <div class="navbar" id="navbar">
-        <a href="show_data.php">Přehled</a>
-        <a href="upload_csv.php">Nahrát data</a>
-        <a href="add_diagnosis.php">Přidat diagnózu</a>
-        <a href="logout.php">Logout</a>
-    </div>
-</div>
+
 <body>
+    <div class="header">
+        <a href="show_data.php" class="logo">
+            <img src="logo.png" alt="MyApp Logo">
+        </a>
+        <div class="navbar">
+            <a href="show_data.php">Přehled</a>
+            <a href="upload_csv.php">Nahrát data</a>
+            <a href="add_diagnosis.php">Přidat diagnózu</a>
+            <a href="logout.php">Logout</a>
+        </div>
+    </div>
+
     <div class="container">
         <h1>Přidat novou diagnózu</h1>
 
@@ -105,22 +173,36 @@ $conn->close();
 
         <h2>Existující diagnózy</h2>
         <ul>
-            <?php foreach ($diagnoses as $diagnosis): ?>
-                <li>
-                    <?php echo htmlspecialchars($diagnosis['name']); ?>
+    <?php foreach ($diagnoses as $diagnosis): ?>
+        <li>
+            <?php echo htmlspecialchars($diagnosis['name']); ?>
 
-                    <!-- Formulář pro úpravu diagnózy -->
-                    <form action="add_diagnosis.php" method="POST" style="display:inline;">
-                        <input type="hidden" name="update_diagnosis_id" value="<?php echo $diagnosis['id']; ?>">
-                        <input type="text" name="updated_diagnosis" value="<?php echo htmlspecialchars($diagnosis['name']); ?>" required>
-                        <button type="submit">Upravit</button>
-                    </form>
+            <!-- Tlačítko pro zobrazení formuláře pro úpravu -->
+            <button class="edit-btn" onclick="toggleEditForm(<?php echo $diagnosis['id']; ?>)">Upravit</button>
 
-                    <!-- Smazání diagnózy -->
-                    <a href="add_diagnosis.php?delete_diagnosis_id=<?php echo $diagnosis['id']; ?>" onclick="return confirm('Opravu chcete opravdu smazat?')">Odstranit</a>
-                </li>
-            <?php endforeach; ?>
-        </ul>
+            <!-- Formulář pro úpravu diagnózy -->
+            <form action="add_diagnosis.php" method="POST" style="display:none;" id="edit-form-<?php echo $diagnosis['id']; ?>">
+                <input type="hidden" name="update_diagnosis_id" value="<?php echo $diagnosis['id']; ?>">
+                <input type="text" name="updated_diagnosis" value="<?php echo htmlspecialchars($diagnosis['name']); ?>" required>
+                <button type="submit">Upravit</button>
+            </form>
+
+            <!-- Smazání diagnózy -->
+            <a href="add_diagnosis.php?delete_diagnosis_id=<?php echo $diagnosis['id']; ?>" onclick="return confirm('Opravu chcete opravdu smazat?')">Odstranit</a>
+        </li>
+    <?php endforeach; ?>
+</ul>
+
+<script>
+    // Funkce pro zobrazení/skrytí formuláře pro úpravu
+    function toggleEditForm(diagnosisId) {
+        var form = document.getElementById('edit-form-' + diagnosisId);
+        var display = form.style.display;
+        form.style.display = (display === 'none' || display === '') ? 'block' : 'none';
+        
+    }
+</script>
+
 
         <p><a href="show_data.php">Zpět na přehled osob</a></p>
     </div>
