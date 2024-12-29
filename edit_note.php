@@ -18,20 +18,24 @@ if ($conn->connect_error) {
 }
 
 // Získání ID poznámky
-if (!isset($_GET['id'])) {
-    die("Note ID is required.");
+if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+    die("Valid Note ID is required.");
 }
 
 $noteId = intval($_GET['id']);
 
 // Načtení existující poznámky a diagnózy (JOIN mezi diagnosis_notes a diagnoses)
 $sql = "
-    SELECT dn.note, d.name, dn.created_at 
+    SELECT dn.note, d.name AS diagnosis_name, dn.created_at, dn.person_id 
     FROM diagnosis_notes dn
-    JOIN diagnoses d ON dn.id = d.id
+    JOIN diagnoses d ON dn.diagnosis_id = d.id
     WHERE dn.id = ?
 ";
 $stmt = $conn->prepare($sql);
+if (!$stmt) {
+    die("SQL Error: " . $conn->error);
+}
+
 $stmt->bind_param("i", $noteId);
 $stmt->execute();
 $result = $stmt->get_result();
@@ -44,20 +48,28 @@ $note = $result->fetch_assoc();
 
 // Zpracování formuláře
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    $updatedNote = $_POST['updated_note'];
-
-    $updateSql = "UPDATE diagnosis_notes SET note = ? WHERE id = ?";
-    $updateStmt = $conn->prepare($updateSql);
-    $updateStmt->bind_param("si", $updatedNote, $noteId);
-
-    if ($updateStmt->execute()) {
-        header("Location: person_details.php?id=" . htmlspecialchars($_GET['person_id']) . "&surname=" . htmlspecialchars($_GET['surname']));
-        exit;
+    if (!isset($_POST['updated_note']) || empty(trim($_POST['updated_note']))) {
+        echo "Note content cannot be empty.";
     } else {
-        echo "Error updating note: " . $conn->error;
-    }
+        $updatedNote = trim($_POST['updated_note']);
 
-    $updateStmt->close();
+        $updateSql = "UPDATE diagnosis_notes SET note = ? WHERE id = ?";
+        $updateStmt = $conn->prepare($updateSql);
+        if (!$updateStmt) {
+            die("SQL Error: " . $conn->error);
+        }
+
+        $updateStmt->bind_param("si", $updatedNote, $noteId);
+
+        if ($updateStmt->execute()) {
+            header("Location: person_details.php?id=" . htmlspecialchars($note['person_id']));
+            exit;
+        } else {
+            echo "Error updating note: " . $conn->error;
+        }
+
+        $updateStmt->close();
+    }
 }
 
 $stmt->close();
@@ -83,7 +95,7 @@ $conn->close();
     <div class="container">
         <h1>Upravit poznámku pro <?php echo htmlspecialchars($_GET['first_name']); echo " "; ?><?php echo htmlspecialchars($_GET['surname']); ?></h1>
         <p>
-            <strong>Diagnóza:</strong> <?php echo htmlspecialchars($note['name']); ?><br>
+            <strong>Diagnóza:</strong> <?php echo htmlspecialchars($note['diagnosis_name']); ?><br>
             <strong>Datum přiřazení:</strong> <?php echo htmlspecialchars(date("d.m.Y H:i", strtotime($note['created_at']))); ?>
         </p>
         <form action="" method="POST">
