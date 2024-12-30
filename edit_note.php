@@ -26,11 +26,12 @@ $noteId = intval($_GET['id']);
 
 // Načtení existující poznámky a diagnózy (JOIN mezi diagnosis_notes a diagnoses)
 $sql = "
-    SELECT dn.note, d.name AS diagnosis_name, dn.created_at, dn.person_id 
+    SELECT dn.note, d.id AS diagnosis_id, d.name AS diagnosis_name, dn.created_at, dn.person_id 
     FROM diagnosis_notes dn
     JOIN diagnoses d ON dn.diagnosis_id = d.id
     WHERE dn.id = ?
 ";
+
 $stmt = $conn->prepare($sql);
 if (!$stmt) {
     die("SQL Error: " . $conn->error);
@@ -104,8 +105,8 @@ $conn->close();
             <button type="submit">Save Changes</button>
             <a href="person_details.php?id=<?php echo htmlspecialchars($_GET['person_id']); ?>&surname=<?php echo htmlspecialchars($_GET['surname']); ?>">Cancel</a>
         </form>
-        <a href="report.php?id=<?php echo htmlspecialchars($_GET['person_id']); ?>&surname=<?php echo htmlspecialchars($_GET['surname']); ?>&diagnosis_id=<?php echo htmlspecialchars($note['diagnosis_name']); ?>">Generování</a>
-    </div>
+        <a href="report.php?id=<?php echo htmlspecialchars($note['person_id']); ?>&surname=<?php echo htmlspecialchars($_GET['surname']); ?>&diagnosis_id=<?php echo htmlspecialchars($note['diagnosis_id']); ?>">Generování</a>
+        </div>
     <div class="header">
         <a href="show_data.php" class="logo">
             <img src="logo.png" alt="ZDRAPP Logo" width="50">
