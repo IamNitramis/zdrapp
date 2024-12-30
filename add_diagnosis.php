@@ -80,11 +80,6 @@ $conn->close();
     <title>Přidat novou diagnózu</title>
     <link rel="stylesheet" href="style.css">
     <style>
-        /* Stylování pro lepší vzhled */
-        .logo img {
-            max-width: 100px;
-        }
-
         form {
             display: flex;
             flex-direction: column;
@@ -97,6 +92,7 @@ $conn->close();
             font-size: 16px;
             border: 1px solid #ddd;
             border-radius: 4px;
+            width: 230px;
         }
 
         a {
@@ -166,7 +162,7 @@ $conn->close();
 
         <!-- Formulář pro přidání nové diagnózy -->
         <form action="add_diagnosis.php" method="POST">
-            <label for="new_diagnosis">Název diagnózy:</label>
+            <label for="new_diagnosis" align="center">Název diagnózy:</label>
             <input type="text" name="new_diagnosis" id="new_diagnosis" placeholder="Zadejte název nové diagnózy" required>
             <button type="submit">Přidat diagnózu</button>
         </form>
@@ -177,31 +173,12 @@ $conn->close();
         <li>
             <?php echo htmlspecialchars($diagnosis['name']); ?>
 
-            <!-- Tlačítko pro zobrazení formuláře pro úpravu -->
-            <button class="edit-btn" onclick="toggleEditForm(<?php echo $diagnosis['id']; ?>)">Upravit</button>
-
-            <!-- Formulář pro úpravu diagnózy -->
-            <form action="add_diagnosis.php" method="POST" style="display:none;" id="edit-form-<?php echo $diagnosis['id']; ?>">
-                <input type="hidden" name="update_diagnosis_id" value="<?php echo $diagnosis['id']; ?>">
-                <input type="text" name="updated_diagnosis" value="<?php echo htmlspecialchars($diagnosis['name']); ?>" required>
-                <button type="submit">Upravit</button>
-            </form>
-
             <!-- Smazání diagnózy -->
             <a href="add_diagnosis.php?delete_diagnosis_id=<?php echo $diagnosis['id']; ?>" onclick="return confirm('Opravu chcete opravdu smazat?')">Odstranit</a>
         </li>
     <?php endforeach; ?>
 </ul>
 
-<script>
-    // Funkce pro zobrazení/skrytí formuláře pro úpravu
-    function toggleEditForm(diagnosisId) {
-        var form = document.getElementById('edit-form-' + diagnosisId);
-        var display = form.style.display;
-        form.style.display = (display === 'none' || display === '') ? 'block' : 'none';
-        
-    }
-</script>
 
 
         <p><a href="show_data.php">Zpět na přehled osob</a></p>
