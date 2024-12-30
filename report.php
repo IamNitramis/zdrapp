@@ -1,7 +1,6 @@
 <?php
 session_start();
 
-// Kontrola, zda je uživatel přihlášen
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     echo "<div class='alert'>
             <h2>You must be logged in to access this page.</h2>
@@ -10,21 +9,23 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     exit;
 }
 
-// Připojení k databázi
 $conn = new mysqli("localhost", "root", "", "zdrapp");
 
 if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Získání ID pacienta
 if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
     die("Valid Patient ID is required.");
 }
 
-$personId = intval($_GET['id']);
+if (!isset($_GET['diagnosis_id']) || !is_numeric($_GET['diagnosis_id'])) {
+    die("Valid Diagnosis ID is required.");
+}
 
-// Načtení údajů o pacientovi
+$personId = intval($_GET['id']);
+$diagnosisId = intval($_GET['diagnosis_id']);
+
 $sqlPerson = "SELECT first_name, surname, birth_date FROM persons WHERE id = ?";
 $stmtPerson = $conn->prepare($sqlPerson);
 $stmtPerson->bind_param("i", $personId);
@@ -37,29 +38,27 @@ if ($resultPerson->num_rows === 0) {
 
 $person = $resultPerson->fetch_assoc();
 
-// Načtení diagnóz pacienta
-$sqlDiagnoses = "
+$sqlDiagnosis = "
     SELECT d.name AS diagnosis_name, pd.assigned_at
     FROM person_diagnoses pd
-    INNER JOIN diagnoses d ON pd.id = d.id
-    WHERE pd.person_id = ?
+    INNER JOIN diagnoses d ON pd.diagnosis_id = d.id
+    WHERE pd.person_id = ? AND pd.diagnosis_id = ?
 ";
-$stmtDiagnoses = $conn->prepare($sqlDiagnoses);
-$stmtDiagnoses->bind_param("i", $personId);
-$stmtDiagnoses->execute();
-$resultDiagnoses = $stmtDiagnoses->get_result();
+$stmtDiagnosis = $conn->prepare($sqlDiagnosis);
+$stmtDiagnosis->bind_param("ii", $personId, $diagnosisId);
+$stmtDiagnosis->execute();
+$resultDiagnosis = $stmtDiagnosis->get_result();
 
-$diagnoses = [];
-while ($row = $resultDiagnoses->fetch_assoc()) {
-    $diagnoses[] = $row;
+if ($resultDiagnosis->num_rows === 0) {
+    die("Diagnosis not found.");
 }
 
-// Generování náhodných hodnot
-$temperature = mt_rand(360, 380) / 10; // 36.0 - 38.0 °C
-$oxygen_saturation = mt_rand(95, 100); // 95 - 100 %
-$heart_rate = mt_rand(60, 100);        // 60 - 100 bpm
+$diagnosis = $resultDiagnosis->fetch_assoc();
 
-// Vytvoření lékařské zprávy
+$temperature = mt_rand(360, 370) / 10;
+$oxygen_saturation = mt_rand(96, 100);
+$heart_rate = mt_rand(60, 100);
+
 $report = "
 Medical Report:
 Name: {$person['first_name']}
@@ -69,19 +68,14 @@ Body Temperature: {$temperature} °C
 Oxygen Saturation: {$oxygen_saturation} %
 Heart Rate: {$heart_rate} bpm
 
-Diagnoses:
+Diagnosis:
+- {$diagnosis['diagnosis_name']} (Recorded on: {$diagnosis['assigned_at']})
 ";
 
-foreach ($diagnoses as $diag) {
-    $report .= "- {$diag['diagnosis_name']} (Recorded on: {$diag['assigned_at']})\n";
-}
-
-// Zpracování formuláře pro uložení zprávy
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['updated_report']) && !empty(trim($_POST['updated_report']))) {
         $updatedReport = trim($_POST['updated_report']);
 
-        // Uložení zprávy do databáze
         $sqlInsert = "INSERT INTO medical_reports (person_id, report_text, created_at) VALUES (?, ?, NOW())";
         $stmtInsert = $conn->prepare($sqlInsert);
 
@@ -103,7 +97,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $stmtPerson->close();
-$stmtDiagnoses->close();
 $conn->close();
 ?>
 <!DOCTYPE html>
