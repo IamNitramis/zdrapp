@@ -104,6 +104,7 @@ $conn->close();
             <button type="submit">Save Changes</button>
             <a href="person_details.php?id=<?php echo htmlspecialchars($_GET['person_id']); ?>&surname=<?php echo htmlspecialchars($_GET['surname']); ?>">Cancel</a>
         </form>
+        <a href="report.php?id=<?php echo htmlspecialchars($_GET['person_id']); ?>&surname=<?php echo htmlspecialchars($_GET['surname']); ?>&diagnosis_id=<?php echo htmlspecialchars($note['diagnosis_name']); ?>">Generování</a>
     </div>
     <div class="header">
         <a href="show_data.php" class="logo">
