@@ -83,16 +83,16 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Upload CSV</title>
+    <title>Nahrání dat</title>
     <link rel="stylesheet" href="style.css">
 </head>
 <body>
     <div class="uploadcontainer">
-        <h1>Upload CSV File</h1>
+        <h1>Nahrát data</h1>
         <form action="upload_csv.php" method="POST" enctype="multipart/form-data">
-            <label for="csv_file">Choose CSV file:</label>
+            <label for="csv_file">Vyber CSV soubor:</label>
             <input type="file" name="csv_file" id="csv_file" accept=".csv" required>
-            <button type="submit">Upload</button>
+            <button type="submit">Nahrát</button>
         </form>
     </div>
 </body>
