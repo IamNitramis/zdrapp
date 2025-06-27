@@ -55,35 +55,51 @@ if ($resultDiagnosis->num_rows === 0) {
 
 $diagnosis = $resultDiagnosis->fetch_assoc();
 
-$temperature = mt_rand(360, 370) / 10;
-$oxygen_saturation = mt_rand(96, 100);
-$heart_rate = mt_rand(60, 100);
+// Načtení šablony z tabulky templates
+$sqlTemplate = "SELECT template_text FROM templates WHERE diagnosis_id = ?";
+$stmtTemplate = $conn->prepare($sqlTemplate);
+$stmtTemplate->bind_param("i", $diagnosisId);
+$stmtTemplate->execute();
+$resultTemplate = $stmtTemplate->get_result();
 
-$report = "
-Medical Report:
-Name: {$person['first_name']}
-Surname: {$person['surname']}
-Birth Date: {$person['birth_date']}
-Body Temperature: {$temperature} °C
-Oxygen Saturation: {$oxygen_saturation} %
-Heart Rate: {$heart_rate} bpm
+if ($resultTemplate->num_rows === 0) {
+    die("No template found for this diagnosis.");
+}
 
-Diagnosis:
-- {$diagnosis['diagnosis_name']} (Recorded on: {$diagnosis['assigned_at']})
-";
+$template = $resultTemplate->fetch_assoc()['template_text'];
 
+// Náhodná data
+$temperature = mt_rand(360, 370) / 10; // 36.0 - 38.0 °C
+$oxygen_saturation = mt_rand(96, 100); // 96 - 100 %
+$heart_rate = mt_rand(60, 100);        // 60 - 100 bpm
+
+// Nahrazení placeholderů skutečnými hodnotami
+$report = str_replace(
+    ['{{name}}', '{{birth_date}}', '{{temperature}}', '{{oxygen_saturation}}', '{{heart_rate}}', '{{diagnosis}}'],
+    [
+        htmlspecialchars($person['first_name'] . ' ' . $person['surname']),
+        htmlspecialchars($person['birth_date']),
+        $temperature,
+        $oxygen_saturation,
+        $heart_rate,
+        htmlspecialchars($diagnosis['diagnosis_name'] . " (Recorded on: " . $diagnosis['assigned_at'] . ")")
+    ],
+    $template
+);
+
+// Uložení zprávy, pokud je formulář odeslán
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['updated_report']) && !empty(trim($_POST['updated_report']))) {
         $updatedReport = trim($_POST['updated_report']);
 
-        $sqlInsert = "INSERT INTO medical_reports (person_id, report_text, created_at) VALUES (?, ?, NOW())";
+        $sqlInsert = "INSERT INTO medical_reports (diagnosis_id, report_text, created_at) VALUES (?, ?, NOW())";
         $stmtInsert = $conn->prepare($sqlInsert);
 
         if (!$stmtInsert) {
             die("SQL Error: " . $conn->error);
         }
 
-        $stmtInsert->bind_param("is", $personId, $updatedReport);
+        $stmtInsert->bind_param("is", $diagnosisId, $updatedReport);
         if ($stmtInsert->execute()) {
             $message = "Medical report has been saved successfully.";
         } else {
@@ -97,6 +113,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 }
 
 $stmtPerson->close();
+$stmtDiagnosis->close();
+$stmtTemplate->close();
 $conn->close();
 ?>
 <!DOCTYPE html>

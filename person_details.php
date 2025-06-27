@@ -179,6 +179,16 @@ $conn->close();
             height: 60px;
             width: 300px;
         }
+        .delete-button2 {
+            background: none; /* Žádné pozadí */
+            border: none;     /* Žádný rámeček */
+            color: red;       /* Červený text */
+            cursor: pointer;  /* Ukazatel myši jako ruka */
+            font-size: 16px;  /* Velikost textu */
+            font-weight: bold; /* Tučný text */
+            text-decoration: underline; /* Podtržený text */
+            padding: 0; /* Žádné mezery */
+}
     </style>
 </head>
 <body>
@@ -187,27 +197,30 @@ $conn->close();
         
         <h2>Diagnózy a poznámky</h2>
         <?php if ($diagnoses->num_rows > 0): ?>
-            <?php while ($row = $diagnoses->fetch_assoc()): ?>
-                <div class="diagnosis-container" onclick="window.location.href='edit_note.php?id=<?php echo $row['note_id']; ?>&first_name=<?php echo $person['first_name']; ?>&surname=<?php echo $person['surname']; ?>&person_id=<?php echo $person_id; ?>'">
-                    <strong>Diagnóza: <?php echo htmlspecialchars($row['diagnosis_name']); ?></strong>
-                    <p>
-                        <p>
-                            <?php echo htmlspecialchars(substr($row['note'], 0, 10)) . (strlen($row['note']) > 10 ? '...' : ''); ?>
-                        </p>
-                    </p>
-                    <small>Vytvořeno: <?php echo htmlspecialchars($row['created_at']); ?></small>
-                    <form action="edit_note.php" method="GET" style="display: inline;">
-                        <input type="hidden" name="id" value="<?php echo $row['note_id']; ?>">
-                        <input type="hidden" name="first_name" value="<?php echo $person['first_name']; ?>">
-                        <input type="hidden" name="surname" value="<?php echo $person['surname']; ?>">
-                        <input type="hidden" name="person_id" value="<?php echo $person_id; ?>">
-                        <button type="submit" class="edit-button">Upravit poznámku</button>
-                    </form>
-                </div>
-            <?php endwhile; ?>
-        <?php else: ?>
-            <p>Žádné diagnózy nejsou zapsány.</p>
-        <?php endif; ?>
+    <?php while ($row = $diagnoses->fetch_assoc()): ?>
+        <div class="diagnosis-container" onclick="window.location.href='edit_note.php?id=<?php echo $row['note_id']; ?>&first_name=<?php echo $person['first_name']; ?>&surname=<?php echo $person['surname']; ?>&person_id=<?php echo $person_id; ?>'">
+            <strong>Diagnóza: <?php echo htmlspecialchars($row['diagnosis_name']); ?></strong>
+            <p>
+                <?php echo htmlspecialchars(substr($row['note'], 0, 10)) . (strlen($row['note']) > 10 ? '...' : ''); ?>
+            </p>
+            <small>Vytvořeno: <?php echo htmlspecialchars($row['created_at']); ?></small>
+            <form action="edit_note.php" method="GET" style="display: inline;">
+                <input type="hidden" name="id" value="<?php echo $row['note_id']; ?>">
+                <input type="hidden" name="first_name" value="<?php echo $person['first_name']; ?>">
+                <input type="hidden" name="surname" value="<?php echo $person['surname']; ?>">
+                <input type="hidden" name="person_id" value="<?php echo $person_id; ?>">
+                <button type="submit" class="edit-button">Upravit poznámku</button>
+            </form>
+            <form action="delete_note.php" method="POST" style="display: inline;" onsubmit="return confirm('Opravdu chcete tuto poznámku odstranit?');">
+                <input type="hidden" name="id" value="<?php echo $row['note_id']; ?>">
+                <button type="submit" class="delete-button2">Smazat</button>
+            </form>
+        </div>
+    <?php endwhile; ?>
+<?php else: ?>
+    <p>Žádné diagnózy nejsou zapsány.</p>
+<?php endif; ?>
+
 
         <h2>Přidat diagnózu a poznámku</h2>
         <form action="" method="POST" align="center">
