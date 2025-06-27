@@ -56,6 +56,7 @@ $conn->close();
 
 <!DOCTYPE html>
 <html lang="en">
+<link rel="icon" type="image/png" href="logo.png">
 <script>
     function toggleMenu() {
         var navbar = document.getElementById("navbar");

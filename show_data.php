@@ -34,6 +34,7 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Show Data</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="logo.png">
     <script>
         function sortTable(n) {
             var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
@@ -89,6 +90,8 @@ $conn->close();
                     <th onclick="sortTable(2)">Příjmení</th>
                     <th onclick="sortTable(3)">Datum narození</th>
                     <th onclick="sortTable(4)">Rodné číslo</th>
+                    <th onclick="sortTable(5)">Léky</th>
+                    <th onclick="sortTable(6)">Alergie</th>
                     <th>Akce</th>
                 </tr>
             </thead>
@@ -102,9 +105,11 @@ $conn->close();
                         echo "<td>" . $row['surname'] . "</td>";
                         echo "<td>" . $row['birth_date'] . "</td>";
                         echo "<td>" . $row['ssn'] . "</td>";
+                        echo "<td>" . (empty($row['medications']) ? "Žádné" : $row['medications']) . "</td>";
+                        echo "<td>" . (empty($row['allergies']) ? "Žádné" : $row['allergies']) . "</td>";
                         echo "<td class='buttons'>";
                         echo "<a href='person_details.php?id=" . $row['id'] . "&surname=" . $row['surname'] . "'><button class='detail'>Detail</button></a>";
-                        echo "<a href='delete_person.php?id=" . $row['id'] . "' onclick='return confirm(\"Are you sure you want to delete this record?\");'><button class='delete'>Delete</button></a>";
+                        echo "<br><br><a href='delete_person.php?id=" . $row['id'] . "' onclick='return confirm(\"Are you sure you want to delete this record?\");'><button class='delete'>Delete</button></a>";
                         echo "</td>";
                         echo "</tr>";
                     }
