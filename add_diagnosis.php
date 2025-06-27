@@ -180,9 +180,7 @@ $conn->close();
         </li>
     <?php endforeach; ?>
 </ul>
-
-
-
+        <p><a href="add_report.php">Přiřadit šablonu lékařské zprávy</a></p>
         <p><a href="show_data.php">Zpět na přehled osob</a></p>
     </div>
 </body>

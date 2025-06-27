@@ -38,6 +38,7 @@ if ($resultPerson->num_rows === 0) {
 
 $person = $resultPerson->fetch_assoc();
 
+// Nejprve zkus najít diagnózu přiřazenou pacientovi
 $sqlDiagnosis = "
     SELECT d.name AS diagnosis_name, pd.assigned_at
     FROM person_diagnoses pd
@@ -50,10 +51,21 @@ $stmtDiagnosis->execute();
 $resultDiagnosis = $stmtDiagnosis->get_result();
 
 if ($resultDiagnosis->num_rows === 0) {
-    die("Diagnosis not found.");
-}
+    // Pokud není přiřazena, najdi diagnózu pouze podle diagnosis_id
+    $sqlDiagnosis = "SELECT name AS diagnosis_name FROM diagnoses WHERE id = ?";
+    $stmtDiagnosis = $conn->prepare($sqlDiagnosis);
+    $stmtDiagnosis->bind_param("i", $diagnosisId);
+    $stmtDiagnosis->execute();
+    $resultDiagnosis = $stmtDiagnosis->get_result();
 
-$diagnosis = $resultDiagnosis->fetch_assoc();
+    if ($resultDiagnosis->num_rows === 0) {
+        die("Diagnosis not found.");
+    }
+
+    $diagnosis = $resultDiagnosis->fetch_assoc();
+} else {
+    $diagnosis = $resultDiagnosis->fetch_assoc();
+}
 
 // Načtení šablony z tabulky templates
 $sqlTemplate = "SELECT template_text FROM templates WHERE diagnosis_id = ?";
@@ -68,9 +80,24 @@ if ($resultTemplate->num_rows === 0) {
 
 $template = $resultTemplate->fetch_assoc()['template_text'];
 
+// Získání data přiřazení diagnózy z tabulky diagnosis_notes
+$sqlNote = "SELECT created_at FROM diagnosis_notes WHERE person_id = ? AND diagnosis_id = ? ORDER BY created_at DESC LIMIT 1";
+$stmtNote = $conn->prepare($sqlNote);
+$stmtNote->bind_param("ii", $personId, $diagnosisId);
+$stmtNote->execute();
+$resultNote = $stmtNote->get_result();
+
+if ($resultNote->num_rows > 0) {
+    $note = $resultNote->fetch_assoc();
+    $assignedAt = $note['created_at'];
+} else {
+    $assignedAt = null;
+}
+$stmtNote->close();
+
 // Náhodná data
 $temperature = mt_rand(360, 370) / 10; // 36.0 - 38.0 °C
-$oxygen_saturation = mt_rand(96, 100); // 96 - 100 %
+$oxygen_saturation = mt_rand(98, 100); // 98 - 100 %
 $heart_rate = mt_rand(60, 100);        // 60 - 100 bpm
 
 // Nahrazení placeholderů skutečnými hodnotami
@@ -82,7 +109,7 @@ $report = str_replace(
         $temperature,
         $oxygen_saturation,
         $heart_rate,
-        htmlspecialchars($diagnosis['diagnosis_name'] . " (Recorded on: " . $diagnosis['assigned_at'] . ")")
+        htmlspecialchars($diagnosis['diagnosis_name'] . " (Recorded on: " . $assignedAt . ")")
     ],
     $template
 );
