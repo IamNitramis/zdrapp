@@ -80,18 +80,20 @@ if ($resultTemplate->num_rows === 0) {
 
 $template = $resultTemplate->fetch_assoc()['template_text'];
 
-// Získání data přiřazení diagnózy z tabulky diagnosis_notes
-$sqlNote = "SELECT created_at FROM diagnosis_notes WHERE person_id = ? AND diagnosis_id = ? ORDER BY created_at DESC LIMIT 1";
+// Získání poznámky a data přiřazení diagnózy z tabulky diagnosis_notes
+$sqlNote = "SELECT note, created_at FROM diagnosis_notes WHERE person_id = ? AND diagnosis_id = ? ORDER BY created_at DESC LIMIT 1";
 $stmtNote = $conn->prepare($sqlNote);
 $stmtNote->bind_param("ii", $personId, $diagnosisId);
 $stmtNote->execute();
 $resultNote = $stmtNote->get_result();
 
 if ($resultNote->num_rows > 0) {
-    $note = $resultNote->fetch_assoc();
-    $assignedAt = $note['created_at'];
+    $noteRow = $resultNote->fetch_assoc();
+    $assignedAt = $noteRow['created_at'];
+    $noteText = $noteRow['note'];
 } else {
     $assignedAt = null;
+    $noteText = '';
 }
 $stmtNote->close();
 
@@ -100,16 +102,17 @@ $temperature = mt_rand(360, 370) / 10; // 36.0 - 38.0 °C
 $oxygen_saturation = mt_rand(98, 100); // 98 - 100 %
 $heart_rate = mt_rand(60, 100);        // 60 - 100 bpm
 
-// Nahrazení placeholderů skutečnými hodnotami
+// Nahrazení placeholderů skutečnými hodnotami, včetně {{note}}
 $report = str_replace(
-    ['{{name}}', '{{birth_date}}', '{{temperature}}', '{{oxygen_saturation}}', '{{heart_rate}}', '{{diagnosis}}'],
+    ['{{name}}', '{{birth_date}}', '{{temperature}}', '{{oxygen_saturation}}', '{{heart_rate}}', '{{diagnosis}}', '{{note}}'],
     [
         htmlspecialchars($person['first_name'] . ' ' . $person['surname']),
         htmlspecialchars($person['birth_date']),
         $temperature,
         $oxygen_saturation,
         $heart_rate,
-        htmlspecialchars($diagnosis['diagnosis_name'] . " (Recorded on: " . $assignedAt . ")")
+        htmlspecialchars($diagnosis['diagnosis_name'] . " (Recorded on: " . $assignedAt . ")"),
+        htmlspecialchars($noteText)
     ],
     $template
 );

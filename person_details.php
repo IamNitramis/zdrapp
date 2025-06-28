@@ -239,7 +239,7 @@ $conn->close();
             <br>
 
             <label for="note">Poznámka:</label>
-            <textarea name="note" id="note" placeholder="Napište poznámku..." required></textarea>
+            <textarea name="note" id="note" placeholder="Napište, jak probíhalo ošetření, co jste podali za medikaci.." required></textarea>
 
             <button type="submit">Přidat</button>
         </form>
