@@ -46,6 +46,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
     </style>
 </head>
 <body>
+    
     <h2>Klikněte na místo, kde pacienta píchlo klíště</h2>
     <div style="display: flex; gap: 40px;">
         <div>
@@ -60,6 +61,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
                 <thead>
                     <tr>
                         <th>ID bodu</th>
+                        <th>Datum přidání</th>
                         <th>Akce</th>
                     </tr>
                 </thead>
@@ -70,12 +72,20 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
         </div>
     </div>
 
+    <div style="margin-top: 30px;">
+        <a href="person_details.php?id=<?php echo $personId; ?>">
+            <button type="button" style="background:#3498db;color:#fff;padding:10px 20px;border:none;border-radius:5px;cursor:pointer;">
+                Zpět na detail pacienta
+            </button>
+        </a>
+    </div>
+
     <script>
     const bodyImg = document.getElementById('bodyImg');
     const container = document.getElementById('bodyContainer');
 
     // Přidání bodu na obrázek
-    function addPinpoint(x, y, id = null) {
+    function addPinpoint(x, y, id = null, created_at = null) {
         const pin = document.createElement('div');
         pin.className = 'pinpoint';
         pin.style.left = (x * 100) + '%';
@@ -98,18 +108,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
 
         // Přidej do tabulky
         if (id) {
-            addPointToTable(id);
+            addPointToTable(id, created_at);
         }
     }
 
     // Přidání řádku do tabulky
-    function addPointToTable(id) {
+    function addPointToTable(id, created_at) {
         const tbody = document.getElementById('pointsTable').querySelector('tbody');
         // Zamez duplicitám
         if (document.getElementById('row-point-' + id)) return;
         const tr = document.createElement('tr');
         tr.id = 'row-point-' + id;
         tr.innerHTML = `<td>${id}</td>
+            <td>${created_at ? created_at : ''}</td>
             <td><button onclick="removePointById(${id})">Odstranit</button></td>`;
         tbody.appendChild(tr);
     }
@@ -167,7 +178,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
             .then(response => response.json())
             .then(data => {
                 data.forEach(function(pin) {
-                    addPinpoint(pin.x, pin.y, pin.id);
+                    addPinpoint(pin.x, pin.y, pin.id, pin.created_at);
                 });
             });
     }

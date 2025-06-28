@@ -234,7 +234,8 @@ $conn->close();
                     </option>
                 <?php endwhile; ?>
             </select>
-            <a href="add_diagnosis.php">Přidat diagnózu</a>
+            <a href="add_diagnosis.php">Přidat diagnózu</a><br><br>
+            <a href="add_report.php">Přidat template lékařské zprávy</a>
             <br>
             <br>
 
@@ -259,5 +260,12 @@ $conn->close();
             <a href="login.php">Login</a>
         </div>
     </div>
+    <script>
+document.querySelectorAll('.diagnosis-container form').forEach(function(form) {
+    form.addEventListener('click', function(e) {
+        e.stopPropagation();
+    });
+});
+</script>
 </body>
 </html>
