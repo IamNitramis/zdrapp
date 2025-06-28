@@ -242,6 +242,9 @@ $conn->close();
             <textarea name="note" id="note" placeholder="Napište, jak probíhalo ošetření, co jste podali za medikaci.." required></textarea>
 
             <button type="submit">Přidat</button>
+            <a href="kliste.php?person_id=<?php echo $person_id; ?>">
+        <button type="button" style="background:#e67e22;color:#fff;">Klíšťata</button>
+    </a>
         </form>
     </div>
 
