@@ -257,6 +257,7 @@ $conn->close();
         <div class="navbar" id="navbar">
             <a href="show_data.php">Home</a>
             <a href="upload_csv.php">Upload Data</a>
+            <a href="download_reports.php">Stáhnout zprávy</a>
             <a href="login.php">Login</a>
         </div>
     </div>

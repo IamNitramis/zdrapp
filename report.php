@@ -211,6 +211,18 @@ $conn->close();
     </style>
 </head>
 <body>
+    <div class="header">
+        <a href="show_data.php" class="logo">
+            <img src="logo.png" alt="ZDRAPP Logo" width="50">
+        </a>
+        <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+        <div class="navbar" id="navbar">
+            <a href="show_data.php">Home</a>
+            <a href="upload_csv.php">Upload Data</a>
+            <a href="download_reports.php">Stáhnout zprávy</a>
+            <a href="login.php">Login</a>
+        </div>
+    </div>
     <div class="container">
         <h1>Edit Medical Report for <?php echo htmlspecialchars($person['first_name'] . ' ' . $person['surname']); ?></h1>
         <?php if (isset($message)) echo "<p>$message</p>"; ?>

@@ -119,19 +119,16 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     </style>
 </head>
 <div class="header">
-    <!-- Logo jako obrázek -->
-    <a href="show_data.php" class="logo">
-        <img src="logo.png" alt="MyApp Logo" width="100">
-    </a>
-    
-    <!-- Burger Menu -->
-    <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
-    
-    <!-- Navigační menu -->
-    <div class="navbar" id="navbar">
-        <a href="show_data.php">Přehled</a>
-        <a href="upload_csv.php">Nahrát data</a>
-        <a href="add_diagnosis.php">Přidat diagnózu</a>
+        <a href="show_data.php" class="logo">
+            <img src="logo.png" alt="ZDRAPP Logo" width="50">
+        </a>
+        <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+        <div class="navbar" id="navbar">
+            <a href="show_data.php">Home</a>
+            <a href="upload_csv.php">Upload Data</a>
+            <a href="download_reports.php">Stáhnout zprávy</a>
+            <a href="login.php">Login</a>
+        </div>
     </div>
 </div>
 <script>

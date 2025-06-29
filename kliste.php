@@ -46,6 +46,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
     </style>
 </head>
 <body>
+    <div class="header">
+        <a href="show_data.php" class="logo">
+            <img src="logo.png" alt="ZDRAPP Logo" width="50">
+        </a>
+        <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
+        <div class="navbar" id="navbar">
+            <a href="show_data.php">Home</a>
+            <a href="upload_csv.php">Upload Data</a>
+            <a href="download_reports.php">Stáhnout zprávy</a>
+            <a href="login.php">Login</a>
+        </div>
+    </div>
     
     <h2>Klikněte na místo, kde pacienta píchlo klíště</h2>
     <div style="display: flex; gap: 40px;">
