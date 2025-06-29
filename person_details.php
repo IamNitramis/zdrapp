@@ -258,7 +258,7 @@ $conn->close();
             <a href="show_data.php">Home</a>
             <a href="upload_csv.php">Upload Data</a>
             <a href="download_reports.php">Stáhnout zprávy</a>
-            <a href="login.php">Login</a>
+            <a href="logout.php">Logout</a>
         </div>
     </div>
     <script>
