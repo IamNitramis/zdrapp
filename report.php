@@ -80,22 +80,21 @@ if ($resultTemplate->num_rows === 0) {
 
 $template = $resultTemplate->fetch_assoc()['template_text'];
 
-// Získání poznámky a data přiřazení diagnózy z tabulky diagnosis_notes
-$sqlNote = "SELECT note, created_at FROM diagnosis_notes WHERE person_id = ? AND diagnosis_id = ? ORDER BY created_at DESC LIMIT 1";
-$stmtNote = $conn->prepare($sqlNote);
-$stmtNote->bind_param("ii", $personId, $diagnosisId);
-$stmtNote->execute();
-$resultNote = $stmtNote->get_result();
-
-if ($resultNote->num_rows > 0) {
-    $noteRow = $resultNote->fetch_assoc();
-    $assignedAt = $noteRow['created_at'];
-    $noteText = $noteRow['note'];
-} else {
-    $assignedAt = null;
-    $noteText = '';
+// Najdi poslední diagnosis_note_id pro daného pacienta a diagnózu
+$sqlNoteId = "SELECT id, note, created_at FROM diagnosis_notes WHERE person_id = ? AND diagnosis_id = ? ORDER BY created_at DESC LIMIT 1";
+$stmtNoteId = $conn->prepare($sqlNoteId);
+$stmtNoteId->bind_param("ii", $personId, $diagnosisId);
+$stmtNoteId->execute();
+$resultNoteId = $stmtNoteId->get_result();
+$diagnosisNoteId = null;
+$noteText = '';
+$assignedAt = null;
+if ($row = $resultNoteId->fetch_assoc()) {
+    $diagnosisNoteId = $row['id'];
+    $noteText = $row['note'];
+    $assignedAt = $row['created_at'];
 }
-$stmtNote->close();
+$stmtNoteId->close();
 
 // Náhodná data
 $temperature = mt_rand(360, 370) / 10; // 36.0 - 38.0 °C
@@ -117,29 +116,70 @@ $report = str_replace(
     $template
 );
 
+// Načtení uložené zprávy z medical_reports podle diagnosis_note_id
+if ($diagnosisNoteId) {
+    $sqlReport = "SELECT report_text FROM medical_reports WHERE diagnosis_note_id = ? ORDER BY created_at DESC LIMIT 1";
+    $stmtReport = $conn->prepare($sqlReport);
+    $stmtReport->bind_param("i", $diagnosisNoteId);
+    $stmtReport->execute();
+    $resultReport = $stmtReport->get_result();
+
+    if ($resultReport->num_rows > 0) {
+        $reportRow = $resultReport->fetch_assoc();
+        $report = $reportRow['report_text'];
+    }
+    $stmtReport->close();
+}
+
 // Uložení zprávy, pokud je formulář odeslán
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['updated_report']) && !empty(trim($_POST['updated_report']))) {
         $updatedReport = trim($_POST['updated_report']);
 
-        $sqlInsert = "INSERT INTO medical_reports (diagnosis_id, report_text, created_at) VALUES (?, ?, NOW())";
-        $stmtInsert = $conn->prepare($sqlInsert);
+        // Zjisti, jestli už report existuje pro tuto diagnosis_note_id
+        $sqlCheck = "SELECT id FROM medical_reports WHERE diagnosis_note_id = ?";
+        $stmtCheck = $conn->prepare($sqlCheck);
+        $stmtCheck->bind_param("i", $diagnosisNoteId);
+        $stmtCheck->execute();
+        $resultCheck = $stmtCheck->get_result();
 
-        if (!$stmtInsert) {
-            die("SQL Error: " . $conn->error);
-        }
-
-        $stmtInsert->bind_param("is", $diagnosisId, $updatedReport);
-        if ($stmtInsert->execute()) {
-            $message = "Medical report has been saved successfully.";
+        if ($resultCheck->num_rows > 0) {
+            // UPDATE existujícího reportu
+            $sqlUpdate = "UPDATE medical_reports SET report_text = ?, created_at = NOW() WHERE diagnosis_note_id = ?";
+            $stmtUpdate = $conn->prepare($sqlUpdate);
+            $stmtUpdate->bind_param("si", $updatedReport, $diagnosisNoteId);
+            if ($stmtUpdate->execute()) {
+                $message = "Medical report has been updated successfully.";
+            } else {
+                $message = "Error updating medical report: " . $conn->error;
+            }
+            $stmtUpdate->close();
         } else {
-            $message = "Error saving medical report: " . $conn->error;
-        }
+            // INSERT nového reportu
+            $sqlInsert = "INSERT INTO medical_reports (person_id, diagnosis_id, diagnosis_note_id, report_text, created_at) VALUES (?, ?, ?, ?, NOW())";
+            $stmtInsert = $conn->prepare($sqlInsert);
 
-        $stmtInsert->close();
+            if (!$stmtInsert) {
+                die("SQL Error: " . $conn->error);
+            }
+
+            $stmtInsert->bind_param("iiis", $personId, $diagnosisId, $diagnosisNoteId, $updatedReport);
+            if ($stmtInsert->execute()) {
+                $message = "Medical report has been saved successfully.";
+            } else {
+                $message = "Error saving medical report: " . $conn->error;
+            }
+            $stmtInsert->close();
+        }
+        $stmtCheck->close();
     } else {
         $message = "Report content cannot be empty.";
     }
+}
+
+// Pokud byl formulář odeslán a úspěšně uložen, ponecháme v textarea uživatelský vstup
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['updated_report'])) {
+    $report = $_POST['updated_report'];
 }
 
 $stmtPerson->close();
@@ -175,7 +215,7 @@ $conn->close();
         <h1>Edit Medical Report for <?php echo htmlspecialchars($person['first_name'] . ' ' . $person['surname']); ?></h1>
         <?php if (isset($message)) echo "<p>$message</p>"; ?>
         <form action="" method="POST">
-            <textarea name="updated_report"><?php echo htmlspecialchars($report); ?></textarea>
+            <textarea name="updated_report" style="width:100%;height:500px;resize:vertical;"><?php echo htmlspecialchars($report); ?></textarea>
             <br>
             <button type="submit">Save Report</button>
             <a href="show_data.php">Cancel</a>
