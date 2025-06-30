@@ -2,29 +2,60 @@
 session_start(); // Spustí session, aby bylo možné kontrolovat přihlášení
 
 // Kontrola, zda je uživatel přihlášen
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    // Zobrazení chybové zprávy
-    echo "<div style='text-align: center; padding: 50px;'>
-            <h2>You must be logged in to access this page.</h2>
-            <p><a href='login.php'>Click here to login</a></p>
-          </div>";
-    exit; // Ukončení skriptu, aby uživatel neměl přístup k dalším částem stránky
-}
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Přístup zamítnut</title>
+    <link rel="stylesheet" href="style.css">
+    <style>
+        body {
+        font-family: Arial, sans-serif;
+        margin: 0;
+        padding: 0;
+        display: flex;
+        flex-direction: column;
+        align-items: flex-start; /* Zajištění, že obsah nebude centrován */
+        justify-content: flex-start; /* Ujistíme se, že obsah začne od vrchu */
+        min-height: 100vh;
+        background: linear-gradient(135deg, #4facfe, #00f2fe);
+        color: #333;
+        }
+        .login-warning {
+            max-width: 400px;
+            margin: 100px auto;
+            background: #fff;
+            border-radius: 10px;
+            box-shadow: 0 2px 12px #ccc;
+            padding: 40px 30px;
+            text-align: center;
+        }
+        .login-warning h2 { color: #e67e22; margin-bottom: 20px; }
+        .login-warning a {
+            display: inline-block;
+            margin-top: 20px;
+            padding: 10px 25px;
+            background: #3498db;
+            color: #fff;
+            border-radius: 5px;
+            text-decoration: none;
+            font-weight: bold;
+            transition: background 0.2s;
+        }
+        .login-warning a:hover { background: #217dbb; }
+    </style>
+</head>
+<body>
+    <div class="login-warning">
+        <h2>Přístup zamítnut</h2>
+        <p>Pro zobrazení této stránky se musíte přihlásit.</p>
+        <a href="login.php">Přihlásit se</a>
+    </div>
+</body>
+</html>
+<?php exit; endif; ?>
 
-// Připojení k databázi
-$conn = new mysqli("localhost", "root", "", "zdrapp");
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
-}
-
-
-// Načtení všech osob
-$sql = "SELECT * FROM persons";
-$result = $conn->query($sql);
-
-$conn->close();
-?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -97,6 +128,20 @@ $conn->close();
             </thead>
             <tbody>
                 <?php
+                // Připojení k databázi
+                $conn = new mysqli("localhost", "root", "", "zdrapp");
+
+                if ($conn->connect_error) {
+                    die("Connection failed: " . $conn->connect_error);
+                }
+
+
+                // Načtení všech osob
+                $sql = "SELECT * FROM persons";
+                $result = $conn->query($sql);
+
+                $conn->close();
+
                 if ($result->num_rows > 0) {
                     while ($row = $result->fetch_assoc()) {
                         echo "<tr>";
