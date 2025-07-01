@@ -15,7 +15,7 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
+if (!isset($_GET['person_id']) || !is_numeric($_GET['person_id'])) {
     die("Valid Patient ID is required.");
 }
 
@@ -23,7 +23,13 @@ if (!isset($_GET['diagnosis_id']) || !is_numeric($_GET['diagnosis_id'])) {
     die("Valid Diagnosis ID is required.");
 }
 
-$personId = intval($_GET['id']);
+// Získání diagnosis_note_id z GET (unikátní pro konkrétní poznámku)
+if (!isset($_GET['diagnosis_note_id']) || !is_numeric($_GET['diagnosis_note_id'])) {
+    die("Valid diagnosis_note_id is required.");
+}
+$diagnosisNoteId = intval($_GET['diagnosis_note_id']);
+
+$personId = intval($_GET['person_id']);
 $diagnosisId = intval($_GET['diagnosis_id']);
 
 $sqlPerson = "SELECT first_name, surname, birth_date FROM persons WHERE id = ?";
@@ -96,6 +102,28 @@ if ($row = $resultNoteId->fetch_assoc()) {
 }
 $stmtNoteId->close();
 
+// Získání diagnosis_note_id z GET
+if (!isset($_GET['diagnosis_note_id']) || !is_numeric($_GET['diagnosis_note_id'])) {
+    die("Valid diagnosis_note_id is required.");
+}
+$diagnosisNoteId = intval($_GET['diagnosis_note_id']);
+
+// Načtení poznámky podle diagnosis_note_id
+$sqlNote = "SELECT person_id, diagnosis_id, note, created_at FROM diagnosis_notes WHERE id = ?";
+$stmtNote = $conn->prepare($sqlNote);
+$stmtNote->bind_param("i", $diagnosisNoteId);
+$stmtNote->execute();
+$resultNote = $stmtNote->get_result();
+if ($resultNote->num_rows === 0) {
+    die("Diagnosis note not found.");
+}
+$noteRow = $resultNote->fetch_assoc();
+$personId = $noteRow['person_id'];
+$diagnosisId = $noteRow['diagnosis_id'];
+$noteText = $noteRow['note'];
+$assignedAt = $noteRow['created_at'];
+$stmtNote->close();
+
 // Náhodná data
 $temperature = mt_rand(360, 370) / 10; // 36.0 - 38.0 °C
 $oxygen_saturation = mt_rand(98, 100); // 98 - 100 %
@@ -118,7 +146,7 @@ $report = str_replace(
 
 // Načtení uložené zprávy z medical_reports podle diagnosis_note_id
 if ($diagnosisNoteId) {
-    $sqlReport = "SELECT report_text FROM medical_reports WHERE diagnosis_note_id = ? ORDER BY created_at DESC LIMIT 1";
+    $sqlReport = "SELECT * FROM medical_reports WHERE diagnosis_note_id = ?";
     $stmtReport = $conn->prepare($sqlReport);
     $stmtReport->bind_param("i", $diagnosisNoteId);
     $stmtReport->execute();
