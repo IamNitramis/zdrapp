@@ -12,12 +12,20 @@ if ($conn->connect_error) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
     $x = floatval($_POST['x']);
     $y = floatval($_POST['y']);
-    $sql = "INSERT INTO tick_bites (person_id, x, y, created_at) VALUES (?, ?, ?, NOW())";
+
+    // Zjisti další pořadí pro tohoto pacienta
+    $getOrder = $conn->prepare("SELECT IFNULL(MAX(bite_order),0)+1 AS next_order FROM tick_bites WHERE person_id = ?");
+    $getOrder->bind_param("i", $personId);
+    $getOrder->execute();
+    $getOrder->bind_result($nextOrder);
+    $getOrder->fetch();
+    $getOrder->close();
+
+    $sql = "INSERT INTO tick_bites (person_id, x, y, created_at, bite_order) VALUES (?, ?, ?, NOW(), ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("idd", $personId, $x, $y);
+    $stmt->bind_param("iddi", $personId, $x, $y, $nextOrder);
     $stmt->execute();
     $stmt->close();
-    // Pro AJAX odpověď
     echo "OK";
     exit;
 }
@@ -97,16 +105,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
     const container = document.getElementById('bodyContainer');
 
     // Přidání bodu na obrázek
-    function addPinpoint(x, y, id = null, created_at = null) {
+    function addPinpoint(x, y, id = null, created_at = null, order = null) {
         const pin = document.createElement('div');
         pin.className = 'pinpoint';
         pin.style.left = (x * 100) + '%';
         pin.style.top = (y * 100) + '%';
         if (id) {
             pin.dataset.id = id;
-            // Přidej číslo do bodu
+            // Přidej pořadové číslo do bodu
             const label = document.createElement('span');
-            label.textContent = id;
+            label.textContent = order !== null ? order : id;
             label.style.position = 'absolute';
             label.style.left = '50%';
             label.style.top = '50%';
@@ -120,18 +128,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
 
         // Přidej do tabulky
         if (id) {
-            addPointToTable(id, created_at);
+            addPointToTable(id, created_at, order);
         }
     }
 
     // Přidání řádku do tabulky
-    function addPointToTable(id, created_at) {
+    function addPointToTable(id, created_at, order) {
         const tbody = document.getElementById('pointsTable').querySelector('tbody');
-        // Zamez duplicitám
         if (document.getElementById('row-point-' + id)) return;
         const tr = document.createElement('tr');
         tr.id = 'row-point-' + id;
-        tr.innerHTML = `<td>${id}</td>
+        tr.innerHTML = `<td>${order !== null ? order : id}</td>
             <td>${created_at ? created_at : ''}</td>
             <td><button onclick="removePointById(${id})">Odstranit</button></td>`;
         tbody.appendChild(tr);
@@ -190,7 +197,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
             .then(response => response.json())
             .then(data => {
                 data.forEach(function(pin) {
-                    addPinpoint(pin.x, pin.y, pin.id, pin.created_at);
+                    addPinpoint(pin.x, pin.y, pin.id, pin.created_at, pin.bite_order);
                 });
             });
     }
