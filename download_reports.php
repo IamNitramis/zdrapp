@@ -62,6 +62,10 @@ if (isset($_GET['download_all']) && $_GET['download_all'] == '1') {
     header('Content-Type: application/zip');
     header('Content-Disposition: attachment; filename="all_medical_reports.zip"');
     header('Content-Length: ' . filesize($tmpFile));
+    if (ob_get_level()) {
+        ob_end_clean();
+    }
+    flush();
     readfile($tmpFile);
     unlink($tmpFile);
     exit;
