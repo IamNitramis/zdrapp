@@ -300,6 +300,8 @@ $conn->close();
 
         .form-textarea {
             width: 100%;
+            max-width: 100%;      /* zabrání přetečení přes rodiče */
+            box-sizing: border-box; /* zajistí správné počítání šířky */
             padding: 16px;
             border: 2px solid #e2e8f0;
             border-radius: 12px;
@@ -310,6 +312,9 @@ $conn->close();
             min-height: 400px;
             resize: vertical;
             line-height: 1.6;
+            text-align: left;
+            display: block;
+            margin: 0;            /* odstraní auto-centrování */
         }
 
         .form-textarea:focus {
@@ -445,13 +450,13 @@ $conn->close();
                 <i class="fas fa-bars"></i>
             </div>
             <div class="navbar" id="navbar">
-                <a href="show_data.php">
-                    <i class="fas fa-home"></i>
-                    Home
-                </a>
                 <a href="upload_csv.php">
                     <i class="fas fa-upload"></i>
-                    Upload Data
+                    Nahrát data
+                </a>
+                <a href="add_diagnosis.php">
+                    <i class="fas fa-plus-circle"></i>
+                    Přidat diagnózu
                 </a>
                 <a href="download_reports.php">
                     <i class="fas fa-download"></i>

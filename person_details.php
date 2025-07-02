@@ -381,9 +381,20 @@ $conn->close();
         }
 
         .form-textarea {
+            width: 100%;
+            padding: 12px 16px;
+            border: 2px solid #e2e8f0;
+            border-radius: 8px;
+            font-size: 1rem;
+            transition: border-color 0.3s ease, box-shadow 0.3s ease;
+            background: #f8f9fa;
             min-height: 120px;
             resize: vertical;
             font-family: inherit;
+            box-sizing: border-box;
+            text-align: left; /* zarovnání textu vlevo */
+            display: block;   /* zajistí správné zarovnání v rodiči */
+            margin: 0 auto;   /* horizontální centrování, pokud je potřeba */
         }
 
         .form-links {
@@ -500,13 +511,13 @@ $conn->close();
                 <i class="fas fa-bars"></i>
             </div>
             <div class="navbar" id="navbar">
-                <a href="show_data.php">
-                    <i class="fas fa-home"></i>
-                    Home
-                </a>
                 <a href="upload_csv.php">
                     <i class="fas fa-upload"></i>
-                    Upload Data
+                    Nahrát data
+                </a>
+                <a href="add_diagnosis.php">
+                    <i class="fas fa-plus-circle"></i>
+                    Přidat diagnózu
                 </a>
                 <a href="download_reports.php">
                     <i class="fas fa-download"></i>
