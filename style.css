@@ -8,7 +8,6 @@ body {
     align-items: flex-start; /* Zajištění, že obsah nebude centrován */
     justify-content: flex-start; /* Ujistíme se, že obsah začne od vrchu */
     min-height: 100vh;
-    background: linear-gradient(135deg, #4facfe, #00f2fe);
     color: #333;
 }
 
@@ -18,13 +17,13 @@ body {
     align-items: center;
     justify-content: space-between;
     padding: 15px 20px;
-    background-color: #007bff;
     color: white;
     width: 100%;
     z-index: 100;
-    position: fixed; /* Fixuje hlavičku na vrchu */
+    position: fixed;
     top: 0;
     left: 0;
+    background: #333; /* změna z modré na tmavě šedou */
 }
 
 .header .logo img {
@@ -67,7 +66,7 @@ body {
 }
 
 .navbar a:hover {
-    background-color: #0056b3;
+    background-color: #444; /* změna z modré na tmavě šedou */
     border-radius: 5px;
 }
 
@@ -87,7 +86,7 @@ body {
         top: 60px;
         left: 0;
         width: 100%;
-        background-color: #007bff;
+        background-color: #333; /* změna z modré na tmavě šedou */
         z-index: 100;
     }
 
