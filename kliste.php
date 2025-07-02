@@ -480,6 +480,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
             </div>
             <div class="navbar" id="navbar">
                 <a href="show_data.php">
+                    <i class="fas fa-users"></i>
+                    Přehled
+                </a>
+                <a href="show_data.php">
                     <i class="fas fa-home"></i>
                     Home
                 </a>

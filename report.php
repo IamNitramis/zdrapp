@@ -2,10 +2,83 @@
 session_start();
 
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    echo "<div class='alert'>
-            <h2>You must be logged in to access this page.</h2>
-            <p><a href='login.php' class='link-button'>Click here to login</a></p>
-          </div>";
+    echo "<!DOCTYPE html>
+<html lang='cs'>
+<head>
+    <meta charset='UTF-8'>
+    <title>Přístup zamítnut</title>
+    <link rel='stylesheet' href='style.css'>
+    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css' rel='stylesheet'>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            color: #333;
+        }
+        .login-warning {
+            max-width: 450px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            padding: 50px 40px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .login-warning i {
+            font-size: 4rem;
+            color: #e67e22;
+            margin-bottom: 20px;
+        }
+        .login-warning h2 { 
+            color: #2d3748; 
+            margin-bottom: 15px; 
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        .login-warning p {
+            color: #718096;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        .login-warning a {
+            display: inline-block;
+            padding: 15px 35px;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: #fff;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        .login-warning a:hover { 
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+    </style>
+</head>
+<body>
+    <div class='login-warning'>
+        <i class='fas fa-lock'></i>
+        <h2>Přístup zamítnut</h2>
+        <p>Pro zobrazení této stránky se musíte přihlásit.</p>
+        <a href='login.php'>
+            <i class='fas fa-sign-in-alt'></i>
+            Přihlásit se
+        </a>
+    </div>
+</body>
+</html>";
     exit;
 }
 
@@ -177,9 +250,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmtUpdate = $conn->prepare($sqlUpdate);
             $stmtUpdate->bind_param("si", $updatedReport, $diagnosisNoteId);
             if ($stmtUpdate->execute()) {
-                $message = "Medical report has been updated successfully.";
+                $message = "Lékařská zpráva byla úspěšně aktualizována.";
+                $message_type = "success";
             } else {
-                $message = "Error updating medical report: " . $conn->error;
+                $message = "Chyba při aktualizaci lékařské zprávy: " . $conn->error;
+                $message_type = "error";
             }
             $stmtUpdate->close();
         } else {
@@ -193,15 +268,18 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $stmtInsert->bind_param("iiis", $personId, $diagnosisId, $diagnosisNoteId, $updatedReport);
             if ($stmtInsert->execute()) {
-                $message = "Medical report has been saved successfully.";
+                $message = "Lékařská zpráva byla úspěšně uložena.";
+                $message_type = "success";
             } else {
-                $message = "Error saving medical report: " . $conn->error;
+                $message = "Chyba při ukládání lékařské zprávy: " . $conn->error;
+                $message_type = "error";
             }
             $stmtInsert->close();
         }
         $stmtCheck->close();
     } else {
-        $message = "Report content cannot be empty.";
+        $message = "Obsah zprávy nemůže být prázdný.";
+        $message_type = "error";
     }
 }
 
@@ -216,50 +294,477 @@ $stmtTemplate->close();
 $conn->close();
 ?>
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Edit Medical Report</title>
+    <title>Editace lékařské zprávy - ZDRAPP</title>
     <link rel="stylesheet" href="style.css">
+    <link rel="icon" type="image/png" href="logo.png">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    
     <style>
-        textarea {
-            width: 100%;
-            height: 300px;
-            resize: vertical;
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            min-height: 100vh;
         }
-        .container {
-            max-width: 800px;
-            margin: auto;
-            padding: 20px;
-            border: 1px solid #ddd;
+
+        .header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            padding: 15px 0;
+            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            position: sticky;
+            top: 0;
+            z-index: 1000;
+            backdrop-filter: blur(10px);
+        }
+
+        .header-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 0 20px;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            text-decoration: none;
+            color: white;
+            font-size: 1.5rem;
+            font-weight: 600;
+            transition: transform 0.3s ease;
+        }
+
+        .logo:hover {
+            transform: scale(1.05);
+        }
+
+        .logo img {
+            width: 45px;
+            height: 45px;
+            border-radius: 50%;
+            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+            transition: box-shadow 0.3s ease;
+        }
+
+        .logo:hover img {
+            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
+        }
+
+        .navbar {
+            display: flex;
+            gap: 5px;
+            align-items: center;
+        }
+
+        .navbar a {
+            color: white;
+            text-decoration: none;
+            padding: 12px 20px;
+            border-radius: 25px;
+            font-weight: 500;
+            font-size: 0.95rem;
+            transition: all 0.3s ease;
+            position: relative;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .navbar a:hover {
+            background: rgba(255, 255, 255, 0.2);
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+        }
+
+        .menu-icon {
+            display: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 10px;
             border-radius: 8px;
-            box-shadow: 0 2px 5px rgba(0, 0, 0, 0.1);
+            transition: background 0.3s ease;
+        }
+
+        .menu-icon:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
+        .container {
+            max-width: 1200px;
+            margin: 30px auto;
+            padding: 20px;
+        }
+
+        .page-header {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+        }
+
+        .page-header h1 {
+            font-size: 2.2rem;
+            margin: 0;
+            font-weight: 300;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .page-header .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+
+        .patient-info {
+            background: white;
+            border-radius: 15px;
+            padding: 25px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 20px;
+        }
+
+        .info-item {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            padding: 15px;
+            background: linear-gradient(135deg, #f8f9ff 0%, #e6f2ff 100%);
+            border-radius: 10px;
+            border-left: 4px solid #667eea;
+        }
+
+        .info-item i {
+            color: #667eea;
+            font-size: 1.2rem;
+            width: 20px;
+        }
+
+        .info-label {
+            font-weight: 600;
+            color: #4a5568;
+            margin-right: 10px;
+        }
+
+        .info-value {
+            color: #2d3748;
+        }
+
+        .form-container {
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+        }
+
+        .form-group {
+            margin-bottom: 25px;
+        }
+
+        .form-label {
+            display: block;
+            font-weight: 600;
+            color: #4a5568;
+            margin-bottom: 10px;
+            font-size: 1.1rem;
+        }
+
+        .form-textarea {
+            width: 100%;
+            min-height: 400px;
+            padding: 20px;
+            border: 2px solid #e2e8f0;
+            border-radius: 12px;
+            font-size: 1rem;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            line-height: 1.6;
+            resize: vertical;
+            background: #f8f9fa;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .form-textarea:focus {
+            outline: none;
+            border-color: #667eea;
+            background: white;
+            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+        }
+
+        .button-group {
+            display: flex;
+            gap: 15px;
+            justify-content: center;
+            margin-top: 30px;
+        }
+
+        .btn {
+            padding: 15px 30px;
+            border: none;
+            border-radius: 50px;
+            cursor: pointer;
+            font-size: 1rem;
+            font-weight: 600;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            min-width: 150px;
+            justify-content: center;
+            text-align: center;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+
+        .btn-secondary {
+            background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);
+            color: white;
+            box-shadow: 0 8px 25px rgba(160, 174, 192, 0.3);
+        }
+
+        .btn-secondary:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(160, 174, 192, 0.4);
+        }
+
+        .alert {
+            padding: 20px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            font-weight: 500;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+        }
+
+        .alert-success {
+            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+            color: #155724;
+            border-left: 4px solid #28a745;
+        }
+
+        .alert-error {
+            background: linear-gradient(135deg, #f8d7da 0%, #f1b0b7 100%);
+            color: #721c24;
+            border-left: 4px solid #dc3545;
+        }
+
+        .alert i {
+            font-size: 1.2rem;
+        }
+
+        @media (max-width: 768px) {
+            .container {
+                margin: 15px;
+                padding: 10px;
+            }
+
+            .page-header h1 {
+                font-size: 1.8rem;
+            }
+
+            .patient-info {
+                grid-template-columns: 1fr;
+            }
+
+            .button-group {
+                flex-direction: column;
+                align-items: center;
+            }
+
+            .btn {
+                width: 100%;
+                max-width: 300px;
+            }
+
+            .navbar {
+                display: none;
+            }
+
+            .menu-icon {
+                display: block;
+            }
+
+            .form-textarea {
+                min-height: 300px;
+            }
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .container > * {
+            animation: fadeInUp 0.6s ease forwards;
         }
     </style>
 </head>
+
 <body>
     <div class="header">
-        <a href="show_data.php" class="logo">
-            <img src="logo.png" alt="ZDRAPP Logo" width="50">
-        </a>
-        <div class="menu-icon" onclick="toggleMenu()">&#9776;</div>
-        <div class="navbar" id="navbar">
-            <a href="show_data.php">Home</a>
-            <a href="upload_csv.php">Upload Data</a>
-            <a href="download_reports.php">Stáhnout zprávy</a>
-            <a href="login.php">Login</a>
+        <div class="header-container">
+            <a href="show_data.php" class="logo">
+                <img src="logo.png" alt="ZDRAPP Logo">
+                <span>ZDRAPP</span>
+            </a>
+            <div class="menu-icon" onclick="toggleMenu()">
+                <i class="fas fa-bars"></i>
+            </div>
+            <div class="navbar" id="navbar">
+                <a href="show_data.php">
+                    <i class="fas fa-users"></i>
+                    Přehled
+                </a>
+                <a href="upload_csv.php">
+                    <i class="fas fa-upload"></i>
+                    Nahrát data
+                </a>
+                <a href="add_diagnosis.php">
+                    <i class="fas fa-plus-circle"></i>
+                    Přidat diagnózu
+                </a>
+                <a href="download_reports.php">
+                    <i class="fas fa-download"></i>
+                    Stáhnout zprávy
+                </a>
+                <a href="logout.php">
+                    <i class="fas fa-sign-out-alt"></i>
+                    Logout
+                </a>
+            </div>
         </div>
     </div>
+
     <div class="container">
-        <h1>Edit Medical Report for <?php echo htmlspecialchars($person['first_name'] . ' ' . $person['surname']); ?></h1>
-        <?php if (isset($message)) echo "<p>$message</p>"; ?>
-        <form action="" method="POST">
-            <textarea name="updated_report" style="width:100%;height:500px;resize:vertical;"><?php echo htmlspecialchars($report); ?></textarea>
-            <br>
-            <button type="submit">Save Report</button>
-            <a href="show_data.php">Cancel</a>
-        </form>
+        <div class="page-header">
+            <h1><i class="fas fa-edit"></i> Editace lékařské zprávy</h1>
+            <div class="subtitle">Úprava lékařské zprávy pro pacienta</div>
+        </div>
+
+        <?php if (isset($message)): ?>
+            <div class="alert alert-<?php echo $message_type; ?>">
+                <i class="fas fa-<?php echo $message_type === 'success' ? 'check-circle' : 'exclamation-triangle'; ?>"></i>
+                <?php echo $message; ?>
+            </div>
+        <?php endif; ?>
+
+        <div class="patient-info">
+            <div class="info-item">
+                <i class="fas fa-user"></i>
+                <span class="info-label">Pacient:</span>
+                <span class="info-value"><?php echo htmlspecialchars($person['first_name'] . ' ' . $person['surname']); ?></span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-calendar"></i>
+                <span class="info-label">Datum narození:</span>
+                <span class="info-value"><?php echo htmlspecialchars(date('d.m.Y', strtotime($person['birth_date']))); ?></span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-stethoscope"></i>
+                <span class="info-label">Diagnóza:</span>
+                <span class="info-value"><?php echo htmlspecialchars($diagnosis['diagnosis_name']); ?></span>
+            </div>
+            <div class="info-item">
+                <i class="fas fa-clock"></i>
+                <span class="info-label">Vytvořeno:</span>
+                <span class="info-value"><?php echo htmlspecialchars(date('d.m.Y H:i', strtotime($assignedAt))); ?></span>
+            </div>
+        </div>
+
+        <div class="form-container">
+            <form action="" method="POST">
+                <div class="form-group">
+                    <label for="updated_report" class="form-label">
+                        <i class="fas fa-file-medical"></i>
+                        Obsah lékařské zprávy
+                    </label>
+                    <textarea 
+                        name="updated_report" 
+                        id="updated_report"
+                        class="form-textarea"
+                        placeholder="Zadejte obsah lékařské zprávy..."
+                        required
+                    ><?php echo htmlspecialchars($report); ?></textarea>
+                </div>
+
+                <div class="button-group">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Uložit zprávu
+                    </button>
+                    <a href="show_data.php" class="btn btn-secondary">
+                        <i class="fas fa-times"></i>
+                        Zrušit
+                    </a>
+                </div>
+            </form>
+        </div>
     </div>
+
+    <script>
+        function toggleMenu() {
+            var navbar = document.getElementById("navbar");
+            navbar.classList.toggle("open");
+        }
+
+        // Auto-resize textarea
+        const textarea = document.getElementById('updated_report');
+        textarea.addEventListener('input', function() {
+            this.style.height = 'auto';
+            this.style.height = Math.max(400, this.scrollHeight) + 'px';
+        });
+
+        // Keyboard shortcuts
+        document.addEventListener('keydown', function(e) {
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                document.querySelector('form').submit();
+            }
+        });
+
+        // Show success message and auto-hide
+        <?php if (isset($message) && $message_type === 'success'): ?>
+        setTimeout(function() {
+            const alert = document.querySelector('.alert-success');
+            if (alert) {
+                alert.style.opacity = '0';
+                alert.style.transform = 'translateY(-20px)';
+                setTimeout(() => alert.remove(), 300);
+            }
+        }, 3000);
+        <?php endif; ?>
+    </script>
 </body>
 </html>

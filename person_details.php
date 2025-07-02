@@ -511,6 +511,10 @@ $conn->close();
                 <i class="fas fa-bars"></i>
             </div>
             <div class="navbar" id="navbar">
+                <a href="show_data.php">
+                    <i class="fas fa-users"></i>
+                    Přehled
+                </a>
                 <a href="upload_csv.php">
                     <i class="fas fa-upload"></i>
                     Nahrát data
