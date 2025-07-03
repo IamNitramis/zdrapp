@@ -90,14 +90,20 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
     <title>Seznam pacientů</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="logo.png">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
+    <link rel="stylesheet" href="assets/css/all.min.css">    
     <style>
+        body {
+            margin: 0;
+            padding: 0;
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+
+        }
+
         .container {
             max-width: 1400px;
-            margin: 30px ;
+            margin: 30px;
             padding: 20px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
         }
 

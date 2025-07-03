@@ -108,7 +108,7 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Přiřazení šablony k diagnóze - ZDRAPP</title>
     <link rel="icon" type="image/png" href="logo.png">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/all.min.css">
 
     <style>
         body {

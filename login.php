@@ -59,7 +59,7 @@ if ($_SERVER['REQUEST_METHOD'] == 'POST') {
     <title>Login</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="logo.png">
-
+    <link rel="stylesheet" href="assets/css/all.min.css">
     <style>
         body {
             font-family: Arial, sans-serif;

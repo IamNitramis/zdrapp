@@ -155,7 +155,7 @@ $conn->close();
     <title>Správa diagnóz</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="logo.png">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="assets/css/all.min.css">
     
     <style>
         body {
@@ -802,11 +802,6 @@ $conn->close();
                 <i class="fas fa-stethoscope"></i>
                 <div class="stat-number"><?php echo $total_diagnoses; ?></div>
                 <div class="stat-label">Celkem diagnóz</div>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-plus-circle"></i>
-                <div class="stat-number">Nová</div>
-                <div class="stat-label">Přidat diagnózu</div>
             </div>
         </div>
 

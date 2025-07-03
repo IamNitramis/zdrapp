@@ -6,7 +6,7 @@
     <title>Homepage - ZDRAPP</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="logo.png">
-
+    <link rel="stylesheet" href="assets/css/all.min.css">
 </head>
 <body>
     <div class="header">
