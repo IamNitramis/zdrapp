@@ -60,6 +60,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Klíště - Záznam bodu</title>
     <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="assets/css/all.min.css">
 
     
@@ -194,21 +195,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
         .main-content {
             display: flex;
             flex-direction: row;
-            
-            gap: 20px; /* odstraní mezeru mezi kartami */
+            gap: 20px;
             margin-bottom: 30px;
+            width: 100%;
+            box-sizing: border-box;
         }
 
         .section-card {
             background: white;
             border-radius: 15px;
-            width: 616px;
+            flex: 1 1 0;           /* umožní oběma kartám se roztáhnout rovnoměrně */
+            min-width: 0;          /* zabrání přetékání */
             height: 800px;
             padding: 25px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-            /* odstraní vnější mezery mezi kartami */
             margin: 0;
+            box-sizing: border-box;
+            overflow: hidden;      /* zabrání přetékání obsahu */
         }
 
         .section-title {
@@ -242,10 +246,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
             cursor: crosshair;
             display: block;
             transition: transform 0.3s ease;
-        }
-
-        .body-img-container:hover img {
-            transform: scale(1.02);
         }
 
         .pinpoint {
@@ -285,15 +285,23 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
         }
 
         .points-table-wrapper {
-            max-height: 720px;      /* nastav dle potřeby, např. 12 řádků */
+            max-height: 720px;
             overflow-y: auto;
             width: 100%;
         }
 
         .points-table {
             width: 100%;
-            min-width: 600px;       /* nebo podle počtu sloupců */
+            min-width: 0;           /* změna z 600px na 0, umožní zmenšení */
             table-layout: fixed;
+        }
+
+        .points-table th,
+        .points-table td {
+            word-break: break-word;  /* zalomení dlouhého textu */
+            white-space: normal;     /* umožní zalomení */
+            overflow: hidden;        /* zabrání přetékání */
+            text-overflow: ellipsis; /* ... pokud je text moc dlouhý */
         }
 
         .points-table th {
@@ -487,13 +495,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
                     <i class="fas fa-users"></i>
                     Přehled
                 </a>
-                <a href="show_data.php">
-                    <i class="fas fa-home"></i>
-                    Home
-                </a>
                 <a href="upload_csv.php">
                     <i class="fas fa-upload"></i>
-                    Upload Data
+                    Nahrát data
                 </a>
                 <a href="download_reports.php">
                     <i class="fas fa-download"></i>
