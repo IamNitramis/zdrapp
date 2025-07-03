@@ -97,7 +97,6 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-
         }
 
         .container {
@@ -366,6 +365,65 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
             border: 1px solid #e2e8f0;
         }
 
+        /* Alert styles */
+        .alert {
+            background: linear-gradient(135deg, #ff8a80 0%, #ff5722 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(255, 87, 34, 0.3);
+            border-left: 5px solid #d32f2f;
+        }
+
+        .alert-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .alert-header i {
+            font-size: 1.5rem;
+            color: #ffeb3b;
+        }
+
+        .alert-header h3 {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .alert-content {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+
+        .alert-patients {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .patient-tag {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .alert-summary {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
         @media (max-width: 768px) {
             .container {
                 padding: 10px;
@@ -393,7 +451,12 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                 font-size: 0.8rem;
                 padding: 6px 12px;
             }
+
+            .alert-patients {
+                flex-direction: column;
+            }
         }
+        
         body {
             margin: 0;
             padding: 0;
@@ -620,7 +683,52 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
         
         // Počet s alergiemi
         $with_allergies = $conn->query("SELECT COUNT(*) as count FROM persons WHERE allergies IS NOT NULL AND allergies != ''")->fetch_assoc()['count'];
+
+        // Kontrola poznámek bez vygenerované zprávy
+        $sql_missing_reports = "
+            SELECT DISTINCT p.id, p.first_name, p.surname, COUNT(n.id) as note_count
+            FROM persons p
+            INNER JOIN diagnosis_notes n ON p.id = n.person_id
+            LEFT JOIN medical_reports r ON n.id = r.diagnosis_note_id
+            WHERE r.diagnosis_note_id IS NULL
+            GROUP BY p.id, p.first_name, p.surname
+            ORDER BY p.surname, p.first_name
+        ";
+        
+        $result_missing = $conn->query($sql_missing_reports);
+        $patients_without_reports = [];
+        $total_notes_without_reports = 0;
+        
+        if ($result_missing->num_rows > 0) {
+            while ($row = $result_missing->fetch_assoc()) {
+                $patients_without_reports[] = $row;
+                $total_notes_without_reports += $row['note_count'];
+            }
+        }
         ?>
+
+        <?php if (!empty($patients_without_reports)): ?>
+        <div class="alert">
+            <div class="alert-header">
+                <i class="fas fa-exclamation-triangle"></i>
+                <h3>Upozornění - Chybějící zprávy</h3>
+            </div>
+            <div class="alert-content">
+                <div class="alert-summary">
+                    <strong><?php echo $total_notes_without_reports; ?></strong> poznámek u <strong><?php echo count($patients_without_reports); ?></strong> pacientů nemá vygenerovanou zprávu.
+                </div>
+                <div>Pacienti s chybějícími zprávami:</div>
+                <div class="alert-patients">
+                    <?php foreach ($patients_without_reports as $patient): ?>
+                        <div class="patient-tag">
+                            <?php echo htmlspecialchars($patient['first_name'] . ' ' . $patient['surname']); ?>
+                            (<?php echo $patient['note_count']; ?> poznámek)
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+            </div>
+        </div>
+        <?php endif; ?>
 
         <div class="stats-container">
             <div class="stat-card">
@@ -721,30 +829,16 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
         // Smooth animations for table rows
         document.addEventListener('DOMContentLoaded', function() {
             const rows = document.querySelectorAll('#dataTable tbody tr');
-            rows.forEach((row, index) => {
-                row.style.animationDelay = `${index * 0.1}s`;
-                row.style.animation = 'fadeInUp 0.6s ease forwards';
+            rows.forEach((row, idx) => {
+                row.style.opacity = 0;
+                row.style.transform = 'translateY(10px)';
+                setTimeout(() => {
+                    row.style.transition = 'opacity 0.5s, transform 0.5s';
+                    row.style.opacity = 1;
+                    row.style.transform = 'translateY(0)';
+                }, 60 * idx);
             });
         });
-
-        // Add CSS for fade in animation
-        const style = document.createElement('style');
-        style.textContent = `
-            @keyframes fadeInUp {
-                from {
-                    opacity: 0;
-                    transform: translateY(20px);
-                }
-                to {
-                    opacity: 1;
-                    transform: translateY(0);
-                }
-            }
-        `;
-        document.head.appendChild(style);
     </script>
-
-    
-</div>
 </body>
 </html>

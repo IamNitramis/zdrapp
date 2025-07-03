@@ -648,7 +648,7 @@ $conn->close();
                 <li><strong>Oddělovač:</strong> Čárka (,)</li>
                 <li><strong>Maximální velikost:</strong> 10 MB</li>
                 <li><strong>Datum narození:</strong> Ve formátu YYYY-MM-DD</li>
-                <li><strong>Duplicity:</strong> Záznamy s existujícím rodným číslem budou přeskočeny</li>
+                <li><strong>Duplicita:</strong> Záznamy s existujícím rodným číslem budou přeskočeny</li>
             </ul>
         </div>
 

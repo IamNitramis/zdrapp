@@ -551,7 +551,7 @@ $conn->close();
                     <i class="fas fa-file-medical"></i>
                     Přidat lékařskou zprávu
                 </a>
-                <a href="statistics.php">
+                <a href="stats.php">
                     <i class="fas fa-chart-bar"></i>
                     Statistiky
                 </a>

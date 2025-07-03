@@ -284,13 +284,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
             100% { box-shadow: 0 4px 15px rgba(229, 62, 62, 0.4); }
         }
 
+        .points-table-wrapper {
+            max-height: 720px;      /* nastav dle potřeby, např. 12 řádků */
+            overflow-y: auto;
+            width: 100%;
+        }
+
         .points-table {
             width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 12px;
-            overflow: hidden;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            min-width: 600px;       /* nebo podle počtu sloupců */
+            table-layout: fixed;
         }
 
         .points-table th {
@@ -546,25 +549,26 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
                     <i class="fas fa-list"></i>
                     Záznam bodů
                 </h2>
-                
-                <table class="points-table" id="pointsTable">
-                    <thead>
-                        <tr>
-                            <th><i class="fas fa-hashtag"></i> Pořadí</th>
-                            <th><i class="fas fa-calendar"></i> Datum</th>
-                            <th><i class="fas fa-cogs"></i> Akce</th>
-                        </tr>
-                    </thead>
-                    <tbody>
-                        <tr class="empty-state" id="emptyState">
-                            <td colspan="3">
-                                <i class="fas fa-mouse-pointer"></i>
-                                <div>Zatím nebyly zaznamenány žádné body</div>
-                                <small>Klikněte na obrázek pro přidání prvního bodu</small>
-                            </td>
-                        </tr>
-                    </tbody>
-                </table>
+                <div class="points-table-wrapper">
+                    <table class="points-table" id="pointsTable">
+                        <thead>
+                            <tr>
+                                <th><i class="fas fa-hashtag"></i> Pořadí</th>
+                                <th><i class="fas fa-calendar"></i> Datum</th>
+                                <th><i class="fas fa-cogs"></i> Akce</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr class="empty-state" id="emptyState">
+                                <td colspan="3">
+                                    <i class="fas fa-mouse-pointer"></i>
+                                    <div>Zatím nebyly zaznamenány žádné body</div>
+                                    <small>Klikněte na obrázek pro přidání prvního bodu</small>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
             </div>
         </div>
 
