@@ -108,6 +108,7 @@ $conn->close();
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Přiřazení šablony k diagnóze - ZDRAPP</title>
     <link rel="icon" type="image/png" href="logo.png">
+    <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="assets/css/all.min.css">
 
     <style>
@@ -248,11 +249,9 @@ $conn->close();
             margin-bottom: 25px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
-        }
-
-        .section-card:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+            width: 100%;           /* přidáno */
+            max-width: 100%;       /* přidáno */
+            box-sizing: border-box;/* přidáno */
         }
 
         .section-title {
@@ -547,6 +546,14 @@ $conn->close();
                 <a href="download_reports.php">
                     <i class="fas fa-download"></i>
                     Stáhnout zprávy
+                </a>
+                <a href="add_report.php">
+                    <i class="fas fa-file-medical"></i>
+                    Přidat lékařskou zprávu
+                </a>
+                <a href="statistics.php">
+                    <i class="fas fa-chart-bar"></i>
+                    Statistiky
                 </a>
                 <a href="logout.php">
                     <i class="fas fa-sign-out-alt"></i>

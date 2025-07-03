@@ -584,6 +584,14 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                     <i class="fas fa-download"></i>
                     Stáhnout zprávy
                 </a>
+                <a href="add_report.php">
+                    <i class="fas fa-file-medical"></i>
+                    Přidat lékařskou zprávu
+                </a>
+                <a href="stats.php">
+                    <i class="fas fa-chart-bar"></i>
+                    Statistiky
+                </a>
                 <a href="logout.php">
                     <i class="fas fa-sign-out-alt"></i>
                     Logout

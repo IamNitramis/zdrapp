@@ -1,0 +1,67 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Rozcestník stránek ZdrAPP</title>
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            margin: 0;
+            padding: 0;
+        }
+        .container {
+            max-width: 600px;
+            margin: 40px auto;
+            background: white;
+            border-radius: 16px;
+            box-shadow: 0 8px 32px rgba(0,0,0,0.08);
+            padding: 32px 24px;
+        }
+        h1 {
+            text-align: center;
+            color: #4b5bb7;
+            margin-bottom: 32px;
+        }
+        ul {
+            list-style: none;
+            padding: 0;
+        }
+        li {
+            margin: 18px 0;
+        }
+        a {
+            font-size: 1.15rem;
+            color: #4b5bb7;
+            text-decoration: none;
+            font-weight: 500;
+            transition: color 0.2s;
+        }
+        a:hover {
+            color: #764ba2;
+            text-decoration: underline;
+        }
+        .desc {
+            color: #718096;
+            font-size: 0.95rem;
+            margin-left: 8px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Rozcestník stránek ZdrAPP</h1>
+        <ul>
+            <li><a href="show_data.php">Seznam pacientů</a> <span class="desc">Přehled všech pacientů</span></li>
+            <li><a href="upload_csv.php">Nahrát CSV data</a> <span class="desc">Import pacientů ze souboru</span></li>
+            <li><a href="add_diagnosis.php">Správa diagnóz</a> <span class="desc">Přidání a úprava diagnóz</span></li>
+            <li><a href="download_reports.php">Stáhnout zprávy</a> <span class="desc">Export lékařských zpráv a map klíšťat</span></li>
+            <li><a href="stats.php">Statistiky</a> <span class="desc">Základní statistiky systému</span></li>
+            <li><a href="person_details.php">Detail pacienta</a> <span class="desc">Detailní informace o pacientovi</span></li>
+            <li><a href="add_report.php">Přidat lékařskou zprávu</a> <span class="desc">Nová lékařská zpráva</span></li>
+            <li><a href="kliste.php">Mapa klíšťat</a> <span class="desc">Záznam míst klíšťat</span></li>
+            <li><a href="edit_note.php">Editace poznámky</a> <span class="desc">Upravit poznámku k diagnóze</span></li>
+        </ul>
+    </div>
+</body>
+</html>
