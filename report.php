@@ -19,7 +19,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%);
             color: #333;
         }
         .login-warning {
@@ -34,7 +34,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
         }
         .login-warning i {
             font-size: 4rem;
-            color: #e67e22;
+            color: #388e3c;
             margin-bottom: 20px;
         }
         .login-warning h2 { 
@@ -44,7 +44,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
             font-weight: 600;
         }
         .login-warning p {
-            color: #718096;
+            color: #4a5568;
             font-size: 1.1rem;
             margin-bottom: 30px;
             line-height: 1.5;
@@ -52,18 +52,18 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
         .login-warning a {
             display: inline-block;
             padding: 15px 35px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
             color: #fff;
             border-radius: 50px;
             text-decoration: none;
             font-weight: 600;
             font-size: 1.1rem;
             transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 25px rgba(56, 142, 60, 0.3);
         }
         .login-warning a:hover { 
             transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 15px 35px rgba(56, 142, 60, 0.4);
         }
     </style>
 </head>
@@ -154,7 +154,79 @@ $stmtTemplate->execute();
 $resultTemplate = $stmtTemplate->get_result();
 
 if ($resultTemplate->num_rows === 0) {
-    die("No template found for this diagnosis.");
+    echo '<!DOCTYPE html>
+    <html lang="cs">
+    <head>
+        <meta charset="UTF-8">
+        <title>Šablona nenalezena</title>
+        <link rel="stylesheet" href="style.css">
+        <link rel="icon" type="image/png" href="logo.png">
+        <link rel="stylesheet" href="assets/css/all.min.css">
+        <style>
+            body {
+                font-family: "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+                background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%);
+                min-height: 100vh;
+                margin: 0;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .not-found-card {
+                background: white;
+                border-radius: 16px;
+                box-shadow: 0 8px 32px rgba(0,0,0,0.10);
+                padding: 40px 30px;
+                text-align: center;
+                max-width: 420px;
+            }
+            .not-found-card i {
+                font-size: 3rem;
+                color: #ff6b6b;
+                margin-bottom: 18px;
+            }
+            .not-found-card h2 {
+                color: #388e3c;
+                margin-bottom: 12px;
+            }
+            .not-found-card p {
+                color: #4a5568;
+                margin-bottom: 22px;
+            }
+            .not-found-card a {
+                display: inline-block;
+                padding: 12px 28px;
+                background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
+                color: #fff;
+                border-radius: 30px;
+                text-decoration: none;
+                font-weight: 600;
+                font-size: 1rem;
+                transition: background 0.2s, transform 0.2s;
+            }
+            .not-found-card a:hover {
+                background: linear-gradient(135deg, #43a047 0%, #388e3c 100%);
+                transform: translateY(-2px) scale(1.04);
+            }
+        </style>
+    </head>
+    <body>
+        <div class="not-found-card">
+            <i class="fas fa-file-excel"></i>
+            <h2>Chybí šablona pro tuto diagnózu</h2>
+            <p>
+                Bohužel nebyla nalezena žádná šablona pro tuto diagnózu.<br>
+                Bez šablony není možné automaticky vygenerovat lékařskou zprávu.<br>
+                <strong>Přidejte šablonu pro tuto diagnózu v sekci níže.</strong>
+            </p>
+            <a href="add_report.php">
+                <i class="fas fa-plus-circle"></i>
+                Přidat šablonu pro diagnózu
+            </a>
+        </div>
+    </body>
+    </html>';
+    exit;
 }
 
 $template = $resultTemplate->fetch_assoc()['template_text'];
@@ -307,12 +379,12 @@ $conn->close();
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%);
             min-height: 100vh;
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
             padding: 15px 0;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             position: sticky;
@@ -399,18 +471,38 @@ $conn->close();
 
         .container {
             max-width: 1200px;
-            margin: 30px auto;
+            margin: 0 auto;
             padding: 20px;
+            background: linear-gradient(135deg, #f1f8e9 0%, #c8e6c9 100%);
+            min-height: calc(100vh - 80px);
         }
 
         .page-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
             color: white;
             padding: 40px;
             border-radius: 20px;
             text-align: center;
             margin-bottom: 30px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .page-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.05); opacity: 0.8; }
         }
 
         .page-header h1 {
@@ -418,16 +510,20 @@ $conn->close();
             margin: 0;
             font-weight: 300;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
         }
 
         .page-header .subtitle {
             font-size: 1.1rem;
             opacity: 0.9;
             margin-top: 10px;
+            position: relative;
+            z-index: 1;
         }
 
         .patient-info {
-            background: white;
+            background: #f1f8e9;
             border-radius: 15px;
             padding: 25px;
             margin-bottom: 25px;
@@ -442,29 +538,29 @@ $conn->close();
             align-items: center;
             gap: 10px;
             padding: 15px;
-            background: linear-gradient(135deg, #f8f9ff 0%, #e6f2ff 100%);
+            background: #e8f5e9;
             border-radius: 10px;
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #388e3c;
         }
 
         .info-item i {
-            color: #667eea;
+            color: #388e3c;
             font-size: 1.2rem;
             width: 20px;
         }
 
         .info-label {
             font-weight: 600;
-            color: #4a5568;
+            color: #2d3748;
             margin-right: 10px;
         }
 
         .info-value {
-            color: #2d3748;
+            color: #4a5568;
         }
 
         .form-container {
-            background: white;
+            background: #f1f8e9;
             border-radius: 15px;
             padding: 30px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
@@ -477,7 +573,7 @@ $conn->close();
         .form-label {
             display: block;
             font-weight: 600;
-            color: #4a5568;
+            color: #2d3748;
             margin-bottom: 10px;
             font-size: 1.1rem;
         }
@@ -486,22 +582,21 @@ $conn->close();
             width: 100%;
             min-height: 400px;
             padding: 20px;
-            border: 2px solid #e2e8f0;
+            border: 2px solid #c8e6c9;
             border-radius: 12px;
             font-size: 1rem;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             line-height: 1.6;
             resize: vertical;
-            background: #f8f9fa;
+            background: white;
             transition: all 0.3s ease;
             box-sizing: border-box;
         }
 
         .form-textarea:focus {
             outline: none;
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #388e3c;
+            box-shadow: 0 0 0 3px rgba(56, 142, 60, 0.1);
         }
 
         .button-group {
@@ -529,25 +624,25 @@ $conn->close();
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
             color: white;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 8px 25px rgba(56, 142, 60, 0.3);
         }
 
         .btn-primary:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+            box-shadow: 0 15px 35px rgba(56, 142, 60, 0.4);
         }
 
         .btn-secondary {
-            background: linear-gradient(135deg, #a0aec0 0%, #718096 100%);
+            background: linear-gradient(135deg, #757575 0%, #616161 100%);
             color: white;
-            box-shadow: 0 8px 25px rgba(160, 174, 192, 0.3);
+            box-shadow: 0 8px 25px rgba(117, 117, 117, 0.3);
         }
 
         .btn-secondary:hover {
             transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(160, 174, 192, 0.4);
+            box-shadow: 0 15px 35px rgba(117, 117, 117, 0.4);
         }
 
         .alert {
@@ -562,15 +657,15 @@ $conn->close();
         }
 
         .alert-success {
-            background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
-            color: #155724;
-            border-left: 4px solid #28a745;
+            background: linear-gradient(135deg, #c8e6c9 0%, #a5d6a7 100%);
+            color: #2e7d32;
+            border-left: 4px solid #388e3c;
         }
 
         .alert-error {
-            background: linear-gradient(135deg, #f8d7da 0%, #f1b0b7 100%);
-            color: #721c24;
-            border-left: 4px solid #dc3545;
+            background: linear-gradient(135deg, #ffcdd2 0%, #ef9a9a 100%);
+            color: #c62828;
+            border-left: 4px solid #f44336;
         }
 
         .alert i {
@@ -579,8 +674,9 @@ $conn->close();
 
         @media (max-width: 768px) {
             .container {
-                margin: 15px;
-                padding: 10px;
+                margin: 0;
+                padding: 15px;
+                background: linear-gradient(135deg, #f1f8e9 0%, #c8e6c9 100%);
             }
 
             .page-header h1 {
@@ -603,6 +699,25 @@ $conn->close();
 
             .navbar {
                 display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+                flex-direction: column;
+                padding: 20px;
+                gap: 10px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            }
+
+            .navbar.active {
+                display: flex;
+            }
+
+            .navbar a {
+                text-align: center;
+                width: 100%;
+                margin: 0;
             }
 
             .menu-icon {

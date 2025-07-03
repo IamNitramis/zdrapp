@@ -499,6 +499,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
                     <i class="fas fa-upload"></i>
                     Nahrát data
                 </a>
+                <a href="add_diagnosis.php">
+                    <i class="fas fa-plus-circle"></i>
+                    Přidat diagnózu
+                </a>
                 <a href="download_reports.php">
                     <i class="fas fa-download"></i>
                     Stáhnout zprávy

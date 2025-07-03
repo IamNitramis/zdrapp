@@ -83,11 +83,11 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
 <?php exit; endif; ?>
 
 <!DOCTYPE html>
-<html lang="en">
+<html lang="cs">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seznam pacientů</title>
+    <title>Seznam pacientů - ZDRAPP</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="stylesheet" href="assets/css/all.min.css">    
@@ -96,375 +96,11 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 30px;
-            padding: 20px;
-            min-height: 100vh;
-        }
-
-        .page-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            margin-bottom: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-        }
-
-        .page-header h1 {
-            font-size: 2.5rem;
-            margin: 0;
-            font-weight: 300;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .page-header .subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-top: 10px;
-        }
-
-        .table-container {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            overflow-x: auto;
-        }
-
-        .search-container {
-            background: white;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            max-width: 100%;
-            box-sizing: border-box;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .search-box {
-            width: 100%;
-            max-width: 600px;
-            padding: 15px 20px;
-            border: 2px solid #e2e8f0;
-            border-radius: 50px;
-            font-size: 1rem;
-            background: #f8f9fa;
-            transition: all 0.3s ease;
-            box-sizing: border-box;
-        }
-
-        .search-box:focus {
-            outline: none;
-            border-color: #667eea;
-            background: white;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
-        }
-
-        #dataTable {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-        }
-
-        #dataTable thead {
-            background: linear-gradient(135deg, #4b5bb7 0%, #764ba2 100%);
-            color: white;
-        }
-
-        #dataTable th {
-            padding: 18px 15px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            background-color:#764ba2;
-            transition: background-color 1s ease;
-            position: relative;
-        }
-
-        #dataTable th:hover {
-            background: #4b5bb7
-        }
-
-        #dataTable th::after {
-            content: '\f0dc';
-            font-family: 'Font Awesome 5 Free';
-            font-weight: 900;
-            position: absolute;
-            right: 10px;
-            opacity: 0.6;
-        }
-
-        #dataTable tbody tr {
-            transition: all 0.3s ease;
-            border-bottom: 1px solid #f1f5f9;
-        }
-
-        #dataTable tbody tr:hover {
-            background: linear-gradient(135deg, #f8f9ff 0%, #e6f2ff 100%);
-            transform: translateY(-2px);
-            box-shadow: 0 4px 15px rgba(102, 126, 234, 0.1);
-        }
-
-        #dataTable td {
-            padding: 16px 15px;
-            border-bottom: 1px solid #f1f5f9;
-            color: #4a5568;
-            font-size: 0.95rem;
-        }
-
-        #dataTable td:first-child {
-            font-weight: 600;
-            color: #667eea;
-        }
-
-        .buttons {
-            display: flex;
-            gap: 10px;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            min-width: 100px;
-            justify-content: center;
-        }
-
-        .btn-detail {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-        }
-
-        .btn-detail:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #718096;
-        }
-
-        .empty-state i {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            color: #cbd5e0;
-        }
-
-        .empty-state h3 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            color: #4a5568;
-        }
-
-        .stats-container {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-        }
-
-        .stat-card {
-            background: white;
-            border-radius: 15px;
-            padding: 25px;
-            flex: 1;
-            min-width: 200px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            transition: transform 0.3s ease;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-
-        .stat-card i {
-            font-size: 2.5rem;
-            color: #667eea;
-            margin-bottom: 15px;
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #2d3748;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            color: #718096;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .medication-pill {
-            background: #e6fffa;
-            color: #38b2ac;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            border: 1px solid #b2f5ea;
-        }
-
-        .allergy-pill {
-            background: #fed7e2;
-            color: #d53f8c;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            border: 1px solid #fbb6ce;
-        }
-
-        .no-data-pill {
-            background: #f7fafc;
-            color: #a0aec0;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-style: italic;
-            border: 1px solid #e2e8f0;
-        }
-
-        /* Alert styles */
-        .alert {
-            background: linear-gradient(135deg, #ff8a80 0%, #ff5722 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            box-shadow: 0 8px 25px rgba(255, 87, 34, 0.3);
-            border-left: 5px solid #d32f2f;
-        }
-
-        .alert-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .alert-header i {
-            font-size: 1.5rem;
-            color: #ffeb3b;
-        }
-
-        .alert-header h3 {
-            margin: 0;
-            font-size: 1.3rem;
-            font-weight: 600;
-        }
-
-        .alert-content {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 10px;
-        }
-
-        .alert-patients {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .patient-tag {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .alert-summary {
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            font-weight: 500;
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .page-header h1 {
-                font-size: 2rem;
-            }
-            
-            .stats-container {
-                flex-direction: column;
-            }
-            
-            .table-container {
-                overflow-x: auto;
-            }
-            
-            .buttons {
-                flex-direction: row;
-                gap: 5px;
-            }
-            
-            .btn {
-                min-width: 80px;
-                font-size: 0.8rem;
-                padding: 6px 12px;
-            }
-
-            .alert-patients {
-                flex-direction: column;
-            }
-        }
-        
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%);
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
             padding: 15px 0;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             position: sticky;
@@ -552,6 +188,414 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
         .menu-icon:hover {
             background: rgba(255, 255, 255, 0.1);
         }
+
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 20px;
+            background: linear-gradient(135deg, #f1f8e9 0%, #c8e6c9 100%);
+            min-height: 100vh;
+        }
+
+        .hero-section {
+            background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
+            color: white;
+            padding: 40px;
+            border-radius: 20px;
+            text-align: center;
+            margin-bottom: 30px;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .hero-section::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.05); opacity: 0.8; }
+        }
+
+        .hero-content {
+            position: relative;
+            z-index: 1;
+        }
+
+        .hero-section h1 {
+            font-size: 2.5rem;
+            margin: 0;
+            font-weight: 300;
+            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+        }
+
+        .hero-section .subtitle {
+            font-size: 1.1rem;
+            opacity: 0.9;
+            margin-top: 10px;
+        }
+
+        .stats-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 20px;
+            margin-bottom: 25px;
+        }
+
+        .stat-card {
+            background: #f1f8e9;
+            border-radius: 15px;
+            padding: 25px;
+            text-align: center;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
+        }
+
+        .stat-card:hover {
+            transform: translateY(-3px);
+        }
+
+        .stat-card i {
+            font-size: 2.5rem;
+            color: #388e3c;
+            margin-bottom: 15px;
+        }
+
+        .stat-number {
+            font-size: 2rem;
+            font-weight: 700;
+            color: #2d3748;
+            margin-bottom: 5px;
+        }
+
+        .stat-label {
+            color: #4a5568;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .search-container {
+            background: #f1f8e9;
+            border-radius: 15px;
+            padding: 20px;
+            margin-bottom: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            max-width: 100%;
+            box-sizing: border-box;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .search-box {
+            width: 100%;
+            max-width: 600px;
+            padding: 15px 20px;
+            border: 2px solid #c8e6c9;
+            border-radius: 50px;
+            font-size: 1rem;
+            background: white;
+            transition: all 0.3s ease;
+            box-sizing: border-box;
+        }
+
+        .search-box:focus {
+            outline: none;
+            border-color: #388e3c;
+            box-shadow: 0 0 0 3px rgba(56, 142, 60, 0.1);
+        }
+
+        .table-container {
+            background: #f1f8e9;
+            border-radius: 15px;
+            padding: 25px;
+            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+            overflow-x: auto;
+        }
+
+        #dataTable {
+            width: 100%;
+            border-collapse: collapse;
+            background: white;
+            border-radius: 10px;
+            overflow: hidden;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        }
+
+        #dataTable thead {
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+            color: white;
+        }
+
+        #dataTable th {
+            padding: 18px 15px;
+            text-align: left;
+            font-weight: 600;
+            font-size: 0.9rem;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            cursor: pointer;
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+            transition: background-color 1s ease;
+            position: relative;
+        }
+
+        
+
+        #dataTable th::after {
+            content: '\f0dc';
+            font-family: 'Font Awesome 5 Free';
+            font-weight: 900;
+            position: absolute;
+            right: 10px;
+            opacity: 0.6;
+        }
+
+        #dataTable tbody tr {
+            transition: all 0.3s ease;
+            border-bottom: 1px solid #e8f5e9;
+        }
+
+        #dataTable tbody tr:hover {
+            background: linear-gradient(135deg, #f1f8e9 0%, #e8f5e9 100%);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 15px rgba(56, 142, 60, 0.1);
+        }
+
+        #dataTable td {
+            padding: 16px 15px;
+            border-bottom: 1px solid #e8f5e9;
+            color: #2d3748;
+            font-size: 0.95rem;
+        }
+
+        #dataTable td:first-child {
+            font-weight: 600;
+            color: #388e3c;
+        }
+
+        .buttons {
+            display: flex;
+            gap: 10px;
+            flex-direction: column;
+            align-items: center;
+        }
+
+        .btn {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 0.9rem;
+            font-weight: 500;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            min-width: 100px;
+            justify-content: center;
+        }
+
+        .btn-detail {
+            background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
+            color: white;
+        }
+
+        .btn-detail:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(56, 142, 60, 0.3);
+        }
+
+        .btn-danger {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+            color: white;
+        }
+
+        .btn-danger:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 60px 20px;
+            color: #4a5568;
+        }
+
+        .empty-state i {
+            font-size: 4rem;
+            margin-bottom: 20px;
+            color: #a5d6a7;
+        }
+
+        .empty-state h3 {
+            font-size: 1.5rem;
+            margin-bottom: 10px;
+            color: #2d3748;
+        }
+
+        .medication-pill {
+            background: #e8f5e9;
+            color: #388e3c;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid #c8e6c9;
+        }
+
+        .allergy-pill {
+            background: #ffebee;
+            color: #d32f2f;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 500;
+            border: 1px solid #ffcdd2;
+        }
+
+        .no-data-pill {
+            background: #f5f5f5;
+            color: #757575;
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-style: italic;
+            border: 1px solid #e0e0e0;
+        }
+
+        /* Alert styles */
+        .alert {
+            background: linear-gradient(135deg, #ff8a80 0%, #ff5722 100%);
+            color: white;
+            padding: 20px;
+            border-radius: 15px;
+            margin-bottom: 25px;
+            box-shadow: 0 8px 25px rgba(255, 87, 34, 0.3);
+            border-left: 5px solid #d32f2f;
+        }
+
+        .alert-header {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .alert-header i {
+            font-size: 1.5rem;
+            color: #ffeb3b;
+        }
+
+        .alert-header h3 {
+            margin: 0;
+            font-size: 1.3rem;
+            font-weight: 600;
+        }
+
+        .alert-content {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+            padding: 15px;
+            margin-top: 10px;
+        }
+
+        .alert-patients {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .patient-tag {
+            background: rgba(255, 255, 255, 0.2);
+            padding: 5px 12px;
+            border-radius: 20px;
+            font-size: 0.85rem;
+            font-weight: 500;
+            backdrop-filter: blur(5px);
+            border: 1px solid rgba(255, 255, 255, 0.3);
+        }
+
+        .alert-summary {
+            font-size: 1.1rem;
+            margin-bottom: 10px;
+            font-weight: 500;
+        }
+
+        @media (max-width: 768px) {
+            .header-container {
+                padding: 0 15px;
+            }
+
+            .menu-icon {
+                display: block;
+            }
+
+            .navbar {
+                display: none;
+                position: absolute;
+                top: 100%;
+                left: 0;
+                right: 0;
+                background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+                flex-direction: column;
+                padding: 20px;
+                gap: 10px;
+                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+            }
+
+            .navbar.active {
+                display: flex;
+            }
+
+            .navbar a {
+                text-align: center;
+                width: 100%;
+                margin: 0;
+            }
+
+            .container {
+                padding: 10px;
+            }
+            
+            .hero-section h1 {
+                font-size: 2rem;
+            }
+            
+            .stats-container {
+                grid-template-columns: 1fr;
+            }
+            
+            .table-container {
+                overflow-x: auto;
+            }
+            
+            .buttons {
+                flex-direction: row;
+                gap: 5px;
+            }
+            
+            .btn {
+                min-width: 80px;
+                font-size: 0.8rem;
+                padding: 6px 12px;
+            }
+
+            .alert-patients {
+                flex-direction: column;
+            }
+        }
     </style>
 
     <script>
@@ -570,15 +614,31 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                     x = rows[i].getElementsByTagName("TD")[n];
                     y = rows[i + 1].getElementsByTagName("TD")[n];
 
-                    if (dir == "asc") {
-                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                            shouldSwitch = true;
-                            break;
+                    if (n === 0) { // ID sloupec - řadit číselně
+                        var xVal = parseInt(x.textContent || x.innerText, 10);
+                        var yVal = parseInt(y.textContent || y.innerText, 10);
+                        if (dir == "asc") {
+                            if (xVal > yVal) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        } else if (dir == "desc") {
+                            if (xVal < yVal) {
+                                shouldSwitch = true;
+                                break;
+                            }
                         }
-                    } else if (dir == "desc") {
-                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                            shouldSwitch = true;
-                            break;
+                    } else { // Ostatní sloupce - řadit textově
+                        if (dir == "asc") {
+                            if ((x.textContent || x.innerText).toLowerCase() > (y.textContent || y.innerText).toLowerCase()) {
+                                shouldSwitch = true;
+                                break;
+                            }
+                        } else if (dir == "desc") {
+                            if ((x.textContent || x.innerText).toLowerCase() < (y.textContent || y.innerText).toLowerCase()) {
+                                shouldSwitch = true;
+                                break;
+                            }
                         }
                     }
                 }
@@ -617,6 +677,21 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                 }
             }
         }
+
+        function toggleMenu() {
+            const navbar = document.getElementById('navbar');
+            navbar.classList.toggle('active');
+        }
+
+        // Close mobile menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const navbar = document.getElementById('navbar');
+            const menuIcon = document.querySelector('.menu-icon');
+            
+            if (!navbar.contains(event.target) && !menuIcon.contains(event.target)) {
+                navbar.classList.remove('active');
+            }
+        });
     </script>
 </head>
 
@@ -662,10 +737,13 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
             </div>
         </div>
     </div>
+
     <div class="container">
-        <div class="page-header">
-            <h1><i class="fas fa-users"></i> Seznam pacientů</h1>
-            <div class="subtitle">Přehled všech registrovaných pacientů v systému</div>
+        <div class="hero-section">
+            <div class="hero-content">
+                <h1><i class="fas fa-users"></i> Seznam pacientů</h1>
+                <div class="subtitle">Přehled všech registrovaných pacientů v systému</div>
+            </div>
         </div>
 
         <?php
@@ -769,7 +847,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                 <tbody>
                     <?php
                     // Načtení všech osob
-                    $sql = "SELECT * FROM persons ORDER BY surname, first_name";
+                    $sql = "SELECT * FROM persons ORDER BY id ASC";
                     $result = $conn->query($sql);
 
                     $conn->close();
@@ -780,65 +858,35 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                             echo "<td><strong>" . htmlspecialchars($row['id']) . "</strong></td>";
                             echo "<td>" . htmlspecialchars($row['first_name']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['surname']) . "</td>";
-                            echo "<td>" . htmlspecialchars(date('d.m.Y', strtotime($row['birth_date']))) . "</td>";
+                            echo "<td>" . htmlspecialchars($row['birth_date']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['ssn']) . "</td>";
-                            
-                            // Léky s barevným označením
-                            if (empty($row['medications'])) {
-                                echo "<td><span class='no-data-pill'>Žádné</span></td>";
+                            echo "<td>";
+                            if (!empty($row['medications'])) {
+                                echo "<span class='medication-pill'>" . htmlspecialchars($row['medications']) . "</span>";
                             } else {
-                                echo "<td><span class='medication-pill'>" . htmlspecialchars($row['medications']) . "</span></td>";
+                                echo "<span class='no-data-pill'>Žádné</span>";
                             }
-                            
-                            // Alergie s barevným označením
-                            if (empty($row['allergies'])) {
-                                echo "<td><span class='no-data-pill'>Žádné</span></td>";
+                            echo "</td>";
+                            echo "<td>";
+                            if (!empty($row['allergies'])) {
+                                echo "<span class='allergy-pill'>" . htmlspecialchars($row['allergies']) . "</span>";
                             } else {
-                                echo "<td><span class='allergy-pill'>" . htmlspecialchars($row['allergies']) . "</span></td>";
+                                echo "<span class='no-data-pill'>Žádné</span>";
                             }
-                            
+                            echo "</td>";
                             echo "<td class='buttons'>";
-                            echo "<a href='person_details.php?id=" . $row['id'] . "&surname=" . urlencode($row['surname']) . "' class='btn btn-detail'>";
-                            echo "<i class='fas fa-eye'></i> Detail</a>";
-                            echo "<a href='delete_person.php?id=" . $row['id'] . "' class='btn btn-danger' onclick='return confirm(\"Opravdu chcete odstranit tento záznam?\");'>";
-                            echo "<i class='fas fa-trash'></i> Smazat</a>";
+                            echo "<a href='person_details.php?id=" . urlencode($row['id']) . "' class='btn btn-detail'><i class='fas fa-eye'></i> Detail</a>";
+                            echo "<a href='delete_person.php?id=" . urlencode($row['id']) . "' class='btn btn-danger' onclick=\"return confirm('Opravdu chcete smazat tohoto pacienta?');\"><i class='fas fa-trash'></i> Smazat</a>";
                             echo "</td>";
                             echo "</tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='8'>";
-                        echo "<div class='empty-state'>";
-                        echo "<i class='fas fa-user-slash'></i>";
-                        echo "<h3>Žádní pacienti</h3>";
-                        echo "<p>V databázi nejsou žádní zaregistrovaní pacienti.</p>";
-                        echo "</div>";
-                        echo "</td></tr>";
+                        echo "<tr><td colspan='8' class='empty-state'><i class='fas fa-user-slash'></i><h3>Žádní pacienti nebyli nalezeni.</h3></td></tr>";
                     }
                     ?>
                 </tbody>
             </table>
         </div>
     </div>
-
-    <script>
-        function toggleMenu() {
-            var navbar = document.getElementById("navbar");
-            navbar.classList.toggle("open");
-        }
-
-        // Smooth animations for table rows
-        document.addEventListener('DOMContentLoaded', function() {
-            const rows = document.querySelectorAll('#dataTable tbody tr');
-            rows.forEach((row, idx) => {
-                row.style.opacity = 0;
-                row.style.transform = 'translateY(10px)';
-                setTimeout(() => {
-                    row.style.transition = 'opacity 0.5s, transform 0.5s';
-                    row.style.opacity = 1;
-                    row.style.transform = 'translateY(0)';
-                }, 60 * idx);
-            });
-        });
-    </script>
 </body>
 </html>
