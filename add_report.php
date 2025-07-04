@@ -116,12 +116,12 @@ $conn->close();
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%);
             min-height: 100vh;
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
             padding: 15px 0;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             position: sticky;
@@ -217,7 +217,7 @@ $conn->close();
         }
 
         .page-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
             color: white;
             padding: 30px;
             border-radius: 20px;
@@ -263,7 +263,7 @@ $conn->close();
         }
 
         .section-title i {
-            color: #667eea;
+            color: #388e3c;
         }
 
         .alert {
@@ -313,8 +313,8 @@ $conn->close();
 
         .form-select:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #388e3c;
+            box-shadow: 0 0 0 3px rgba(56, 142, 60, 0.1);
         }
 
         .form-textarea {
@@ -335,7 +335,7 @@ $conn->close();
 
         .form-textarea:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #388e3c;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
             background: white;
         }
@@ -356,7 +356,7 @@ $conn->close();
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
             color: white;
         }
 
@@ -390,7 +390,7 @@ $conn->close();
 
         .help-box {
             background: linear-gradient(135deg, #f8f9ff 0%, #e6f2ff 100%);
-            border-left: 4px solid #667eea;
+            border-left: 4px solid #388e3c;
             border-radius: 8px;
             padding: 20px;
             margin-top: 15px;
@@ -426,11 +426,12 @@ $conn->close();
 
         .help-box li {
             margin-bottom: 8px;
+            list-style: none;
             color: #718096;
         }
 
         .help-box code {
-            background: #667eea;
+            background: #388e3c;
             color: white;
             padding: 2px 6px;
             border-radius: 4px;
@@ -454,7 +455,7 @@ $conn->close();
             left: 0;
             width: 4px;
             height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
         }
 
         .diagnosis-info h3 {
@@ -482,7 +483,7 @@ $conn->close();
                 top: 100%;
                 left: 0;
                 right: 0;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
                 flex-direction: column;
                 padding: 20px;
                 gap: 10px;

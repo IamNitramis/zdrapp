@@ -55,7 +55,7 @@ $conn->close();
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%);
             min-height: 100vh;
         }
         .stats-container {
@@ -125,7 +125,7 @@ $conn->close();
             }
         }
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
             padding: 15px 0;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             position: sticky;
@@ -208,7 +208,7 @@ $conn->close();
         }
 
         .page-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
             color: white;
             padding: 40px;
             border-radius: 20px;

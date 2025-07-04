@@ -79,10 +79,11 @@ $conn->close();
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%);
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
             padding: 15px 0;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             position: sticky;
@@ -175,18 +176,35 @@ $conn->close();
             max-width: 1200px;
             margin: 10px auto;
             padding: 20px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
         }
 
         .person-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
             color: white;
             padding: 30px;
             border-radius: 20px;
             text-align: center;
             margin-bottom: 30px;
             box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+            position: relative;
+            overflow: hidden;
+        }
+
+        .person-header::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+            animation: pulse 4s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1); opacity: 0.5; }
+            50% { transform: scale(1.05); opacity: 0.8; }
         }
 
         .person-header h1 {
@@ -194,21 +212,37 @@ $conn->close();
             margin: 0;
             font-weight: 300;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+            position: relative;
+            z-index: 1;
         }
 
         .person-header .subtitle {
             font-size: 1.1rem;
             opacity: 0.9;
             margin-top: 10px;
+            position: relative;
+            z-index: 1;
         }
 
         .section-card {
-            background: white;
+            background: #f1f8e9;
             border-radius: 15px;
             padding: 25px;
             margin-bottom: 25px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .section-card::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 4px;
+            background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
         }
 
         .section-card:hover {
@@ -217,23 +251,23 @@ $conn->close();
         }
 
         .section-title {
-            color: #4a5568;
+            color: #2d3748;
             font-size: 1.5rem;
             margin-bottom: 20px;
             display: flex;
             align-items: center;
             gap: 10px;
-            border-bottom: 2px solid #e2e8f0;
+            border-bottom: 2px solid #c8e6c9;
             padding-bottom: 10px;
         }
 
         .section-title i {
-            color: #667eea;
+            color: #388e3c;
         }
 
         .diagnosis-card {
-            background: linear-gradient(135deg, #f8f9ff 0%, #e6f2ff 100%);
-            border: 1px solid #e2e8f0;
+            background: #e8f5e9;
+            border: 1px solid #c8e6c9;
             border-radius: 12px;
             padding: 20px;
             margin-bottom: 15px;
@@ -250,13 +284,13 @@ $conn->close();
             left: 0;
             width: 4px;
             height: 100%;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
         }
 
         .diagnosis-card:hover {
             transform: translateY(-3px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.15);
-            border-color: #667eea;
+            box-shadow: 0 10px 25px rgba(56, 142, 60, 0.15);
+            border-color: #388e3c;
         }
 
         .diagnosis-header {
@@ -275,11 +309,11 @@ $conn->close();
 
         .diagnosis-date {
             font-size: 0.9rem;
-            color: #718096;
-            background: #f7fafc;
+            color: #4a5568;
+            background: #f1f8e9;
             padding: 5px 10px;
             border-radius: 20px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid #c8e6c9;
         }
 
         .diagnosis-preview {
@@ -290,7 +324,7 @@ $conn->close();
             background: white;
             padding: 15px;
             border-radius: 8px;
-            border: 1px solid #e2e8f0;
+            border: 1px solid #c8e6c9;
         }
 
         .diagnosis-actions {
@@ -314,13 +348,13 @@ $conn->close();
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
             color: white;
         }
 
         .btn-primary:hover {
             transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+            box-shadow: 0 5px 15px rgba(56, 142, 60, 0.3);
         }
 
         .btn-danger {
@@ -357,7 +391,7 @@ $conn->close();
         .form-label {
             display: block;
             font-weight: 600;
-            color: #4a5568;
+            color: #2d3748;
             margin-bottom: 8px;
             font-size: 1rem;
         }
@@ -365,7 +399,7 @@ $conn->close();
         .form-select, .form-textarea {
             width: 100%;
             padding: 12px 16px;
-            border: 2px solid #e2e8f0;
+            border: 2px solid #c8e6c9;
             border-radius: 8px;
             font-size: 1rem;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -374,15 +408,15 @@ $conn->close();
 
         .form-select:focus, .form-textarea:focus {
             outline: none;
-            border-color: #667eea;
-            box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+            border-color: #388e3c;
+            box-shadow: 0 0 0 3px rgba(56, 142, 60, 0.1);
             background: white;
         }
 
         .form-textarea {
             width: 100%;
             padding: 12px 16px;
-            border: 2px solid #e2e8f0;
+            border: 2px solid #c8e6c9;
             border-radius: 8px;
             font-size: 1rem;
             transition: border-color 0.3s ease, box-shadow 0.3s ease;
@@ -391,9 +425,9 @@ $conn->close();
             resize: vertical;
             font-family: inherit;
             box-sizing: border-box;
-            text-align: left; /* zarovnání textu vlevo */
-            display: block;   /* zajistí správné zarovnání v rodiči */
-            margin: 0 auto;   /* horizontální centrování, pokud je potřeba */
+            text-align: left;
+            display: block;
+            margin: 0 auto;
         }
 
         .form-links {
@@ -404,14 +438,14 @@ $conn->close();
         }
 
         .form-link {
-            color: #667eea;
+            color: #388e3c;
             text-decoration: none;
             font-weight: 500;
             transition: color 0.3s ease;
         }
 
         .form-link:hover {
-            color: #764ba2;
+            color: #2e7d32;
             text-decoration: underline;
         }
 
@@ -426,22 +460,22 @@ $conn->close();
         .empty-state {
             text-align: center;
             padding: 40px;
-            color: #718096;
+            color: #4a5568;
         }
 
         .empty-state i {
             font-size: 3rem;
             margin-bottom: 15px;
-            color: #cbd5e0;
+            color: #a5d6a7;
         }
 
         .alert-error {
-            background: #fed7d7;
-            color: #c53030;
+            background: #ffebee;
+            color: #c62828;
             padding: 15px;
             border-radius: 8px;
             margin-bottom: 20px;
-            border: 1px solid #feb2b2;
+            border: 1px solid #ffcdd2;
         }
 
         @media (max-width: 768px) {
@@ -459,7 +493,7 @@ $conn->close();
                 top: 100%;
                 left: 0;
                 right: 0;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
                 flex-direction: column;
                 padding: 20px;
                 gap: 10px;
@@ -687,6 +721,29 @@ $conn->close();
             if (!navbar.contains(event.target) && !menuIcon.contains(event.target)) {
                 navbar.classList.remove('active');
             }
+        });
+
+        // Add subtle animation to cards on scroll
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.opacity = '1';
+                    entry.target.style.transform = 'translateY(0)';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all section cards
+        document.querySelectorAll('.section-card').forEach(card => {
+            card.style.opacity = '0';
+            card.style.transform = 'translateY(20px)';
+            card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
+            observer.observe(card);
         });
     </script>
 </body>

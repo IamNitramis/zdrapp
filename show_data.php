@@ -193,7 +193,6 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            background: linear-gradient(135deg, #f1f8e9 0%, #c8e6c9 100%);
             min-height: 100vh;
         }
 
@@ -244,10 +243,11 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
         }
 
         .stats-container {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            display: flex;
             gap: 20px;
             margin-bottom: 25px;
+            flex-wrap: wrap;
+            justify-content: center;
         }
 
         .stat-card {
@@ -257,6 +257,9 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
             text-align: center;
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease;
+            min-width: 200px;
+            flex: 1 1 0;
+            max-width: 300px;
         }
 
         .stat-card:hover {
@@ -361,13 +364,11 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
         }
 
         #dataTable tbody tr {
-            transition: all 0.3s ease;
             border-bottom: 1px solid #e8f5e9;
         }
 
         #dataTable tbody tr:hover {
             background: linear-gradient(135deg, #f1f8e9 0%, #e8f5e9 100%);
-            transform: translateY(-2px);
             box-shadow: 0 4px 15px rgba(56, 142, 60, 0.1);
         }
 

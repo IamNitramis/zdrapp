@@ -20,7 +20,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
             color: #333;
         }
         .login-warning {
@@ -53,7 +53,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
         .login-warning a {
             display: inline-block;
             padding: 15px 35px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
             color: #fff;
             border-radius: 50px;
             text-decoration: none;
@@ -429,12 +429,12 @@ $conn->close();
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%);
             min-height: 100vh;
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
             padding: 15px 0;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             position: sticky;
@@ -517,7 +517,7 @@ $conn->close();
         }
 
         .page-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
             color: white;
             padding: 40px;
             border-radius: 20px;
@@ -563,7 +563,7 @@ $conn->close();
 
         .stat-card i {
             font-size: 2.5rem;
-            color: #667eea;
+            color: #388e3c;
             margin-bottom: 15px;
         }
 
@@ -605,7 +605,7 @@ $conn->close();
         }
 
         .download-section h3 i {
-            color: #667eea;
+            color: #388e3c;
         }
 
         .download-section p {
@@ -640,7 +640,7 @@ $conn->close();
 
         .form-control:focus {
             outline: none;
-            border-color: #667eea;
+            border-color: #388e3c;
             background: white;
             box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
         }
@@ -662,7 +662,7 @@ $conn->close();
         }
 
         .btn-primary {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
             color: white;
             box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
         }
@@ -684,7 +684,7 @@ $conn->close();
         }
 
         .patient-count {
-            background: linear-gradient(135deg, #74b9ff 0%, #0984e3 100%);
+            background:rgb(108, 165, 111);
             color: white;
             padding: 8px 16px;
             border-radius: 20px;

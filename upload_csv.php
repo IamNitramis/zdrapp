@@ -20,7 +20,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
             align-items: center;
             justify-content: center;
             min-height: 100vh;
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
+            background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%);
             color: #333;
         }
         .login-warning {
@@ -53,7 +53,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
         .login-warning a {
             display: inline-block;
             padding: 15px 35px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
             color: #fff;
             border-radius: 50px;
             text-decoration: none;
@@ -194,12 +194,12 @@ $conn->close();
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
+            background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%);
             min-height: 100vh;
         }
 
         .header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
             padding: 15px 0;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             position: sticky;
@@ -295,7 +295,7 @@ $conn->close();
         }
 
         .page-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
             color: white;
             padding: 40px;
             border-radius: 20px;
@@ -337,7 +337,7 @@ $conn->close();
         }
 
         .file-upload-area:hover, .file-upload-area.dragover {
-            border-color: #667eea;
+            border-color: #388e3c;
             background: #f0f4ff;
             transform: translateY(-5px);
             box-shadow: 0 10px 25px rgba(102, 126, 234, 0.1);
@@ -351,7 +351,7 @@ $conn->close();
         }
 
         .file-upload-area:hover i {
-            color: #667eea;
+            color: #388e3c;
         }
 
         .file-upload-area h3 {
@@ -378,7 +378,7 @@ $conn->close();
         }
 
         .upload-btn {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
             color: white;
             border: none;
             padding: 15px 40px;
@@ -483,7 +483,7 @@ $conn->close();
 
         .progress-fill {
             height: 100%;
-            background: linear-gradient(90deg, #667eea, #764ba2);
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
             width: 0%;
             transition: width 0.3s ease;
         }
@@ -529,7 +529,7 @@ $conn->close();
                 top: 100%;
                 left: 0;
                 right: 0;
-                background: rgba(102, 126, 234, 0.95);
+                background: #388e3c;
                 backdrop-filter: blur(10px);
                 padding: 20px;
                 gap: 10px;

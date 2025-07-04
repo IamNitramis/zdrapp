@@ -13,7 +13,6 @@
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%);
         }
 
         .header {
@@ -110,12 +109,12 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            background: linear-gradient(135deg, #f1f8e9 0%, #c8e6c9 100%);
+            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
         }
 
         .hero-section {
-            background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
             color: white;
             padding: 60px 40px;
             border-radius: 20px;
@@ -133,7 +132,7 @@
             left: -50%;
             width: 200%;
             height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
             animation: pulse 4s ease-in-out infinite;
         }
 
@@ -169,7 +168,7 @@
         }
 
         .feature-card {
-            background: #f1f8e9;
+            background: white;
             border-radius: 15px;
             padding: 30px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
@@ -191,7 +190,7 @@
             left: 0;
             width: 100%;
             height: 4px;
-            background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
         }
 
         .feature-icon {
@@ -221,7 +220,7 @@
 
         .cta-button {
             display: inline-block;
-            background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
             color: white;
             text-decoration: none;
             padding: 18px 40px;
@@ -229,7 +228,7 @@
             font-size: 1.1rem;
             font-weight: 600;
             transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(56, 142, 60, 0.3);
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
             position: relative;
             overflow: hidden;
         }
@@ -251,7 +250,7 @@
 
         .cta-button:hover {
             transform: translateY(-3px);
-            box-shadow: 0 12px 30px rgba(56, 142, 60, 0.25);
+            box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
         }
 
         .cta-button i {
@@ -266,7 +265,7 @@
         }
 
         .stat-card {
-            background: #f1f8e9;
+            background: white;
             border-radius: 15px;
             padding: 25px;
             text-align: center;
@@ -298,7 +297,7 @@
         }
 
         .tech-card {
-            background: #f1f8e9;
+            background: white;
             border-radius: 15px;
             padding: 30px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
@@ -327,7 +326,7 @@
         }
 
         .tech-item {
-            background: #e8f5e9;
+            background: #f8f9fa;
             padding: 15px;
             border-radius: 10px;
             border-left: 4px solid #388e3c;
@@ -352,7 +351,7 @@
                 top: 100%;
                 left: 0;
                 right: 0;
-                background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+                background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
                 flex-direction: column;
                 padding: 20px;
                 gap: 10px;
@@ -496,7 +495,7 @@
         </div>
 
         <div class="cta-section">
-            <a href="upload_csv.php" class="cta-button">
+            <a href="login.php" class="cta-button">
                 <i class="fas fa-stethoscope"></i>
                 Začít používat systém
             </a>
