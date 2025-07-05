@@ -13,7 +13,21 @@ $person_id = intval($_GET['id']);
 
 // Zpracování formuláře pro přidání diagnózy a poznámky
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
-    if (isset($_POST['diagnosis_id'], $_POST['note']) && !empty($_POST['note'])) {
+    // Uložení medikace a alergií
+    if (isset($_POST['save_med_all'])) {
+        $medications = isset($_POST['medications']) ? trim($_POST['medications']) : '';
+        $allergies = isset($_POST['allergies']) ? trim($_POST['allergies']) : '';
+        $sql = "UPDATE persons SET medications = ?, allergies = ? WHERE id = ?";
+        $stmt = $conn->prepare($sql);
+        $stmt->bind_param("ssi", $medications, $allergies, $person_id);
+        if ($stmt->execute()) {
+            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $person_id);
+            exit;
+        } else {
+            echo "<p style='color: red;'>Chyba při ukládání medikace/alergií: " . $conn->error . "</p>";
+        }
+        $stmt->close();
+    } elseif (isset($_POST['diagnosis_id'], $_POST['note']) && !empty($_POST['note'])) {
         $diagnosis_id = intval($_POST['diagnosis_id']);
         $note = trim($_POST['note']);
         
@@ -382,10 +396,15 @@ $conn->close();
             border-radius: 15px;
             padding: 30px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            overflow: hidden;
         }
 
         .form-group {
             margin-bottom: 20px;
+            width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
+            overflow: hidden;
         }
 
         .form-label {
@@ -396,8 +415,10 @@ $conn->close();
             font-size: 1rem;
         }
 
-        .form-select, .form-textarea {
+        .form-select, input[type="text"], select {
             width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
             padding: 12px 16px;
             border: 2px solid #c8e6c9;
             border-radius: 8px;
@@ -415,6 +436,8 @@ $conn->close();
 
         .form-textarea {
             width: 100%;
+            max-width: 100%;
+            box-sizing: border-box;
             padding: 12px 16px;
             border: 2px solid #c8e6c9;
             border-radius: 8px;
@@ -424,7 +447,6 @@ $conn->close();
             min-height: 120px;
             resize: vertical;
             font-family: inherit;
-            box-sizing: border-box;
             text-align: left;
             display: block;
             margin: 0 auto;
@@ -476,6 +498,30 @@ $conn->close();
             border-radius: 8px;
             margin-bottom: 20px;
             border: 1px solid #ffcdd2;
+        }
+
+        .flex-sections {
+            display: flex;
+            gap: 30px;
+            align-items: flex-start;
+        }
+        .section-notes {
+            flex: 2 1 0;
+            min-width: 0;
+        }
+        .section-medalergies {
+            flex: 1 1 320px;
+            min-width: 320px;
+            max-width: 400px;
+        }
+        @media (max-width: 1100px) {
+            .flex-sections {
+                flex-direction: column;
+            }
+            .section-medalergies {
+                max-width: 100%;
+                min-width: 0;
+            }
         }
 
         @media (max-width: 768px) {
@@ -581,66 +627,90 @@ $conn->close();
             <h1><i class="fas fa-user-circle"></i> <?php echo htmlspecialchars($person['first_name'] . ' ' . $person['surname']); ?></h1>
             <div class="subtitle">Detail pacienta a zdravotní záznamy</div>
         </div>
-        
-        <div class="section-card">
-            <h2 class="section-title">
-                <i class="fas fa-stethoscope"></i>
-                Diagnózy a poznámky
-            </h2>
-            
-            <?php if ($diagnoses->num_rows > 0): ?>
-                <?php while ($row = $diagnoses->fetch_assoc()): ?>
-                    <div class="diagnosis-card" onclick="window.location.href='edit_note.php?id=<?php echo $row['note_id']; ?>&first_name=<?php echo $person['first_name']; ?>&surname=<?php echo $person['surname']; ?>&person_id=<?php echo $person_id; ?>'">
-                        <div class="diagnosis-header">
-                            <h3 class="diagnosis-name">
-                                <i class="fas fa-diagnosis"></i>
-                                <?php echo htmlspecialchars($row['diagnosis_name']); ?>
-                            </h3>
-                            <span class="diagnosis-date">
-                                <i class="fas fa-calendar-alt"></i>
-                                <?php echo date('d.m.Y H:i', strtotime($row['created_at'])); ?>
-                            </span>
+        <div class="flex-sections">
+            <div class="section-card section-notes">
+                <h2 class="section-title">
+                    <i class="fas fa-stethoscope"></i>
+                    Diagnózy a poznámky
+                </h2>
+                <?php if ($diagnoses->num_rows > 0): ?>
+                    <?php while ($row = $diagnoses->fetch_assoc()): ?>
+                        <div class="diagnosis-card" onclick="window.location.href='edit_note.php?id=<?php echo $row['note_id']; ?>&first_name=<?php echo $person['first_name']; ?>&surname=<?php echo $person['surname']; ?>&person_id=<?php echo $person_id; ?>'">
+                            <div class="diagnosis-header">
+                                <h3 class="diagnosis-name">
+                                    <i class="fas fa-diagnosis"></i>
+                                    <?php echo htmlspecialchars($row['diagnosis_name']); ?>
+                                </h3>
+                                <span class="diagnosis-date">
+                                    <i class="fas fa-calendar-alt"></i>
+                                    <?php echo date('d.m.Y H:i', strtotime($row['created_at'])); ?>
+                                </span>
+                            </div>
+                            <div class="diagnosis-preview">
+                                <?php echo htmlspecialchars(substr($row['note'], 0, 150)) . (strlen($row['note']) > 150 ? '...' : ''); ?>
+                            </div>
+                            <div class="diagnosis-actions">
+                                <form action="edit_note.php" method="GET" style="display: inline;">
+                                    <input type="hidden" name="id" value="<?php echo $row['note_id']; ?>">
+                                    <input type="hidden" name="first_name" value="<?php echo $person['first_name']; ?>">
+                                    <input type="hidden" name="surname" value="<?php echo $person['surname']; ?>">
+                                    <input type="hidden" name="person_id" value="<?php echo $person_id; ?>">
+                                    <button type="submit" class="btn btn-primary">
+                                        <i class="fas fa-edit"></i>
+                                        Upravit
+                                    </button>
+                                </form>
+                                <form action="delete_note.php" method="POST" style="display: inline;" onsubmit="return confirm('Opravdu chcete tuto poznámku odstranit?');">
+                                    <input type="hidden" name="id" value="<?php echo $row['note_id']; ?>">
+                                    <button type="submit" class="btn btn-danger">
+                                        <i class="fas fa-trash"></i>
+                                        Smazat
+                                    </button>
+                                </form>
+                            </div>
                         </div>
-                        
-                        <div class="diagnosis-preview">
-                            <?php echo htmlspecialchars(substr($row['note'], 0, 150)) . (strlen($row['note']) > 150 ? '...' : ''); ?>
-                        </div>
-                        
-                        <div class="diagnosis-actions">
-                            <form action="edit_note.php" method="GET" style="display: inline;">
-                                <input type="hidden" name="id" value="<?php echo $row['note_id']; ?>">
-                                <input type="hidden" name="first_name" value="<?php echo $person['first_name']; ?>">
-                                <input type="hidden" name="surname" value="<?php echo $person['surname']; ?>">
-                                <input type="hidden" name="person_id" value="<?php echo $person_id; ?>">
-                                <button type="submit" class="btn btn-primary">
-                                    <i class="fas fa-edit"></i>
-                                    Upravit
-                                </button>
-                            </form>
-                            <form action="delete_note.php" method="POST" style="display: inline;" onsubmit="return confirm('Opravdu chcete tuto poznámku odstranit?');">
-                                <input type="hidden" name="id" value="<?php echo $row['note_id']; ?>">
-                                <button type="submit" class="btn btn-danger">
-                                    <i class="fas fa-trash"></i>
-                                    Smazat
-                                </button>
-                            </form>
-                        </div>
+                    <?php endwhile; ?>
+                <?php else: ?>
+                    <div class="empty-state">
+                        <i class="fas fa-notes-medical"></i>
+                        <p>Žádné diagnózy nejsou zapsány.</p>
                     </div>
-                <?php endwhile; ?>
-            <?php else: ?>
-                <div class="empty-state">
+                <?php endif; ?>
+            </div>
+            <div class="section-card section-medalergies">
+                <h2 class="section-title">
                     <i class="fas fa-notes-medical"></i>
-                    <p>Žádné diagnózy nejsou zapsány.</p>
-                </div>
-            <?php endif; ?>
+                    Medikace a alergie
+                </h2>
+                <form action="" method="post" class="form-container" style="margin-bottom:0;">
+                    <div class="form-group">
+                        <label for="medications" class="form-label">
+                            <i class="fas fa-pills"></i>
+                            Medikace:
+                        </label>
+                        <input type="text" name="medications" id="medications" class="form-select" value="<?php echo htmlspecialchars($person['medications'] ?? ''); ?>" placeholder="Zadejte medikaci">
+                    </div>
+                    <div class="form-group">
+                        <label for="allergies" class="form-label">
+                            <i class="fas fa-allergies"></i>
+                            Alergie:
+                        </label>
+                        <input type="text" name="allergies" id="allergies" class="form-select" value="<?php echo htmlspecialchars($person['allergies'] ?? ''); ?>" placeholder="Zadejte alergie">
+                    </div>
+                    <div class="form-actions">
+                        <button type="submit" name="save_med_all" class="btn btn-primary">
+                            <i class="fas fa-save"></i>
+                            Uložit změny
+                        </button>
+                    </div>
+                </form>
+            </div>
         </div>
-
-        <div class="section-card">
+        <div class="section-card section-add-note">
             <h2 class="section-title">
                 <i class="fas fa-plus-circle"></i>
                 Přidat diagnózu a poznámku
             </h2>
-            
             <form action="" method="POST" class="form-container">
                 <div class="form-group">
                     <label for="diagnosis" class="form-label">
@@ -656,7 +726,6 @@ $conn->close();
                         <?php endwhile; ?>
                     </select>
                 </div>
-
                 <div class="form-links">
                     <a href="add_diagnosis.php" class="form-link">
                         <i class="fas fa-plus"></i>
@@ -667,7 +736,6 @@ $conn->close();
                         Přidat template lékařské zprávy
                     </a>
                 </div>
-
                 <div class="form-group">
                     <label for="note" class="form-label">
                         <i class="fas fa-sticky-note"></i>
@@ -676,7 +744,6 @@ $conn->close();
                     <textarea name="note" id="note" class="form-textarea" 
                               placeholder="Napište, jak probíhalo ošetření, co jste podali za medikaci..." required></textarea>
                 </div>
-
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i>
