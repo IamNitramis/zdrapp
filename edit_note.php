@@ -24,11 +24,13 @@ if (!isset($_GET['id']) || !is_numeric($_GET['id'])) {
 
 $noteId = intval($_GET['id']);
 
-// Načtení existující poznámky a diagnózy (JOIN mezi diagnosis_notes a diagnoses)
+// načtení existující poznámky a diagnózy (JOIN mezi diagnosis_notes, diagnoses, users)
 $sql = "
-    SELECT dn.note, d.id AS diagnosis_id, d.name AS diagnosis_name, dn.created_at, dn.person_id 
+    SELECT dn.note, d.id AS diagnosis_id, d.name AS diagnosis_name, dn.created_at, dn.person_id,
+           u1.username AS updated_by_username
     FROM diagnosis_notes dn
     JOIN diagnoses d ON dn.diagnosis_id = d.id
+    LEFT JOIN users u1 ON dn.updated_by = u1.id
     WHERE dn.id = ?
 ";
 
@@ -46,6 +48,7 @@ if ($result->num_rows === 0) {
 }
 
 $note = $result->fetch_assoc();
+$updatedByUsername = $note['updated_by_username'] ?? '';
 
 // Zpracování formuláře
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
@@ -501,6 +504,10 @@ $conn->close();
                 <p>
                     <i class="fas fa-calendar-alt"></i>
                     <strong>Datum přiřazení:</strong> <?php echo htmlspecialchars(date("d.m.Y H:i", strtotime($note['created_at']))); ?>
+                </p>
+                <p>
+                    <i class="fas fa-user"></i>
+                    <strong>Upravil:</strong> <?php echo $updatedByUsername ? htmlspecialchars($updatedByUsername) : '<span style="color:#aaa;">-</span>'; ?>
                 </p>
             </div>
         </div>

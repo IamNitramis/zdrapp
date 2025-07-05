@@ -98,7 +98,8 @@ CREATE TABLE tick_bites (
   x double NOT NULL,
   y double NOT NULL,
   created_at datetime NOT NULL
-) ;
+  bite_order INT DEFAULT 1 
+  ) ;
 
 -- --------------------------------------------------------
 
@@ -259,3 +260,26 @@ ALTER TABLE person_diagnoses
 --
 ALTER TABLE templates
   ADD CONSTRAINT templates_ibfk_1 FOREIGN KEY (diagnosis_id) REFERENCES diagnoses (id) ON DELETE CASCADE;
+
+-- Přidání sloupce updated_by do všech tabulek pro logování uživatele, který provedl změnu
+
+ALTER TABLE diagnoses ADD COLUMN updated_by INT NULL AFTER name;
+ALTER TABLE diagnosis_notes ADD COLUMN updated_by INT NULL AFTER created_at;
+ALTER TABLE medical_reports ADD COLUMN updated_by INT NULL AFTER created_at;
+ALTER TABLE persons ADD COLUMN updated_by INT NULL AFTER allergies;
+ALTER TABLE persons_backup ADD COLUMN updated_by INT NULL AFTER ssn;
+ALTER TABLE person_diagnoses ADD COLUMN updated_by INT NULL AFTER assigned_at;
+ALTER TABLE templates ADD COLUMN updated_by INT NULL AFTER created_at;
+ALTER TABLE tick_bites ADD COLUMN updated_by INT NULL AFTER created_at;
+ALTER TABLE users ADD COLUMN updated_by INT NULL AFTER created_at;
+
+-- Přidání cizích klíčů (kromě tabulky users)
+ALTER TABLE diagnoses ADD CONSTRAINT fk_diagnoses_updated_by FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL;
+ALTER TABLE diagnosis_notes ADD CONSTRAINT fk_diagnosis_notes_updated_by FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL;
+ALTER TABLE medical_reports ADD CONSTRAINT fk_medical_reports_updated_by FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL;
+ALTER TABLE persons ADD CONSTRAINT fk_persons_updated_by FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL;
+ALTER TABLE persons_backup ADD CONSTRAINT fk_persons_backup_updated_by FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL;
+ALTER TABLE person_diagnoses ADD CONSTRAINT fk_person_diagnoses_updated_by FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL;
+ALTER TABLE templates ADD CONSTRAINT fk_templates_updated_by FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL;
+ALTER TABLE tick_bites ADD CONSTRAINT fk_tick_bites_updated_by FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL;
+-- Tabulka users nemá cizí klíč na sebe sama.

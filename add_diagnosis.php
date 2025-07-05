@@ -93,8 +93,9 @@ if ($conn->connect_error) {
 // Přidání nové diagnózy
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_diagnosis'])) {
     $newDiagnosis = $conn->real_escape_string($_POST['new_diagnosis']);
-    $stmt = $conn->prepare("INSERT INTO diagnoses (name) VALUES (?)");
-    $stmt->bind_param("s", $newDiagnosis);
+    $user_id = $_SESSION['user_id'] ?? null;
+    $stmt = $conn->prepare("INSERT INTO diagnoses (name, updated_by) VALUES (?, ?)");
+    $stmt->bind_param("si", $newDiagnosis, $user_id);
 
     if ($stmt->execute()) {
         header("Location: add_diagnosis.php");
@@ -109,8 +110,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_diagnosis'])) {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_diagnosis_id'])) {
     $diagnosisId = $_POST['update_diagnosis_id'];
     $updatedDiagnosis = $conn->real_escape_string($_POST['updated_diagnosis']);
-    $stmt = $conn->prepare("UPDATE diagnoses SET name = ? WHERE id = ?");
-    $stmt->bind_param("si", $updatedDiagnosis, $diagnosisId);
+    $user_id = $_SESSION['user_id'] ?? null;
+    $stmt = $conn->prepare("UPDATE diagnoses SET name = ?, updated_by = ? WHERE id = ?");
+    $stmt->bind_param("sii", $updatedDiagnosis, $user_id, $diagnosisId);
 
     if ($stmt->execute()) {
         header("Location: add_diagnosis.php");
@@ -134,7 +136,7 @@ if (isset($_GET['delete_diagnosis_id'])) {
 }
 
 // Načtení seznamu diagnóz
-$diagnosesSql = "SELECT * FROM diagnoses ORDER BY name ASC";
+$diagnosesSql = "SELECT *, (SELECT username FROM users WHERE users.id = diagnoses.updated_by) AS updated_by_username FROM diagnoses ORDER BY name ASC";
 $diagnosesResult = $conn->query($diagnosesSql);
 $diagnoses = [];
 while ($row = $diagnosesResult->fetch_assoc()) {
@@ -836,6 +838,7 @@ $conn->close();
                         <th onclick="sortTable(0)"><i class="fas fa-hashtag"></i> ID</th>
                         <th onclick="sortTable(1)"><i class="fas fa-stethoscope"></i> Název diagnózy</th>
                         <th><i class="fas fa-cogs"></i> Akce</th>
+                        <th><i class="fas fa-user-edit"></i> Přidal</th>
                     </tr>
                 </thead>
                 <tbody>
@@ -853,6 +856,13 @@ $conn->close();
                                onclick="return confirm('Opravdu chcete odstranit tuto diagnózu?')">
                                 <i class="fas fa-trash"></i> Odstranit
                             </a>
+                        </td>
+                        <td>
+                            <?php if ($diagnosis['updated_by_username']) {
+                                echo htmlspecialchars($diagnosis['updated_by_username']);
+                            } else {
+                                echo '<span style="color:#aaa;">-</span>';
+                            } ?>
                         </td>
                     </tr>
                     <?php endforeach; ?>

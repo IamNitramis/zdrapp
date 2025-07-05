@@ -1,4 +1,38 @@
 <?php
+session_start();
+if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+    <meta charset="UTF-8">
+    <title>Přístup zamítnut</title>
+    <link rel="stylesheet" href="style.css">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; margin: 0; padding: 0; display: flex; flex-direction: column; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%); color: #333; }
+        .login-warning { max-width: 450px; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2); padding: 50px 40px; text-align: center; backdrop-filter: blur(10px); border: 1px solid rgba(255, 255, 255, 0.2); }
+        .login-warning i { font-size: 4rem; color: #e67e22; margin-bottom: 20px; }
+        .login-warning h2 { color: #2d3748; margin-bottom: 15px; font-size: 1.8rem; font-weight: 600; }
+        .login-warning p { color: #4a5568; font-size: 1.1rem; margin-bottom: 30px; line-height: 1.5; }
+        .login-warning a { display: inline-block; padding: 15px 35px; background: linear-gradient(135deg, #388e3c 0%, #43a047 100%); color: #fff; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 1.1rem; transition: all 0.3s ease; box-shadow: 0 8px 25px rgba(56, 142, 60, 0.3); }
+        .login-warning a:hover { transform: translateY(-3px); box-shadow: 0 15px 35px rgba(56, 142, 60, 0.4); }
+    </style>
+</head>
+<body>
+    <div class="login-warning">
+        <i class="fas fa-lock"></i>
+        <h2>Přístup zamítnut</h2>
+        <p>Pro zobrazení této stránky se musíte přihlásit.</p>
+        <a href="login.php">
+            <i class="fas fa-sign-in-alt"></i>
+            Přihlásit se
+        </a>
+    </div>
+</body>
+</html>
+<?php exit; endif; ?>
+
+<?php
 // Připojení k databázi
 $conn = new mysqli("localhost", "root", "", "zdrapp");
 if ($conn->connect_error) {
@@ -17,9 +51,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['save_med_all'])) {
         $medications = isset($_POST['medications']) ? trim($_POST['medications']) : '';
         $allergies = isset($_POST['allergies']) ? trim($_POST['allergies']) : '';
-        $sql = "UPDATE persons SET medications = ?, allergies = ? WHERE id = ?";
+        $user_id = $_SESSION['user_id'] ?? null;
+        $sql = "UPDATE persons SET medications = ?, allergies = ?, updated_by = ? WHERE id = ?";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("ssi", $medications, $allergies, $person_id);
+        $stmt->bind_param("ssii", $medications, $allergies, $user_id, $person_id);
         if ($stmt->execute()) {
             header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $person_id);
             exit;
@@ -30,20 +65,22 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     } elseif (isset($_POST['diagnosis_id'], $_POST['note']) && !empty($_POST['note'])) {
         $diagnosis_id = intval($_POST['diagnosis_id']);
         $note = trim($_POST['note']);
-        
-        $sql = "INSERT INTO diagnosis_notes (person_id, diagnosis_id, note, created_at) 
-                VALUES (?, ?, ?, NOW())";
+        $user_id = $_SESSION['user_id'] ?? null;
+        $sql = "INSERT INTO diagnosis_notes (person_id, diagnosis_id, note, updated_by) 
+                VALUES (?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("iis", $person_id, $diagnosis_id, $note);
-        
-        if ($stmt->execute()) {
-            header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $person_id);
-            exit;
+        if ($stmt === false) {
+            echo "<p style='color: red;'>Chyba při přípravě dotazu: " . $conn->error . "</p>";
         } else {
-            echo "Error: " . $conn->error;
+            $stmt->bind_param("iisi", $person_id, $diagnosis_id, $note, $user_id);
+            if ($stmt->execute()) {
+                header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $person_id);
+                exit;
+            } else {
+                echo "<p style='color: red;'>Chyba při ukládání poznámky: " . $stmt->error . "</p>";
+            }
+            $stmt->close();
         }
-        
-        $stmt->close();
     } else {
         echo "<p style='color: red;'>Prosím vyplňte všechna pole formuláře.</p>";
     }
@@ -60,13 +97,17 @@ if (!$person) {
     die("Person not found.");
 }
 
-// Načtení diagnóz a poznámek osoby
-$sql = "SELECT d.name AS diagnosis_name, dn.id AS note_id, dn.note, dn.created_at 
+// Načtení diagnóz a poznámek osoby včetně uživatele, který upravil
+$sql = "SELECT d.name AS diagnosis_name, dn.id AS note_id, dn.note, dn.created_at, u.username AS updated_by_username
         FROM diagnosis_notes dn
         JOIN diagnoses d ON dn.diagnosis_id = d.id
+        LEFT JOIN users u ON dn.updated_by = u.id
         WHERE dn.person_id = ?
         ORDER BY dn.created_at DESC";
 $stmt = $conn->prepare($sql);
+if ($stmt === false) {
+    die("Chyba při přípravě dotazu (diagnosis_notes): " . $conn->error);
+}
 $stmt->bind_param("i", $person_id);
 $stmt->execute();
 $diagnoses = $stmt->get_result();
@@ -648,6 +689,9 @@ $conn->close();
                             </div>
                             <div class="diagnosis-preview">
                                 <?php echo htmlspecialchars(substr($row['note'], 0, 150)) . (strlen($row['note']) > 150 ? '...' : ''); ?>
+                            </div>
+                            <div style="color:#4a5568; font-size:0.95rem; margin-bottom:8px;">
+                                <i class="fas fa-user-edit"></i> Upravil: <?php echo $row['updated_by_username'] ? htmlspecialchars($row['updated_by_username']) : '<span style=\"color:#aaa;\">-</span>'; ?>
                             </div>
                             <div class="diagnosis-actions">
                                 <form action="edit_note.php" method="GET" style="display: inline;">

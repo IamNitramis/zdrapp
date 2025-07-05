@@ -44,10 +44,28 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
     $getOrder->fetch();
     $getOrder->close();
 
-    $sql = "INSERT INTO tick_bites (person_id, x, y, created_at, bite_order) VALUES (?, ?, ?, NOW(), ?)";
+    // Získání ID uživatele pro updated_by
+    $updated_by = isset($_SESSION['user_id']) ? intval($_SESSION['user_id']) : null;
+    if (!$updated_by) {
+        http_response_code(400);
+        echo "Chyba: Uživatelské ID není k dispozici.";
+        exit;
+    }
+
+    $sql = "INSERT INTO tick_bites (person_id, x, y, created_at, bite_order, updated_by) VALUES (?, ?, ?, NOW(), ?, ?)";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("iddi", $personId, $x, $y, $nextOrder);
-    $stmt->execute();
+    if (!$stmt) {
+        http_response_code(500);
+        echo "Chyba při přípravě dotazu: " . $conn->error;
+        exit;
+    }
+    $stmt->bind_param("iddii", $personId, $x, $y, $nextOrder, $updated_by);
+    if (!$stmt->execute()) {
+        http_response_code(500);
+        echo "Chyba při ukládání bodu: " . $stmt->error;
+        $stmt->close();
+        exit;
+    }
     $stmt->close();
     echo "OK";
     exit;
@@ -659,12 +677,13 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
                             <tr>
                                 <th><i class="fas fa-hashtag"></i> Pořadí</th>
                                 <th><i class="fas fa-calendar"></i> Datum</th>
+                                <th><i class="fas fa-user-edit"></i> Přidal</th>
                                 <th><i class="fas fa-cogs"></i> Akce</th>
                             </tr>
                         </thead>
                         <tbody>
                             <tr class="empty-state" id="emptyState">
-                                <td colspan="3">
+                                <td colspan="4">
                                     <i class="fas fa-mouse-pointer"></i>
                                     <div>Zatím nebyly zaznamenány žádné body</div>
                                     <small>Klikněte na obrázek pro přidání prvního bodu</small>
@@ -704,7 +723,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
     });
 
     // Přidání bodu na obrázek
-    function addPinpoint(x, y, id = null, created_at = null, order = null) {
+    function addPinpoint(x, y, id = null, created_at = null, order = null, updated_by_name = null) {
         const pin = document.createElement('div');
         pin.className = 'pinpoint';
         pin.style.left = (x * 100) + '%';
@@ -720,26 +739,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
 
         // Přidej do tabulky
         if (id) {
-            addPointToTable(id, created_at, order);
+            addPointToTable(id, created_at, order, updated_by_name);
         }
     }
 
     // Přidání řádku do tabulky
-    function addPointToTable(id, created_at, order) {
+    function addPointToTable(id, created_at, order, updated_by_name) {
         const tbody = document.getElementById('pointsTable').querySelector('tbody');
         const emptyState = document.getElementById('emptyState');
-        
-        // Skryj prázdný stav při přidání prvního bodu
         if (emptyState) {
             emptyState.style.display = 'none';
         }
-        
         if (document.getElementById('row-point-' + id)) return;
         const tr = document.createElement('tr');
         tr.id = 'row-point-' + id;
         tr.innerHTML = `
             <td><strong>${order !== null ? order : id}</strong></td>
             <td>${created_at ? new Date(created_at).toLocaleDateString('cs-CZ') + ' ' + new Date(created_at).toLocaleTimeString('cs-CZ', {hour: '2-digit', minute: '2-digit'}) : ''}</td>
+            <td>${updated_by_name ? updated_by_name : ''}</td>
             <td>
                 <button class="btn btn-danger" onclick="removePointById(${id})">
                     <i class="fas fa-trash"></i>
@@ -841,7 +858,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
                     if (emptyState) emptyState.style.display = 'table-row';
                 } else {
                     points.forEach(point => {
-                        addPinpoint(point.x, point.y, point.id, point.created_at, point.bite_order);
+                        addPinpoint(point.x, point.y, point.id, point.created_at, point.bite_order, point.updated_by_name);
                     });
                 }
             })
