@@ -266,6 +266,94 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                     </ol>
                 </div>
             </li>
+            <li class="faq-item">
+                <div class="faq-question">Jak zaznamenat klíšťata na těle pacienta a exportovat kompletní zprávu? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="faq-answer">
+                    <ol style="margin-left: 1.2em;">
+                        <li>V detailu pacienta klikněte na tlačítko <b>Klíšťata</b>.</li>
+                        <li>Zobrazí se obrázek lidského těla. Klikněte na místo, kde se klíště nachází.</li>
+                        <li>Každé klíště se automaticky očísluje podle pořadí přidání.</li>
+                        <li>Pro odstranění klíštěte klikněte na tlačítko <b>Odebrat klíště</b> a pak na klíště, které chcete smazat.</li>
+                        <li>Po dokončení mapování přejděte do sekce <b>Stáhnout zprávy</b>.</li>
+                        <li>Vyberte pacienta a klikněte na <b>Exportovat DOCX</b> - stáhne se ZIP archiv obsahující:</li>
+                        <ul style="margin-left: 1.5em; margin-top: 0.5em;">
+                            <li><b>lekarska_zprava.docx</b> - kompletní lékařská zpráva s formátovaným textem</li>
+                            <li><b>mapa_klistat.png</b> - vizuální mapa všech klíšťat na těle</li>
+                            <li><b>info.txt</b> - informace o pacientovi a obsahu archivu</li>
+                        </ul>
+                        <li>Můžete také exportovat data všech pacientů najednou pomocí tlačítka <b>Stáhnout vše (ZIP)</b>.</li>
+                    </ol>
+                </div>
+            </li>
+            <li class="faq-item">
+                <div class="faq-question">Jak vytvořit a spravovat šablony lékařských zpráv? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="faq-answer">
+                    <ol style="margin-left: 1.2em;">
+                        <li>V horním menu klikněte na <b>Přidat lékařskou zprávu</b>.</li>
+                        <li>Vyberte diagnózu ze seznamu.</li>
+                        <li>V poli <b>Text zprávy</b> můžete použít bohatý textový editor pro formátování:</li>
+                        <ul style="margin-left: 1.5em; margin-top: 0.5em;">
+                            <li><b>Tučné písmo</b> - pro zvýraznění důležitých informací</li>
+                            <li><b>Kurzíva</b> - pro poznámky nebo citace</li>
+                            <li><b>Podtržené písmo</b> - pro zdůraznění</li>
+                            <li><b>Seznamy</b> - pro strukturované informace</li>
+                            <li><b>Tabulky</b> - pro přehledné zobrazení dat</li>
+                        </ul>
+                        <li>Uložte šablonu kliknutím na <b>Uložit zprávu</b>.</li>
+                        <li>Uložené šablony pak můžete kopírovat a upravovat pro nové pacienty.</li>
+                        <li><b>Tip:</b> Používejte placeholder text jako "{{name}}" nebo "{{birth_date}}" pro části, které se mění u každého pacienta.</li>
+                    </ol>
+                </div>
+            </li>
+            <li class="faq-item">
+                <div class="faq-question">Jak přidat novou diagnózu do systému? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="faq-answer">
+                    <ol style="margin-left: 1.2em;">
+                        <li>V horním menu klikněte na <b>Přidat diagnózu</b>.</li>
+                        <li>Vyplňte formulář pro novou diagnózu:</li>
+                        <li>Klikněte na tlačítko <b>Přidat diagnózu</b> pro uložení.</li>
+                        <li>Nová diagnóza se automaticky zobrazí v seznamu dostupných diagnóz.</li>
+                        <li>Diagnózu pak můžete použít při vytváření lékařských zpráv a záznamů.</li>
+                        <li><b>Správa diagnóz:</b> Přidané diagnózy můžete později upravit nebo smazat v seznamu diagnóz.</li>
+                    </ol>
+                </div>
+            </li>
+            <li class="faq-item">
+                <div class="faq-question">Jak funguje upozornění na chybějící lékařské zprávy? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="faq-answer">
+                    <ol style="margin-left: 1.2em;">
+                        <li>Při načtení přehledu pacientů systém automaticky zkontroluje, zda některé diagnózy/poznámky nemají vygenerovanou lékařskou zprávu.</li>
+                        <li>Pokud jsou nalezeny poznámky bez zprávy, zobrazí se v horní části stránky výrazné červené upozornění (alert).</li>
+                        <li>Upozornění obsahuje seznam pacientů a konkrétních diagnóz/poznámek, které nemají zprávu, včetně data vytvoření.</li>
+                        <li>U každé chybějící zprávy je červené tlačítko <b>Vygenerovat</b>, které vás přesměruje přímo na formulář pro vytvoření zprávy k dané poznámce.</li>
+                        <li>Jakmile je zpráva vytvořena, upozornění pro danou poznámku zmizí.</li>
+                        <li>Tento mechanismus pomáhá zdravotníkům rychle najít a doplnit chybějící dokumentaci.</li>
+                    </ol>
+                </div>
+            </li>
+            <li class="faq-item">
+                <div class="faq-question">Kdo vytvořil logo ZDRAPP? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="faq-answer">
+                    Logo aplikace ZDRAPP vytvořila <b>Julča Bónová</b>. Také poskytla konzultaci při ranných fázích vývoje aplikace. Díky za to.
+                </div>
+            </li>
+            <li class="faq-item">
+    <div class="faq-question">Jaké byly poslední důležité změny a vylepšení v aplikaci ZDRAPP? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
+    <div class="faq-answer">
+        <ul style="margin-left: 1.2em;">
+            <li>Vylepšený alert na chybějící lékařské zprávy – nyní zobrazuje konkrétní diagnózy a data, umožňuje rychlé vygenerování zprávy tlačítkem.</li>
+            <li>Možnost formátovaného textu v lékařských zprávách díky editoru TinyMCE.</li>
+            <li>Export zpráv a dat pacientů do ZIP archivu s DOCX, obrázkem klíšťat a informacemi.</li>
+            <li>Všechny exporty jsou nyní ve formátu ZIP (i pro jednoho pacienta).</li>
+            <li>Vylepšené rozhraní a responzivní design pro lepší práci na mobilu i PC.</li>
+            <li>Opraveno ukládání prázdných hodnot alergií a medikace jako NULL při importu CSV.</li>
+            <li>Diagnózy a poznámky mají lepší přehlednost a zarovnání v detailu pacienta.</li>
+            <li>Vylepšené chybové hlášky a ladění SQL dotazů.</li>
+            <li>Přidána nová sekce FAQ a rozšířeny odpovědi na nejčastější dotazy.</li>
+        </ul>
+        <div style="margin-top:8px;font-size:0.97em;color:#388e3c;">Pokud chcete vidět další novinky nebo máte návrh na vylepšení, napište správci systému.</div>
+    </div>
+</li>
         </ul>
     </div>
 </body>

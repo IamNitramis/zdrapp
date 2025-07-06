@@ -135,6 +135,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
                     $medications = $conn->real_escape_string(trim($fields[4]));
                     $allergies = $conn->real_escape_string(trim($fields[5]));
 
+                    // Pokud je prázdné, nastav na NULL
+                    $medications_sql = ($medications === '') ? 'NULL' : "'$medications'";
+                    $allergies_sql = ($allergies === '') ? 'NULL' : "'$allergies'";
+
                     // Validace dat
                     if (!empty($firstName) && !empty($surname) && !empty($dob) && !empty($idNumber)) {
                         // Kontrola, zda osoba již neexistuje
@@ -144,7 +148,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
                         if ($check_result->num_rows == 0) {
                             // Vložení dat do tabulky
                             $sql = "INSERT INTO persons (first_name, surname, birth_date, ssn, medications, allergies) 
-                                   VALUES ('$firstName', '$surname', '$dob', '$idNumber', '$medications', '$allergies')";
+                                   VALUES ('$firstName', '$surname', '$dob', '$idNumber', $medications_sql, $allergies_sql)";
                             if ($conn->query($sql)) {
                                 $inserted_count++;
                             }

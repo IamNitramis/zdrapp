@@ -330,6 +330,9 @@ $conn->close();
             transition: all 0.3s ease;
             position: relative;
             overflow: hidden;
+            display: flex;
+            flex-direction: column;
+            align-items: stretch;
         }
 
         .diagnosis-card::before {
@@ -353,6 +356,7 @@ $conn->close();
             justify-content: space-between;
             align-items: flex-start;
             margin-bottom: 15px;
+            width: 100%;
         }
 
         .diagnosis-name {
@@ -360,6 +364,10 @@ $conn->close();
             font-weight: 600;
             color: #2d3748;
             margin: 0;
+            flex: 1;
+            display: flex;
+            align-items: center;
+            gap: 8px;
         }
 
         .diagnosis-date {
@@ -369,6 +377,10 @@ $conn->close();
             padding: 5px 10px;
             border-radius: 20px;
             border: 1px solid #c8e6c9;
+            white-space: nowrap;
+            display: flex;
+            align-items: center;
+            gap: 5px;
         }
 
         .diagnosis-preview {
@@ -380,12 +392,27 @@ $conn->close();
             padding: 15px;
             border-radius: 8px;
             border: 1px solid #c8e6c9;
+            width: 100%;
+            box-sizing: border-box;
+            text-align: left;
+        }
+
+        .diagnosis-user-info {
+            color: #4a5568;
+            font-size: 0.95rem;
+            margin-bottom: 15px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            width: 100%;
         }
 
         .diagnosis-actions {
             display: flex;
             gap: 10px;
             justify-content: flex-end;
+            width: 100%;
+            margin-top: auto;
         }
 
         .btn {
@@ -404,6 +431,7 @@ $conn->close();
 
         .btn-primary {
             background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
+            margin-left: 85px;
             color: white;
         }
 

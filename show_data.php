@@ -769,23 +769,43 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
 
         // Kontrola poznámek bez vygenerované zprávy
         $sql_missing_reports = "
-            SELECT DISTINCT p.id, p.first_name, p.surname, COUNT(n.id) as note_count
+            SELECT p.id AS person_id, p.first_name, p.surname, n.id AS note_id, n.note, n.diagnosis_id, d.name AS diagnosis_text, n.created_at
             FROM persons p
             INNER JOIN diagnosis_notes n ON p.id = n.person_id
+            LEFT JOIN diagnoses d ON n.diagnosis_id = d.id
             LEFT JOIN medical_reports r ON n.id = r.diagnosis_note_id
             WHERE r.diagnosis_note_id IS NULL
-            GROUP BY p.id, p.first_name, p.surname
-            ORDER BY p.surname, p.first_name
+            ORDER BY p.surname, p.first_name, n.created_at
         ";
-        
+
         $result_missing = $conn->query($sql_missing_reports);
         $patients_without_reports = [];
         $total_notes_without_reports = 0;
-        
-        if ($result_missing->num_rows > 0) {
+
+        if ($result_missing === false) {
+            echo '<div class="alert" style="background: #ffebee; color: #b71c1c; border-left: 5px solid #b71c1c;">';
+            echo '<b>Chyba SQL při kontrole chybějících zpráv:</b><br>';
+            echo htmlspecialchars($conn->error);
+            echo '<br><small>Dotaz: ' . htmlspecialchars($sql_missing_reports) . '</small>';
+            echo '</div>';
+        } elseif ($result_missing->num_rows > 0) {
             while ($row = $result_missing->fetch_assoc()) {
-                $patients_without_reports[] = $row;
-                $total_notes_without_reports += $row['note_count'];
+                $pid = $row['person_id'];
+                if (!isset($patients_without_reports[$pid])) {
+                    $patients_without_reports[$pid] = [
+                        'first_name' => $row['first_name'],
+                        'surname' => $row['surname'],
+                        'notes' => []
+                    ];
+                }
+                $patients_without_reports[$pid]['notes'][] = [
+                    'note_id' => $row['note_id'],
+                    'note_text' => $row['note'],
+                    'diagnosis' => $row['diagnosis_text'],
+                    'diagnosis_id' => $row['diagnosis_id'], // <-- add this line to ensure diagnosis_id is available
+                    'created_at' => $row['created_at']
+                ];
+                $total_notes_without_reports++;
             }
         }
         ?>
@@ -801,11 +821,21 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                     <strong><?php echo $total_notes_without_reports; ?></strong> poznámek u <strong><?php echo count($patients_without_reports); ?></strong> pacientů nemá vygenerovanou zprávu.
                 </div>
                 <div>Pacienti s chybějícími zprávami:</div>
-                <div class="alert-patients">
+                <div class="alert-patients" style="flex-direction:column;gap:18px;align-items:stretch;">
                     <?php foreach ($patients_without_reports as $patient): ?>
-                        <div class="patient-tag">
-                            <?php echo htmlspecialchars($patient['first_name'] . ' ' . $patient['surname']); ?>
-                            (<?php echo $patient['note_count']; ?> poznámek)
+                        <div class="patient-tag" style="background:rgba(255,255,255,0.15);padding:12px 18px;">
+                            <strong><?php echo htmlspecialchars($patient['first_name'] . ' ' . $patient['surname']); ?></strong>
+                            <ul style="margin:8px 0 0 0;padding-left:18px;">
+                                <?php foreach ($patient['notes'] as $note): ?>
+                                    <li style="margin-bottom:6px;display:flex;align-items:center;gap:8px;">
+                                        <span style="font-size:0.97em;"><b>Diagnóza:</b> <?php echo htmlspecialchars(mb_strimwidth(strip_tags($note['diagnosis']), 0, 80, '…')); ?></span>
+                                        <span style="font-size:0.92em;color:#ffe082;"><i class="far fa-calendar-alt"></i> <?php echo htmlspecialchars(date('d.m.Y H:i', strtotime($note['created_at']))); ?></span>
+                                        <a href="report.php?note_id=<?php echo urlencode($note['note_id']); ?>&person_id=<?php echo urlencode($patient['person_id'] ?? $pid); ?>&diagnosis_id=<?php echo urlencode($note['diagnosis_id'] ?? ''); ?>&diagnosis_note_id=<?php echo urlencode($note['note_id']); ?>" title="Vygenerovat zprávu" style="display:inline-flex;align-items:center;justify-content:center;margin-left:4px;padding:2px 14px;font-size:1em;border-radius:6px;background:linear-gradient(135deg,#ff3d00 0%,#d32f2f 100%);color:#fff;border:2px solid #fff;text-decoration:none;box-shadow:0 2px 8px rgba(255,87,34,0.18);font-weight:700;letter-spacing:0.5px;transition:background 0.2s,color 0.2s,box-shadow 0.2s;min-width:22px;min-height:28px;line-height:1.2;box-shadow:0 2px 8px rgba(255,87,34,0.18);">
+                                            <i class="fas fa-file-medical-alt" style="margin-right:6px;color:#fff;"></i>Vygenerovat
+                                        </a>
+                                    </li>
+                                <?php endforeach; ?>
+                            </ul>
                         </div>
                     <?php endforeach; ?>
                 </div>
