@@ -639,6 +639,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
                     <i class="fas fa-chart-bar"></i>
                     Statistiky
                 </a>
+                <a href="faq.php">
+                    <i class="fas fa-question-circle"></i>
+                    FAQ
+                </a>
                 <a href="logout.php">
                     <i class="fas fa-sign-out-alt"></i>
                     Logout

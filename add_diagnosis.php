@@ -786,6 +786,10 @@ $conn->close();
                     <i class="fas fa-chart-bar"></i>
                     Statistiky
                 </a>
+                <a href="faq.php">
+                    <i class="fas fa-question-circle"></i>
+                    FAQ
+                </a>
                 <a href="logout.php">
                     <i class="fas fa-sign-out-alt"></i>
                     Logout

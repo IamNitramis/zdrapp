@@ -537,7 +537,7 @@ $conn->close();
             align-items: center;
             gap: 10px;
             padding: 15px;
-            background: #e8f5e9;
+            background:rgb(255, 255, 255);
             border-radius: 10px;
             border-left: 4px solid #388e3c;
         }

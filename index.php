@@ -422,6 +422,14 @@
                     <i class="fas fa-download"></i>
                     Stáhnout zprávy
                 </a>
+                <a href="stats.php">
+                    <i class="fas fa-chart-bar"></i>
+                    Statistiky
+                </a>
+                <a href="faq.php">
+                    <i class="fas fa-question-circle"></i>
+                    FAQ
+                </a>
                 <a href="login.php">
                     <i class="fas fa-sign-in-alt"></i>
                     Login
