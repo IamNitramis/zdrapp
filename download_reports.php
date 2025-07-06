@@ -418,7 +418,7 @@ if (isset($_GET['download_all']) && $_GET['download_all'] == '1') {
 if (isset($_GET['person_id']) && is_numeric($_GET['person_id'])) {
     $person_id = intval($_GET['person_id']);
     
-    // Generuj obsah
+    // Generuj obsah TXT (pro info a případné legacy použití)
     $reportData = generateReportContent($person_id, $conn);
     if (!$reportData) {
         die("Pacient nebyl nalezen.");
@@ -433,6 +433,16 @@ if (isset($_GET['person_id']) && is_numeric($_GET['person_id'])) {
         $hasImage = generateKlisteImage($person_id, $conn, $imgPath);
     }
 
+    // Vytvoř DOCX report
+    $phpWord = new PhpWord();
+    $docxData = generateDocxReport($person_id, $conn, $phpWord);
+    if (!$docxData) {
+        die("Pacient nebyl nalezen.");
+    }
+    $docxPath = sys_get_temp_dir() . "/report_" . $person_id . ".docx";
+    $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
+    $objWriter->save($docxPath);
+
     // Vytvoř ZIP
     $zip = new ZipArchive();
     $tmpFile = tempnam(sys_get_temp_dir(), 'report_zip_');
@@ -440,15 +450,16 @@ if (isset($_GET['person_id']) && is_numeric($_GET['person_id'])) {
     if ($zip->open($tmpFile, ZipArchive::CREATE) !== TRUE) {
         die("Cannot create ZIP file");
     }
-    
-    // Přidej soubory do složky pacienta
-    $zip->addFromString($folderName . "lekarske_zpravy.txt", $reportData['content']);
-    
+
+    // Přidej DOCX do ZIPu
+    $zip->addFile($docxPath, $folderName . "lekarska_zprava.docx");
+
+    // Přidej obrázek pokud existuje
     if ($hasImage && file_exists($imgPath)) {
         $zip->addFile($imgPath, $folderName . "mapa_klistat.png");
     }
-    
-    // Přidej informační soubor
+
+    // Přidej info.txt
     $infoContent = "INFORMACE O PACIENTOVI\n";
     $infoContent .= str_repeat("=", 30) . "\n";
     $infoContent .= "Jméno: " . $reportData['person']['first_name'] . "\n";
@@ -457,20 +468,18 @@ if (isset($_GET['person_id']) && is_numeric($_GET['person_id'])) {
     $infoContent .= "Datum exportu: " . date('Y-m-d H:i:s') . "\n";
     $infoContent .= str_repeat("=", 30) . "\n\n";
     $infoContent .= "OBSAH SLOŽKY:\n";
-    $infoContent .= "- lekarske_zpravy.txt - kompletní lékařské zprávy a seznam klíšťat\n";
+    $infoContent .= "- lekarska_zprava.docx - kompletní lékařská zpráva\n";
     if ($hasImage) {
         $infoContent .= "- mapa_klistat.png - vizuální mapa klíšťat na těle\n";
     }
     $infoContent .= "- info.txt - tento informační soubor\n";
-    
     $zip->addFromString($folderName . "info.txt", $infoContent);
-    
+
     $zip->close();
 
-    // Smazání dočasného obrázku
-    if ($hasImage && file_exists($imgPath)) {
-        unlink($imgPath);
-    }
+    // Smazání dočasných souborů
+    if (file_exists($docxPath)) unlink($docxPath);
+    if ($hasImage && file_exists($imgPath)) unlink($imgPath);
 
     header('Content-Type: application/zip');
     header('Content-Disposition: attachment; filename="report_' . $reportData['person']['surname'] . '_' . $reportData['person']['first_name'] . '_' . date('Y-m-d') . '.zip"');
@@ -487,25 +496,7 @@ if (isset($_GET['person_id']) && is_numeric($_GET['person_id'])) {
     exit;
 }
 
-// Export do DOCX
-if (isset($_GET['export_docx']) && isset($_GET['person_id']) && is_numeric($_GET['person_id'])) {
-    $person_id = intval($_GET['person_id']);
-    
-    $phpWord = new PhpWord();
-    $reportData = generateDocxReport($person_id, $conn, $phpWord);
-    
-    if (!$reportData) {
-        die("Pacient nebyl nalezen.");
-    }
 
-    header('Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document');
-    header('Content-Disposition: attachment;filename="report_' . $reportData['person']['surname'] . '_' . $reportData['person']['first_name'] . '.docx"');
-    header('Cache-Control: max-age=0');
-    
-    $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
-    $objWriter->save('php://output');
-    exit;
-}
 
 // Statistiky
 $total_patients = count($patients);

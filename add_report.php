@@ -110,6 +110,7 @@ $conn->close();
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="assets/css/all.min.css">
+    <script src="assets/tinymce/js/tinymce/tinymce.min.js"></script>
 
     <style>
         body {
