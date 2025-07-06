@@ -473,7 +473,6 @@ $conn->close();
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            background: linear-gradient(135deg, #f1f8e9 0%, #c8e6c9 100%);
             min-height: calc(100vh - 80px);
         }
 
@@ -744,6 +743,18 @@ $conn->close();
             animation: fadeInUp 0.6s ease forwards;
         }
     </style>
+    <script src="assets/tinymce/js/tinymce/tinymce.min.js"></script>
+<script>
+  tinymce.init({
+    selector: '#updated_report',
+    plugins: 'lists table',
+    toolbar: 'undo redo | bold italic underline | bullist numlist | table | fontsize',
+    menubar: false,
+    fontsize_formats: '8pt 10pt 12pt 14pt 18pt 24pt 36pt 48pt',
+    branding: false,
+    height: 500
+  });
+</script>
 </head>
 
 <body>
@@ -889,4 +900,4 @@ $conn->close();
         <?php endif; ?>
     </script>
 </body>
-</html> 
+</html>

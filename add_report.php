@@ -591,7 +591,7 @@ $conn->close();
                 Konfigurace šablony
             </h2>
             
-            <form action="" method="POST">
+            <form id="templateForm" action="" method="POST">
                 <div class="form-group">
                     <label for="diagnosis_id" class="form-label">
                         <i class="fas fa-list"></i>
@@ -652,25 +652,52 @@ $conn->close();
         </div>
     </div>
 
+    <!-- VLOŽTE TENTO KOMPLETNÍ BLOK PŘED </body> -->
     <script>
-        function toggleMenu() {
-            const navbar = document.getElementById('navbar');
-            navbar.classList.toggle('active');
-        }
+        // Inicializace TinyMCE editoru
+        tinymce.init({
+            selector: '#template_text',
+            plugins: 'lists table',
+            toolbar: 'undo redo | bold italic underline | bullist numlist | table',
+            menubar: false,
+            branding: false,
+            height: 500
+        });
 
-        // Close mobile menu when clicking outside
-        document.addEventListener('click', function(event) {
-            const navbar = document.getElementById('navbar');
-            const menuIcon = document.querySelector('.menu-icon');
+        let isSubmitting = false;
+
+        // Zpracování odeslání formuláře
+        document.getElementById('templateForm').addEventListener('submit', function(e) {
+            isSubmitting = true;
             
-            if (!navbar.contains(event.target) && !menuIcon.contains(event.target)) {
-                navbar.classList.remove('active');
+            // KLÍČOVÉ: Uloží obsah z editoru do skrytého <textarea>
+            tinymce.triggerSave(); 
+            
+            const diagnosisId = document.getElementById('diagnosis_id').value;
+            const templateText = document.getElementById('template_text').value.trim();
+            
+            if (!diagnosisId) {
+                e.preventDefault(); // Zastaví odeslání
+                alert('Prosím vyberte diagnózu.');
+                isSubmitting = false;
+                return;
+            }
+            
+            if (!templateText) {
+                e.preventDefault(); // Zastaví odeslání
+                alert('Prosím zadejte text šablony.');
+                isSubmitting = false;
+                return;
             }
         });
 
-        // Po změně diagnózy načti stránku s vybranou diagnózou
+        // Načtení šablony po změně diagnózy
         function loadTemplateForDiagnosis(sel) {
-            var id = sel.value;
+            if (isSubmitting) {
+                return; // Zabrání přesměrování během odesílání
+            }
+            
+            const id = sel.value;
             if (id) {
                 window.location.href = "?diagnosis_id=" + id;
             } else {
@@ -678,47 +705,23 @@ $conn->close();
             }
         }
 
-        // Nápověda toggle
+        // Zobrazení nápovědy
         document.getElementById('helpBtn').onclick = function() {
-            var box = document.getElementById('helpBox');
-            box.classList.toggle('active');
+            document.getElementById('helpBox').classList.toggle('active');
         };
 
-        // Auto-resize textarea
-        const textarea = document.getElementById('template_text');
-        textarea.addEventListener('input', function() {
-            this.style.height = 'auto';
-            this.style.height = Math.max(500, this.scrollHeight) + 'px';
-        });
+        // Mobilní menu
+        function toggleMenu() {
+            const navbar = document.getElementById('navbar');
+            navbar.classList.toggle('active');
+        }
 
-        // Smooth scrolling
-        document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-            anchor.addEventListener('click', function (e) {
-                e.preventDefault();
-                const target = document.querySelector(this.getAttribute('href'));
-                if (target) {
-                    target.scrollIntoView({
-                        behavior: 'smooth'
-                    });
-                }
-            });
-        });
-
-        // Form validation
-        document.querySelector('form').addEventListener('submit', function(e) {
-            const diagnosisId = document.getElementById('diagnosis_id').value;
-            const templateText = document.getElementById('template_text').value.trim();
+        document.addEventListener('click', function(event) {
+            const navbar = document.getElementById('navbar');
+            const menuIcon = document.querySelector('.menu-icon');
             
-            if (!diagnosisId) {
-                e.preventDefault();
-                alert('Prosím vyberte diagnózu.');
-                return;
-            }
-            
-            if (!templateText) {
-                e.preventDefault();
-                alert('Prosím zadejte text šablony.');
-                return;
+            if (menuIcon && !navbar.contains(event.target) && !menuIcon.contains(event.target)) {
+                navbar.classList.remove('active');
             }
         });
     </script>

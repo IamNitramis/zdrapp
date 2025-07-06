@@ -423,12 +423,24 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
             transition: background-color 0.3s ease;
         }
 
+        .points-table th:first-child,
+        .points-table td:first-child {
+            width: 60px;
+            min-width: 50px;
+            max-width: 80px;
+            text-align: center;
+        }
+
         .points-table tr:hover td {
             background-color: #f1f8e9;
         }
 
         .points-table tr:last-child td {
             border-bottom: none;
+        }
+
+        .btn, .btn-danger, .btn-primary {
+            white-space: nowrap;
         }
 
         .btn {

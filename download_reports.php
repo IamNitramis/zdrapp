@@ -1,6 +1,8 @@
 <?php
 session_start(); // Spustí session, aby bylo možné kontrolovat přihlášení
-
+require_once __DIR__ . '/vendor/autoload.php';
+    use PhpOffice\PhpWord\PhpWord;
+    use PhpOffice\PhpWord\IOFactory;
 // Kontrola, zda je uživatel přihlášen
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
 <!DOCTYPE html>
@@ -223,10 +225,111 @@ function generateReportContent($person_id, $conn) {
     $content .= "Vygenerováno: " . date('Y-m-d H:i:s') . "\n";
     $content .= str_repeat("=", 60) . "\n";
 
-    return [
+    return [ 
         'content' => $content,
         'person' => $person,
         'has_bites' => $hasBites
+    ];
+}
+
+// Nejdřív přidejte novou funkci pro generování DOCX:
+function generateDocxReport($person_id, $conn, $phpWord) {
+    // Získání dat pacienta
+    $personSql = "SELECT first_name, surname FROM persons WHERE id = ?";
+    $personStmt = $conn->prepare($personSql);
+    $personStmt->bind_param("i", $person_id);
+    $personStmt->execute();
+    $personResult = $personStmt->get_result();
+    $person = $personResult->fetch_assoc();
+    $personStmt->close();
+    
+    if (!$person) return null;
+
+    // Vytvoření nové sekce
+    $section = $phpWord->addSection();
+    
+    // Nadpis
+    $section->addText(
+        'LÉKAŘSKÉ ZPRÁVY - ' . strtoupper($person['first_name'] . ' ' . $person['surname']),
+        ['bold' => true, 'size' => 16]
+    );
+    $section->addTextBreak();
+
+    // Získání lékařských zpráv
+    $sql = "SELECT mr.created_at, mr.report_text, d.name AS diagnosis 
+            FROM medical_reports mr
+            LEFT JOIN diagnoses d ON mr.diagnosis_id = d.id
+            WHERE mr.person_id = ?
+            ORDER BY mr.created_at ASC";
+    
+    $stmt = $conn->prepare($sql);
+    $stmt->bind_param("i", $person_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+
+    // Přidání zpráv
+    $section->addText('LÉKAŘSKÉ ZPRÁVY:', ['bold' => true, 'size' => 14]);
+    $section->addTextBreak();
+
+    while ($row = $result->fetch_assoc()) {
+        $section->addText('Datum: ' . $row['created_at'], ['bold' => true]);
+        $section->addText('Diagnóza: ' . ($row['diagnosis'] ?? 'Nezadána'), ['bold' => true]);
+        $section->addTextBreak();
+        
+        // Přidání textu zprávy (může obsahovat HTML)
+        \PhpOffice\PhpWord\Shared\Html::addHtml($section, $row['report_text']);
+        $section->addTextBreak();
+    }
+    $stmt->close();
+
+    // Přidání obrázku klíšťat
+    $section->addPageBreak();
+    $section->addText('MAPA KLÍŠŤAT:', ['bold' => true, 'size' => 14]);
+    $section->addTextBreak();
+
+    // Generování a přidání obrázku
+    $imgPath = sys_get_temp_dir() . "/kliste_" . $person_id . ".png";
+    if (generateKlisteImage($person_id, $conn, $imgPath)) {
+        $section->addImage($imgPath, ['width' => 400]);
+        register_shutdown_function(function() use ($imgPath) {
+            if (file_exists($imgPath)) unlink($imgPath);
+        });
+    } else {
+        $section->addText('Žádná klíšťata nebyla zaznamenána.');
+    }
+
+    // Přidání tabulky klíšťat
+    $section->addTextBreak(2);
+    $section->addText('TABULKA KLÍŠŤAT:', ['bold' => true, 'size' => 14]);
+    $section->addTextBreak();
+
+    $klisteSql = "SELECT bite_order, created_at, x, y FROM tick_bites WHERE person_id = ? ORDER BY bite_order ASC";
+    $klisteStmt = $conn->prepare($klisteSql);
+    $klisteStmt->bind_param("i", $person_id);
+    $klisteStmt->execute();
+    $klisteResult = $klisteStmt->get_result();
+
+    if ($klisteResult->num_rows > 0) {
+        $table = $section->addTable(['borderSize' => 1]);
+        $table->addRow();
+        $table->addCell(1500)->addText('Pořadí', ['bold' => true]);
+        $table->addCell(2500)->addText('Datum přidání', ['bold' => true]);
+        $table->addCell(1500)->addText('X pozice', ['bold' => true]);
+        $table->addCell(1500)->addText('Y pozice', ['bold' => true]);
+
+        while ($k = $klisteResult->fetch_assoc()) {
+            $table->addRow();
+            $table->addCell(1500)->addText($k['bite_order']);
+            $table->addCell(2500)->addText($k['created_at']);
+            $table->addCell(1500)->addText(number_format($k['x'], 3));
+            $table->addCell(1500)->addText(number_format($k['y'], 3));
+        }
+    }
+    $klisteStmt->close();
+
+    return [
+        'person' => $person,
+        'section' => $section
     ];
 }
 
@@ -242,49 +345,33 @@ if (isset($_GET['download_all']) && $_GET['download_all'] == '1') {
     $processedCount = 0;
     foreach ($patients as $p) {
         $person_id = $p['id'];
-        
-        // Generuj obsah
-        $reportData = generateReportContent($person_id, $conn);
-        if (!$reportData) continue;
-        
-        // Vytvoř složku pro pacienta (název složky = příjmení_jméno)
         $folderName = $p['surname'] . "_" . $p['first_name'] . "/";
         
-        // TXT soubor do složky pacienta
-        $filename = $folderName . "lekarske_zpravy.txt";
-        $zip->addFromString($filename, $reportData['content']);
-
-        // Přidej obrázek s klíšťaty do složky pacienta (pokud existují klíšťata)
-        if ($reportData['has_bites']) {
-            $imgPath = sys_get_temp_dir() . "/kliste_" . $p['id'] . ".png";
-            if (generateKlisteImage($person_id, $conn, $imgPath)) {
-                $imgName = $folderName . "mapa_klistat.png";
-                $zip->addFile($imgPath, $imgName);
-                // Smazání bude provedeno až po zavření ZIP
-                register_shutdown_function(function() use ($imgPath) {
-                    if (file_exists($imgPath)) {
-                        unlink($imgPath);
-                    }
-                });
-            }
+        // Vytvoř DOCX pro pacienta
+        $phpWord = new PhpWord();
+        $reportData = generateDocxReport($person_id, $conn, $phpWord);
+        if (!$reportData) continue;
+        
+        // Ulož DOCX
+        $docxPath = sys_get_temp_dir() . "/report_" . $p['id'] . ".docx";
+        $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
+        $objWriter->save($docxPath);
+        
+        // Přidej DOCX do ZIPu
+        $zip->addFile($docxPath, $folderName . "lekarska_zprava.docx");
+        
+        // Generuj a přidej obrázek klíšťat
+        $imgPath = sys_get_temp_dir() . "/kliste_" . $person_id . ".png";
+        $hasImage = generateKlisteImage($person_id, $conn, $imgPath);
+        if ($hasImage && file_exists($imgPath)) {
+            $zip->addFile($imgPath, $folderName . "mapa_klistat.png");
         }
         
-        // Přidej informační soubor do složky pacienta
-        $infoContent = "INFORMACE O PACIENTOVI\n";
-        $infoContent .= str_repeat("=", 30) . "\n";
-        $infoContent .= "Jméno: " . $p['first_name'] . "\n";
-        $infoContent .= "Příjmení: " . $p['surname'] . "\n";
-        $infoContent .= "ID pacienta: " . $p['id'] . "\n";
-        $infoContent .= "Datum exportu: " . date('Y-m-d H:i:s') . "\n";
-        $infoContent .= str_repeat("=", 30) . "\n\n";
-        $infoContent .= "OBSAH SLOŽKY:\n";
-        $infoContent .= "- lekarske_zpravy.txt - kompletní lékařské zprávy a seznam klíšťat\n";
-        if ($reportData['has_bites']) {
-            $infoContent .= "- mapa_klistat.png - vizuální mapa klíšťat na těle\n";
-        }
-        $infoContent .= "- info.txt - tento informační soubor\n";
-        
-        $zip->addFromString($folderName . "info.txt", $infoContent);
+        // Registruj smazání dočasných souborů
+        register_shutdown_function(function() use ($docxPath, $imgPath) {
+            if (file_exists($docxPath)) unlink($docxPath);
+            if (file_exists($imgPath)) unlink($imgPath);
+        });
         
         $processedCount++;
     }
@@ -397,6 +484,26 @@ if (isset($_GET['person_id']) && is_numeric($_GET['person_id'])) {
     flush();
     readfile($tmpFile);
     unlink($tmpFile);
+    exit;
+}
+
+// Export do DOCX
+if (isset($_GET['export_docx']) && isset($_GET['person_id']) && is_numeric($_GET['person_id'])) {
+    $person_id = intval($_GET['person_id']);
+    
+    $phpWord = new PhpWord();
+    $reportData = generateDocxReport($person_id, $conn, $phpWord);
+    
+    if (!$reportData) {
+        die("Pacient nebyl nalezen.");
+    }
+
+    header('Content-Type: application/vnd.openxmlformats-officedocument.wordprocessingml.document');
+    header('Content-Disposition: attachment;filename="report_' . $reportData['person']['surname'] . '_' . $reportData['person']['first_name'] . '.docx"');
+    header('Cache-Control: max-age=0');
+    
+    $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
+    $objWriter->save('php://output');
     exit;
 }
 
@@ -817,8 +924,8 @@ $conn->close();
                         <?php endforeach; ?>
                     </select>
                 </div>
-                <button type="submit" class="btn btn-secondary">
-                    <i class="fas fa-user-download"></i> Stáhnout ZIP
+                <button type="submit" class="btn btn-secondary" name="export_docx" value="1">
+                    <i class="fas fa-file-word"></i> Exportovat DOCX
                 </button>
             </form>
         </div>
