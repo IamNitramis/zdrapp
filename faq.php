@@ -350,6 +350,18 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                 <div class="faq-question">Jak přidám nového pacienta? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
                 <div class="faq-answer">Nového pacienta lze přidat pouze přes <b>Nahrát data</b></div>
             </li>
+            <li class="faq-item">
+                <div class="faq-question">Jaké jsou osvědčené postupy (best practices) pro tvorbu šablon lékařských zpráv? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="faq-answer">
+                    <ol style="margin-left: 1.2em;">
+                        <li>Používejte <b>placeholdry</b> (zástupné texty) pro proměnné části zprávy, např. <code>{{name}}</code>, <code>{{birth_date}}</code>, <code>{{diagnosis}}</code> apod. Tyto hodnoty budou automaticky nahrazeny konkrétními údaji pacienta.</li>
+                        <li>Pro víceuživatelská prostředí (kdy zprávy vytváří více zdravotníků) využijte nově podporovaný placeholder <code>{{author}}</code>. Ten bude vygenerován podle přihlášeného uživatele, který zprávu vytvořil. Díky tomu je vždy jasné, kdo zprávu vystavil.</li>
+                        <li>Využívejte možnosti formátování (tučné písmo, seznamy, tabulky) pro přehlednost a srozumitelnost zprávy. Všechno toto formátování bude přeneseno do výsledné zprávy ve formátu docx.</li>
+                        <li>Před uložením šablony si ji vyzkoušejte na testovacím pacientovi, abyste ověřili správné nahrazení všech placeholderů.</li>
+                    </ol>
+                    <div style="margin-top: 0.7em; color: #388e3c; font-size: 0.98em;"><b>Tip:</b> Správné použití <code>{{author}}</code> je důležité zejména v týmech, kde zprávy vystavuje více zdravotníků. Umožňuje zpětně dohledat autora každé zprávy.</div>
+                </div>
+            </li>
         </ul>
     </div>
 </body>

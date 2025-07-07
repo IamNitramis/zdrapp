@@ -188,24 +188,40 @@ function generateReportContent($person_id, $conn) {
     }
 
     // Tabulka klíšťat
-    $klisteSql = "SELECT bite_order, created_at, x, y FROM tick_bites WHERE person_id = ? ORDER BY bite_order ASC";
+    $klisteSql = "SELECT tb.bite_order, tb.created_at, tb.x, tb.y, u.firstname, u.lastname 
+                  FROM tick_bites tb
+                  LEFT JOIN users u ON tb.updated_by = u.id
+                  WHERE tb.person_id = ? 
+                  ORDER BY tb.bite_order ASC";
     $klisteStmt = $conn->prepare($klisteSql);
+    if ($klisteStmt === false) {
+        // Fallback bez JOIN pokud sloupec neexistuje
+        $klisteSql = "SELECT bite_order, created_at, x, y FROM tick_bites WHERE person_id = ? ORDER BY bite_order ASC";
+        $klisteStmt = $conn->prepare($klisteSql);
+    }
     $klisteStmt->bind_param("i", $person_id);
     $klisteStmt->execute();
     $klisteResult = $klisteStmt->get_result();
 
     $content .= "\nTABULKA KLÍŠŤAT:\n";
-    $content .= str_repeat("-", 60) . "\n";
-    $content .= sprintf("%-8s %-20s %-10s %-10s\n", "Pořadí", "Datum přidání", "X pozice", "Y pozice");
-    $content .= str_repeat("-", 60) . "\n";
+    $content .= str_repeat("-", 80) . "\n";
+    $content .= sprintf("%-8s %-20s %-10s %-10s %-20s\n", "Pořadí", "Datum přidání", "X pozice", "Y pozice", "Přidal");
+    $content .= str_repeat("-", 80) . "\n";
     
     $hasBites = false;
     while ($k = $klisteResult->fetch_assoc()) {
-        $content .= sprintf("%-8s %-20s %-10.3f %-10.3f\n", 
+        if (isset($k['firstname']) && isset($k['lastname'])) {
+            $added_by = trim($k['firstname'] . ' ' . $k['lastname']);
+            if ($added_by === '') $added_by = 'Neznámý';
+        } else {
+            $added_by = 'N/A';
+        }
+        $content .= sprintf("%-8s %-20s %-10.3f %-10.3f %-20s\n", 
             $k['bite_order'], 
             $k['created_at'], 
             $k['x'], 
-            $k['y']
+            $k['y'],
+            $added_by
         );
         $hasBites = true;
     }
@@ -214,7 +230,7 @@ function generateReportContent($person_id, $conn) {
         $content .= "Žádná klíšťata nebyla zaznamenána.\n";
     }
     
-    $content .= str_repeat("-", 60) . "\n\n";
+    $content .= str_repeat("-", 80) . "\n\n";
     $klisteStmt->close();
 
     // Statistiky
@@ -303,8 +319,17 @@ function generateDocxReport($person_id, $conn, $phpWord) {
     $section->addText('TABULKA KLÍŠŤAT:', ['bold' => true, 'size' => 14]);
     $section->addTextBreak();
 
-    $klisteSql = "SELECT bite_order, created_at, x, y FROM tick_bites WHERE person_id = ? ORDER BY bite_order ASC";
+    $klisteSql = "SELECT tb.bite_order, tb.created_at, tb.x, tb.y, u.firstname, u.lastname 
+                  FROM tick_bites tb
+                  LEFT JOIN users u ON tb.updated_by = u.id
+                  WHERE tb.person_id = ? 
+                  ORDER BY tb.bite_order ASC";
     $klisteStmt = $conn->prepare($klisteSql);
+    if ($klisteStmt === false) {
+        // Fallback bez JOIN pokud sloupec neexistuje
+        $klisteSql = "SELECT bite_order, created_at, x, y FROM tick_bites WHERE person_id = ? ORDER BY bite_order ASC";
+        $klisteStmt = $conn->prepare($klisteSql);
+    }
     $klisteStmt->bind_param("i", $person_id);
     $klisteStmt->execute();
     $klisteResult = $klisteStmt->get_result();
@@ -312,17 +337,20 @@ function generateDocxReport($person_id, $conn, $phpWord) {
     if ($klisteResult->num_rows > 0) {
         $table = $section->addTable(['borderSize' => 1]);
         $table->addRow();
-        $table->addCell(1500)->addText('Pořadí', ['bold' => true]);
-        $table->addCell(2500)->addText('Datum přidání', ['bold' => true]);
-        $table->addCell(1500)->addText('X pozice', ['bold' => true]);
-        $table->addCell(1500)->addText('Y pozice', ['bold' => true]);
+        $table->addCell(1200)->addText('Pořadí', ['bold' => true]);
+        $table->addCell(2000)->addText('Datum přidání', ['bold' => true]);
+        $table->addCell(1200)->addText('X pozice', ['bold' => true]);
+        $table->addCell(1200)->addText('Y pozice', ['bold' => true]);
+        $table->addCell(2000)->addText('Přidal', ['bold' => true]);
 
         while ($k = $klisteResult->fetch_assoc()) {
+            $username = isset($k['added_by_username']) ? ($k['added_by_username'] ? $k['added_by_username'] : 'Neznámý') : 'N/A';
             $table->addRow();
-            $table->addCell(1500)->addText($k['bite_order']);
-            $table->addCell(2500)->addText($k['created_at']);
-            $table->addCell(1500)->addText(number_format($k['x'], 3));
-            $table->addCell(1500)->addText(number_format($k['y'], 3));
+            $table->addCell(1200)->addText($k['bite_order']);
+            $table->addCell(2000)->addText($k['created_at']);
+            $table->addCell(1200)->addText(number_format($k['x'], 3));
+            $table->addCell(1200)->addText(number_format($k['y'], 3));
+            $table->addCell(2000)->addText($username);
         }
     }
     $klisteStmt->close();

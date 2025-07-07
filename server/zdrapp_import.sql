@@ -283,3 +283,8 @@ ALTER TABLE person_diagnoses ADD CONSTRAINT fk_person_diagnoses_updated_by FOREI
 ALTER TABLE templates ADD CONSTRAINT fk_templates_updated_by FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL;
 ALTER TABLE tick_bites ADD CONSTRAINT fk_tick_bites_updated_by FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL;
 -- Tabulka users nemá cizí klíč na sebe sama.
+
+-- Přidání sloupců pro jméno a příjmení do tabulky users
+ALTER TABLE users
+ADD COLUMN firstname VARCHAR(100) NOT NULL AFTER role,
+ADD COLUMN lastname VARCHAR(100) NOT NULL AFTER firstname;

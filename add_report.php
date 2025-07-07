@@ -638,11 +638,12 @@ $conn->close();
                         <ul>
                             <li><code>{{name}}</code> – Jméno a příjmení pacienta</li>
                             <li><code>{{birth_date}}</code> – Datum narození</li>
-                            <li><code>{{temperature}}</code> – Tělesná teplota</li>
-                            <li><code>{{oxygen_saturation}}</code> – Saturace kyslíku</li>
-                            <li><code>{{heart_rate}}</code> – Srdeční tep</li>
+                            <li><code>{{temperature}}</code> – Tělesná teplota (náhodně generována)</li>
+                            <li><code>{{oxygen_saturation}}</code> – Saturace kyslíkem (náhodně generováno)</li>
+                            <li><code>{{heart_rate}}</code> – Srdeční tep (náhodně generován)</li>
                             <li><code>{{diagnosis}}</code> – Název diagnózy a datum přiřazení</li>
                             <li><code>{{note}}</code> – Poznámka k diagnóze</li>
+                            <li><code>{{author}}</code> – Autor poslední změny zprávy. (doporučujeme používat na konci zprávy jako podpis)</li>
                         </ul>
                     </div>
                 </div>

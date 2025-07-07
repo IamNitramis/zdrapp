@@ -254,7 +254,7 @@ if (!isset($_GET['diagnosis_note_id']) || !is_numeric($_GET['diagnosis_note_id']
 $diagnosisNoteId = intval($_GET['diagnosis_note_id']);
 
 // Načtení poznámky podle diagnosis_note_id
-$sqlNote = "SELECT person_id, diagnosis_id, note, created_at FROM diagnosis_notes WHERE id = ?";
+$sqlNote = "SELECT person_id, diagnosis_id, note, created_at, updated_by FROM diagnosis_notes WHERE id = ?";
 $stmtNote = $conn->prepare($sqlNote);
 $stmtNote->bind_param("i", $diagnosisNoteId);
 $stmtNote->execute();
@@ -267,24 +267,41 @@ $personId = $noteRow['person_id'];
 $diagnosisId = $noteRow['diagnosis_id'];
 $noteText = $noteRow['note'];
 $assignedAt = $noteRow['created_at'];
+$updatedBy = $noteRow['updated_by'];
 $stmtNote->close();
+
+// Získání jména autora (updated_by)
+$authorName = 'Neznámý';
+if ($updatedBy) {
+    $sqlUser = "SELECT firstname, lastname FROM users WHERE id = ?";
+    $stmtUser = $conn->prepare($sqlUser);
+    $stmtUser->bind_param("i", $updatedBy);
+    $stmtUser->execute();
+    $resultUser = $stmtUser->get_result();
+    if ($resultUser->num_rows > 0) {
+        $userRow = $resultUser->fetch_assoc();
+        $authorName = $userRow['firstname'] . ' ' . $userRow['lastname'];
+    }
+    $stmtUser->close();
+}
 
 // Náhodná data
 $temperature = mt_rand(360, 370) / 10; // 36.0 - 38.0 °C
 $oxygen_saturation = mt_rand(98, 100); // 98 - 100 %
 $heart_rate = mt_rand(60, 100);        // 60 - 100 bpm
 
-// Nahrazení placeholderů skutečnými hodnotami, včetně {{note}}
+// Nahrazení placeholderů skutečnými hodnotami, včetně {{note}} a {{author}}
 $report = str_replace(
-    ['{{name}}', '{{birth_date}}', '{{temperature}}', '{{oxygen_saturation}}', '{{heart_rate}}', '{{diagnosis}}', '{{note}}'],
+    ['{{name}}', '{{birth_date}}', '{{temperature}}', '{{oxygen_saturation}}', '{{heart_rate}}', '{{diagnosis}}', '{{note}}', '{{author}}'],
     [
         htmlspecialchars($person['first_name'] . ' ' . $person['surname']),
         htmlspecialchars($person['birth_date']),
         $temperature,
         $oxygen_saturation,
         $heart_rate,
-        htmlspecialchars($diagnosis['diagnosis_name'] . " (Recorded on: " . $assignedAt . ")"),
-        htmlspecialchars($noteText)
+        htmlspecialchars($diagnosis['diagnosis_name'] . " (Zaznamenáno: " . $assignedAt . ")"),
+        htmlspecialchars($noteText),
+        htmlspecialchars($authorName)
     ],
     $template
 );

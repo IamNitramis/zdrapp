@@ -18,14 +18,16 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $username = trim($_POST['username'] ?? '');
     $password = $_POST['password'] ?? '';
     $role = trim($_POST['role'] ?? 'user');
+    $firstname = trim($_POST['firstname'] ?? '');
+    $lastname = trim($_POST['lastname'] ?? '');
 
-    if ($username === '' || $password === '') {
-        $message = '<div style="color:red;">Vyplňte uživatelské jméno i heslo.</div>';
+    if ($username === '' || $password === '' || $firstname === '' || $lastname === '') {
+        $message = '<div style="color:red;">Vyplňte všechna pole.</div>';
     } else {
         $hash = password_hash($password, PASSWORD_DEFAULT);
-        $sql = "INSERT INTO users (username, password, role) VALUES (?, ?, ?)";
+        $sql = "INSERT INTO users (username, password, role, firstname, lastname) VALUES (?, ?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
-        $stmt->bind_param("sss", $username, $hash, $role);
+        $stmt->bind_param("sssss", $username, $hash, $role, $firstname, $lastname);
         if ($stmt->execute()) {
             $message = '<div style="color:green;">Uživatel úspěšně přidán.</div>';
         } else {
@@ -65,6 +67,14 @@ $conn->close();
             <div class="form-group">
                 <label for="username">Uživatelské jméno:</label>
                 <input type="text" name="username" id="username" required>
+            </div>
+             <div class="form-group">
+                <label for="firstname">Jméno:</label>
+                <input type="text" name="firstname" id="firstname" required>
+            </div>
+            <div class="form-group">
+                <label for="lastname">Příjmení:</label>
+                <input type="text" name="lastname" id="lastname" required>
             </div>
             <div class="form-group">
                 <label for="password">Heslo:</label>

@@ -13,6 +13,7 @@
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%);
         }
 
         .header {
@@ -109,8 +110,8 @@
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
-            background: linear-gradient(135deg, #f5f7fa 0%, #c3cfe2 100%);
             min-height: 100vh;
+            background: rgba(255, 255, 255, 0.9);
         }
 
         .hero-section {
@@ -441,7 +442,7 @@
     <div class="container">
         <div class="hero-section">
             <div class="hero-content">
-                <h1><i class="fas fa-user-md"></i> ZDRAPP - Zdravotnický Aplikační Systém</h1>
+                <h1><i class="fas fa-user-md"></i> ZDRAPP - ZDRavotnická APPlikace</h1>
                 <p>Specializovaný systém pro zaznamenávání zdravotních záznamů na zotavovacích akcích</p>
             </div>
         </div>
@@ -450,7 +451,7 @@
             <div class="feature-card">
                 <i class="fas fa-user-injured feature-icon"></i>
                 <h2>Správa pacientů</h2>
-                <p>Databáze osob s kompletními údaji (jméno, příjmení). Detailní profily pacientů s možností správy zdravotních záznamů.</p>
+                <p>Databáze osob s kompletními údaji (jméno, příjmení, alergie, medikace..). Detailní profily pacientů s možností správy zdravotních záznamů.</p>
             </div>
             <div class="feature-card">
                 <i class="fas fa-bug feature-icon"></i>
@@ -478,7 +479,7 @@
         <span style="position: absolute; top: 50%; left: 0; width: 100%; height: 2px; background: red; transform: rotate(-45deg); transform-origin: center;"></span>
     </span>
     <h2>Funguje offline</h2>
-    <p>Aplikace funguje plně bez připojení k internetu. Všechny funkce pro sledování a prevenci klíšťových onemocnění běží přímo ve vašem zařízení.</p>
+    <p>Aplikace funguje plně bez připojení k internetu. Všechny funkce běží přímo ve vašem zařízení.</p>
 </div>
 
         </div>
@@ -508,28 +509,6 @@
                 Začít používat systém
             </a>
         </div>
-
-        <!-- Technické detaily -->
-        <div class="tech-details">
-            <div class="tech-card">
-                <h3><i class="fas fa-code"></i> Technické řešení</h3>
-                <div class="tech-grid">
-                    <div class="tech-item">
-                        <strong>Databáze:</strong> MySQL s tabulkami persons a tick_bites
-                    </div>
-                    <div class="tech-item">
-                        <strong>Backend:</strong> PHP s prepared statements proti SQL injection
-                    </div>
-                    <div class="tech-item">
-                        <strong>Frontend:</strong> JavaScript pro interaktivní mapování
-                    </div>
-                    <div class="tech-item">
-                        <strong>Bezpečnost:</strong> Session management a kontrola oprávnění
-                    </div>
-                </div>
-            </div>
-        </div>
-    </div>
 
     <script>
         function toggleMenu() {
