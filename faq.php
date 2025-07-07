@@ -229,10 +229,6 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
         <div class="faq-title"><i class="fas fa-question-circle"></i> Často kladené otázky (FAQ)</div>
         <ul class="faq-list">
             <li class="faq-item">
-                <div class="faq-question">Jak přidám nového pacienta? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
-                <div class="faq-answer">Nového pacienta lze přidat pouze přes <b>Nahrát data</b></div>
-            </li>
-            <li class="faq-item">
                 <div class="faq-question">Jak mohu upravit nebo smazat pacienta? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
                 <div class="faq-answer">V přehledu pacientů klikněte na tlačítko <b>Detail</b> u konkrétního pacienta. Zde můžete upravit údaje nebo použít tlačítko <b>Smazat</b>.</div>
             </li>
@@ -250,7 +246,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
             </li>
             <li class="faq-item">
                 <div class="faq-question">Na koho se mohu obrátit v případě technických problémů? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
-                <div class="faq-answer">V případě technických problémů kontaktujte správce systému nebo napište na e-mail <b>gabriel@zgnetworks.cz</b>.</div>
+                <div class="faq-answer">V případě technických problémů kontaktujte správce systému na tel. čísle <b>+420 735 880 870</b> nebo napište na e-mail <b>gabriel@zgnetworks.eu</b>.</div>
             </li>
             <li class="faq-item">
                 <div class="faq-question">Jak přidám diagnózu a poznámku a vygeneruji lékařskou zprávu? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
@@ -336,24 +332,24 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                 <div class="faq-answer">
                     Logo aplikace ZDRAPP vytvořila <b>Julča Bónová</b>. Také poskytla konzultaci při ranných fázích vývoje aplikace. Díky za to.
                 </div>
+            </li>     
+            <li class="faq-item">
+                <div class="faq-question">Jak přidat novou poznámku a diagnózu k pacientovi? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="faq-answer">
+                    <ol style="margin-left: 1.2em;">
+                        <li>V přehledu pacientů klikněte na tlačítko <b>Detail</b> u vybraného pacienta.</li>
+                        <li>V detailu pacienta najděte sekci <b>Přidat diagnózu a poznámku</b>.</li>
+                        <li>Vyberte diagnózu ze seznamu (nebo přidejte novou v sekci <b>Přidat diagnózu</b> v hlavním menu).</li>
+                        <li>Do pole poznámky napište popis, průběh nebo další informace k danému případu.</li>
+                        <li>Klikněte na tlačítko <b>Přidat záznam</b>. Nová diagnóza a poznámka se uloží a zobrazí v seznamu záznamů pacienta.</li>
+                        <li>Ke každé diagnóze/poznámce je třeba následně vygenerovat lékařskou zprávu, jinak se při exportování zpráva neukáže.</li>
+                    </ol>
+                </div>
             </li>
             <li class="faq-item">
-    <div class="faq-question">Jaké byly poslední důležité změny a vylepšení v aplikaci ZDRAPP? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
-    <div class="faq-answer">
-        <ul style="margin-left: 1.2em;">
-            <li>Vylepšený alert na chybějící lékařské zprávy – nyní zobrazuje konkrétní diagnózy a data, umožňuje rychlé vygenerování zprávy tlačítkem.</li>
-            <li>Možnost formátovaného textu v lékařských zprávách díky editoru TinyMCE.</li>
-            <li>Export zpráv a dat pacientů do ZIP archivu s DOCX, obrázkem klíšťat a informacemi.</li>
-            <li>Všechny exporty jsou nyní ve formátu ZIP (i pro jednoho pacienta).</li>
-            <li>Vylepšené rozhraní a responzivní design pro lepší práci na mobilu i PC.</li>
-            <li>Opraveno ukládání prázdných hodnot alergií a medikace jako NULL při importu CSV.</li>
-            <li>Diagnózy a poznámky mají lepší přehlednost a zarovnání v detailu pacienta.</li>
-            <li>Vylepšené chybové hlášky a ladění SQL dotazů.</li>
-            <li>Přidána nová sekce FAQ a rozšířeny odpovědi na nejčastější dotazy.</li>
-        </ul>
-        <div style="margin-top:8px;font-size:0.97em;color:#388e3c;">Pokud chcete vidět další novinky nebo máte návrh na vylepšení, napište správci systému.</div>
-    </div>
-</li>
+                <div class="faq-question">Jak přidám nového pacienta? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="faq-answer">Nového pacienta lze přidat pouze přes <b>Nahrát data</b></div>
+            </li>
         </ul>
     </div>
 </body>
