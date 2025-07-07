@@ -193,6 +193,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
             max-width: 1200px;
             margin: 0 auto;
             padding: 20px;
+            margin-top: 30px;
             min-height: 100vh;
         }
 
