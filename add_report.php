@@ -139,7 +139,7 @@ $conn->close();
                     <i class="fas fa-download"></i>
                     Stáhnout zprávy
                 </a>
-                <a href="add_report.php">
+                <a href="add_report.php" class="active">
                     <i class="fas fa-file-medical"></i>
                     Přidat lékařskou zprávu
                 </a>

@@ -42,15 +42,11 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
         function toggleMenu() {
             const navbar = document.getElementById('navbar');
             navbar.classList.toggle('active');
+            navbar.classList.toggle('open');
         }
-        document.addEventListener('click', function(event) {
-            const navbar = document.getElementById('navbar');
-            const menuIcon = document.querySelector('.menu-icon');
-            if (!navbar.contains(event.target) && !menuIcon.contains(event.target)) {
-                navbar.classList.remove('active');
-            }
-        });
+        
         document.addEventListener('DOMContentLoaded', function() {
+            // FAQ functionality
             var items = document.querySelectorAll('.faq-question');
             items.forEach(function(item) {
                 item.addEventListener('click', function() {
@@ -58,6 +54,28 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                     parent.classList.toggle('active');
                 });
             });
+            
+            // Mobile menu functionality
+            const navbarLinks = document.querySelectorAll('.navbar a');
+            const navbar = document.getElementById('navbar');
+            
+            navbarLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    navbar.classList.remove('active');
+                    navbar.classList.remove('open');
+                });
+            });
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const navbar = document.getElementById('navbar');
+            const menuIcon = document.querySelector('.menu-icon');
+            
+            if (!navbar.contains(event.target) && !menuIcon.contains(event.target)) {
+                navbar.classList.remove('active');
+                navbar.classList.remove('open');
+            }
         });
     </script>
 </head>
@@ -96,7 +114,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                     <i class="fas fa-chart-bar"></i>
                     Statistiky
                 </a>
-                <a href="faq.php">
+                <a href="faq.php" class="active">
                     <i class="fas fa-question-circle"></i>
                     FAQ
                 </a>

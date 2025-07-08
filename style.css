@@ -3,6 +3,11 @@
     box-sizing: border-box;
 }
 
+html {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
 body {
     margin: 0;
     padding: 0;
@@ -15,6 +20,8 @@ body {
     min-height: 100vh;
     font-size: 16px;
     line-height: 1.6;
+    overflow-x: hidden;
+    max-width: 100%;
 }
 
 /* --- HEADER --- */
@@ -26,9 +33,7 @@ body {
     top: 0;
     z-index: 1000;
     backdrop-filter: blur(10px);
-    width: 100vw;
-    left: 0;
-    right: 0;
+    width: 100%;
     min-width: 0;
     margin: 0;
 }
@@ -124,13 +129,15 @@ body {
     color: white;
     font-size: 1.5rem;
     cursor: pointer;
-    padding: 10px;
+    padding: 8px;
     border-radius: 8px;
     transition: background 0.3s ease;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
 }
 
 .menu-icon:hover {
-    background: rgba(255, 255, 255, 0.1);
+    background: rgba(255, 255, 255, 0.2);
 }
 
 /* --- CONTAINER --- */
@@ -159,8 +166,10 @@ body {
     margin-bottom: 20px;
     box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
     display: inline-block;
-    min-width: 540px;
-    max-width: 100%;
+    width: 100%;
+    max-width: 540px;
+    min-width: 0;
+    box-sizing: border-box;
 }
 
 .page-header h1 {
@@ -201,6 +210,26 @@ body {
     flex-basis: 100%;
     min-width: 0;
     max-width: 100%;
+}
+
+/* --- STATS & FORM LAYOUT --- */
+.stats-form-container {
+    display: flex;
+    gap: 25px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+.stats-form-container .stats-container {
+    flex: 0 0 auto;
+    margin-bottom: 0;
+}
+
+.stats-form-container .form-container {
+    flex: 1;
+    min-width: 350px;
+    margin-bottom: 0;
 }
 
 .stat-card:hover {
@@ -343,8 +372,8 @@ body {
     padding: 20px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
     overflow-x: auto;
-    width: 1040px;
-    max-width: 100%;
+    width: 100%;
+    max-width: 800px;
     margin-left: auto;
     margin-right: auto;
     display: block;
@@ -369,16 +398,16 @@ body {
     padding: 20px;
     margin-bottom: 20px;
     box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-    width: 340px;
-    max-width: 100%;
+    width: 100%;
+    max-width: 340px;
     margin-left: auto;
     margin-right: auto;
     display: block;
 }
 
 .search-box {
-    width: 320px;
-    max-width: 100%;
+    width: 100%;
+    max-width: 320px;
     padding: 10px 16px;
     border: 2px solid #c8e6c9;
     border-radius: 50px;
@@ -408,7 +437,7 @@ body {
     border-radius: 10px;
     overflow: hidden;
     box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
-    min-width: 600px;
+    min-width: 500px;
 }
 
 #diagnosisTable thead {
@@ -417,7 +446,7 @@ body {
 }
 
 #diagnosisTable th {
-    padding: 12px 10px;
+    padding: 12px 15px;
     text-align: left;
     font-weight: 600;
     font-size: 0.85rem;
@@ -454,7 +483,7 @@ body {
 }
 
 #diagnosisTable td {
-    padding: 12px 10px;
+    padding: 12px 15px;
     border-bottom: 1px solid #e8f5e9;
     color: #4a5568;
     font-size: 0.9rem;
@@ -996,6 +1025,10 @@ body {
     font-size: 0.9rem;
 }
 @media (max-width: 768px) {
+    .header-container {
+        padding: 0 15px;
+    }
+    
     .navbar {
         display: none;
         position: absolute;
@@ -1008,14 +1041,24 @@ body {
         gap: 10px;
         box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     }
-    .navbar.active {
+    
+    .navbar.active,
+    .navbar.open {
         display: flex;
     }
+    
     .navbar a {
         text-align: center;
         width: 100%;
         margin: 0;
+        padding: 12px 20px;
+        font-size: 1rem;
     }
+    
+    .menu-icon {
+        display: block;
+    }
+    
     .container {
         padding: 10px;
     }
@@ -1035,16 +1078,11 @@ body {
         min-width: unset;
         padding: 15px;
     }
-    .header-container {
+    .stats-form-container {
         flex-direction: column;
-        align-items: flex-start;
-        padding: 0 10px;
     }
-    .navbar {
-        flex-direction: column;
-        gap: 10px;
-        width: 100%;
-        margin-top: 10px;
+    .stats-form-container .form-container {
+        min-width: 0;
     }
 }
 
@@ -1096,9 +1134,51 @@ body {
 }
 
 @media (max-width: 480px) {
+    .header {
+        padding: 8px 0;
+    }
+    
+    .header-container {
+        padding: 0 10px;
+    }
+    
+    .logo {
+        font-size: 1.1rem;
+    }
+    
+    .logo img {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .menu-icon {
+        font-size: 1.3rem;
+        padding: 6px;
+    }
+    
+    .navbar a {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .page-header {
+        padding: 20px 15px;
+        margin-bottom: 15px;
+    }
+    
     .page-header h1 {
         font-size: 1.4rem;
     }
+    
+    .page-header .subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .container {
+        padding: 10px;
+        margin-top: 20px;
+    }
+    
     .form-container {
         padding: 15px;
     }
@@ -1107,13 +1187,6 @@ body {
     }
     .search-container {
         padding: 15px;
-    }
-    .logo {
-        font-size: 1.1rem;
-    }
-    .logo img {
-        width: 35px;
-        height: 35px;
     }
 }
 
@@ -1440,4 +1513,18 @@ body {
     max-width: 800px;
     margin: 0 auto;
     padding: 0 20px;
+}
+.info-card{
+    width: 100%;
+    max-width: 1240px; /* nebo jiná max šířka */
+    margin: 0 auto;
+    padding: 15px;
+    border-radius: 10px;
+    background: #f8f9fa;
+    margin-top: 30px;
+    display: flex;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
 }

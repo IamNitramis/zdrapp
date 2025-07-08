@@ -4,6 +4,6 @@
 .phpunit.result.cache
 composer.lock
 phpDocumentor.phar
-
+codealike.json
 public/
 vendor/

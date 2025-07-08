@@ -70,7 +70,7 @@ $conn->close();
                     <i class="fas fa-upload"></i>
                     Nahrát data
                 </a>
-                <a href="add_diagnosis.php" class="active">
+                <a href="add_diagnosis.php">
                     <i class="fas fa-plus-circle"></i>
                     Přidat diagnózu
                 </a>
@@ -82,7 +82,7 @@ $conn->close();
                     <i class="fas fa-file-medical"></i>
                     Přidat lékařskou zprávu
                 </a>
-                <a href="stats.php">
+                <a href="stats.php" class="active">
                     <i class="fas fa-chart-bar"></i>
                     Statistiky
                 </a>

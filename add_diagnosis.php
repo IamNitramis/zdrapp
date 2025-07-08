@@ -355,26 +355,28 @@ document.addEventListener('click', function(event) {
             <div class="subtitle">Přidávání a správa diagnóz v systému</div>
         </div>
 
-        <div class="stats-container">
-            <div class="stat-card">
-                <i class="fas fa-stethoscope"></i>
-                <div class="stat-number"><?php echo $total_diagnoses; ?></div>
-                <div class="stat-label">Celkem diagnóz</div>
-            </div>
-        </div>
-
-        <div class="form-container">
-            <h2><i class="fas fa-plus"></i> Přidat novou diagnózu</h2>
-            <form action="add_diagnosis.php" method="POST">
-                <div class="form-group">
-                    <label for="new_diagnosis">Název diagnózy:</label>
-                    <input type="text" name="new_diagnosis" id="new_diagnosis" 
-                           class="form-control" placeholder="Zadejte název nové diagnózy" required>
+        <div class="stats-form-container">
+            <div class="stats-container">
+                <div class="stat-card">
+                    <i class="fas fa-stethoscope"></i>
+                    <div class="stat-number"><?php echo $total_diagnoses; ?></div>
+                    <div class="stat-label">Celkem diagnóz</div>
                 </div>
-                <button type="submit" class="btn btn-primary">
-                    <i class="fas fa-plus"></i> Přidat diagnózu
-                </button>
-            </form>
+            </div>
+
+            <div class="form-container">
+                <h2><i class="fas fa-plus"></i> Přidat novou diagnózu</h2>
+                <form action="add_diagnosis.php" method="POST">
+                    <div class="form-group">
+                        <label for="new_diagnosis">Název diagnózy:</label>
+                        <input type="text" name="new_diagnosis" id="new_diagnosis" 
+                               class="form-control" placeholder="Zadejte název nové diagnózy" required>
+                    </div>
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-plus"></i> Přidat diagnózu
+                    </button>
+                </form>
+            </div>
         </div>
         <div class="table-container">
             <h2><i class="fas fa-list"></i> Seznam diagnóz</h2>
