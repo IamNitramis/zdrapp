@@ -107,27 +107,47 @@ function generateKlisteImage($person_id, $conn, $outputPath) {
 
     $sql = "SELECT x, y, bite_order FROM tick_bites WHERE person_id = ? ORDER BY bite_order ASC";
     $stmt = $conn->prepare($sql);
-    $stmt->bind_param("i", $person_id);
-    $stmt->execute();
-    $result = $stmt->get_result();
-
-    $width = imagesx($im);
-    $height = imagesy($im);
-
-    $red = imagecolorallocate($im, 255, 0, 0);
-    $white = imagecolorallocate($im, 255, 255, 255);
-    $black = imagecolorallocate($im, 0, 0, 0);
-
-    while ($row = $result->fetch_assoc()) {
-        $px = intval($row['x'] * $width);
-        $py = intval($row['y'] * $height);
-        imagefilledellipse($im, $px, $py, 16, 16, $red);
-        $text = $row['bite_order'];
-        imagestring($im, 5, $px-6, $py-8, $text, $black);
-        imagestring($im, 5, $px-7, $py-9, $text, $white);
+    if ($stmt === false) {
+        // Fallback pokud sloupec bite_order neexistuje
+        $sql = "SELECT x, y FROM tick_bites WHERE person_id = ?";
+        $stmt = $conn->prepare($sql);
+        if ($stmt === false) {
+            // Pokud stále selže, vrať false
+            return false;
+        }
+        $stmt->bind_param("i", $person_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $width = imagesx($im);
+        $height = imagesy($im);
+        $red = imagecolorallocate($im, 255, 0, 0);
+        while ($row = $result->fetch_assoc()) {
+            $px = intval($row['x'] * $width);
+            $py = intval($row['y'] * $height);
+            imagefilledellipse($im, $px, $py, 16, 16, $red);
+        }
+        $stmt->close();
+    } else {
+        $stmt->bind_param("i", $person_id);
+        $stmt->execute();
+        $result = $stmt->get_result();
+        $width = imagesx($im);
+        $height = imagesy($im);
+        $red = imagecolorallocate($im, 255, 0, 0);
+        $white = imagecolorallocate($im, 255, 255, 255);
+        $black = imagecolorallocate($im, 0, 0, 0);
+        while ($row = $result->fetch_assoc()) {
+            $px = intval($row['x'] * $width);
+            $py = intval($row['y'] * $height);
+            imagefilledellipse($im, $px, $py, 16, 16, $red);
+            if (isset($row['bite_order'])) {
+                $text = $row['bite_order'];
+                imagestring($im, 5, $px-6, $py-8, $text, $black);
+                imagestring($im, 5, $px-7, $py-9, $text, $white);
+            }
+        }
+        $stmt->close();
     }
-
-    $stmt->close();
     $success = imagepng($im, $outputPath);
     imagedestroy($im);
     return $success;
@@ -187,8 +207,8 @@ function generateReportContent($person_id, $conn) {
         $content .= "Žádné lékařské zprávy nebyly nalezeny.\n\n";
     }
 
-    // Tabulka klíšťat
-    $klisteSql = "SELECT tb.bite_order, tb.created_at, tb.x, tb.y, u.firstname, u.lastname 
+    // Tabulka klíšťat - OPRAVENÝ DOTAZ
+    $klisteSql = "SELECT tb.bite_order, tb.created_at, tb.x, tb.y, tb.updated_by, u.firstname, u.lastname 
                   FROM tick_bites tb
                   LEFT JOIN users u ON tb.updated_by = u.id
                   WHERE tb.person_id = ? 
@@ -196,7 +216,7 @@ function generateReportContent($person_id, $conn) {
     $klisteStmt = $conn->prepare($klisteSql);
     if ($klisteStmt === false) {
         // Fallback bez JOIN pokud sloupec neexistuje
-        $klisteSql = "SELECT bite_order, created_at, x, y FROM tick_bites WHERE person_id = ? ORDER BY bite_order ASC";
+        $klisteSql = "SELECT bite_order, created_at, x, y, updated_by FROM tick_bites WHERE person_id = ? ORDER BY bite_order ASC";
         $klisteStmt = $conn->prepare($klisteSql);
     }
     $klisteStmt->bind_param("i", $person_id);
@@ -210,12 +230,23 @@ function generateReportContent($person_id, $conn) {
     
     $hasBites = false;
     while ($k = $klisteResult->fetch_assoc()) {
+        // OPRAVENÉ ZPRACOVÁNÍ JMÉNA UŽIVATELE
+        $added_by = 'Neznámý';
+        
+        // Pokud existují sloupcové firstname a lastname z JOIN
         if (isset($k['firstname']) && isset($k['lastname'])) {
-            $added_by = trim($k['firstname'] . ' ' . $k['lastname']);
-            if ($added_by === '') $added_by = 'Neznámý';
-        } else {
-            $added_by = 'N/A';
+            $first = trim($k['firstname'] ?? '');
+            $last = trim($k['lastname'] ?? '');
+            
+            if (!empty($first) || !empty($last)) {
+                $added_by = trim($first . ' ' . $last);
+            } elseif (isset($k['updated_by']) && $k['updated_by'] !== null) {
+                $added_by = 'ID: ' . $k['updated_by'];
+            }
+        } elseif (isset($k['updated_by']) && $k['updated_by'] !== null) {
+            $added_by = 'ID: ' . $k['updated_by'];
         }
+        
         $content .= sprintf("%-8s %-20s %-10.3f %-10.3f %-20s\n", 
             $k['bite_order'], 
             $k['created_at'], 
@@ -237,7 +268,17 @@ function generateReportContent($person_id, $conn) {
     $content .= "STATISTIKY:\n";
     $content .= str_repeat("-", 30) . "\n";
     $content .= "Počet lékařských zpráv: " . count($reports) . "\n";
-    $content .= "Počet zaznamenaných klíšťat: " . ($hasBites ? mysqli_num_rows($klisteResult) : 0) . "\n";
+    
+    // Opravený počet klíšťat
+    $tickCountSql = "SELECT COUNT(*) as tick_count FROM tick_bites WHERE person_id = ?";
+    $tickCountStmt = $conn->prepare($tickCountSql);
+    $tickCountStmt->bind_param("i", $person_id);
+    $tickCountStmt->execute();
+    $tickCountResult = $tickCountStmt->get_result();
+    $tickCount = $tickCountResult->fetch_assoc()['tick_count'];
+    $tickCountStmt->close();
+    
+    $content .= "Počet zaznamenaných klíšťat: " . $tickCount . "\n";
     $content .= "Vygenerováno: " . date('Y-m-d H:i:s') . "\n";
     $content .= str_repeat("=", 60) . "\n";
 
@@ -266,7 +307,7 @@ function generateDocxReport($person_id, $conn, $phpWord) {
     
     // Nadpis
     $section->addText(
-        'LÉKAŘSKÉ ZPRÁVY - ' . strtoupper($person['first_name'] . ' ' . $person['surname']),
+        'LÉKAŘSKÉ ZPRÁVY - ' . mb_strtoupper($person['first_name'] . ' ' . $person['surname'], 'UTF-8'),
         ['bold' => true, 'size' => 16]
     );
     $section->addTextBreak();
@@ -287,11 +328,13 @@ function generateDocxReport($person_id, $conn, $phpWord) {
     $section->addText('LÉKAŘSKÉ ZPRÁVY:', ['bold' => true, 'size' => 14]);
     $section->addTextBreak();
 
+    $first = true;
     while ($row = $result->fetch_assoc()) {
-        $section->addText('Datum: ' . $row['created_at'], ['bold' => true]);
-        $section->addText('Diagnóza: ' . ($row['diagnosis'] ?? 'Nezadána'), ['bold' => true]);
+        if (!$first) {
+            $section->addPageBreak();
+        }
+        $first = false;
         $section->addTextBreak();
-        
         // Přidání textu zprávy (může obsahovat HTML)
         \PhpOffice\PhpWord\Shared\Html::addHtml($section, $row['report_text']);
         $section->addTextBreak();
@@ -319,7 +362,8 @@ function generateDocxReport($person_id, $conn, $phpWord) {
     $section->addText('TABULKA KLÍŠŤAT:', ['bold' => true, 'size' => 14]);
     $section->addTextBreak();
 
-    $klisteSql = "SELECT tb.bite_order, tb.created_at, tb.x, tb.y, u.firstname, u.lastname 
+    // OPRAVENÝ DOTAZ PRO DOCX
+    $klisteSql = "SELECT tb.bite_order, tb.created_at, tb.x, tb.y, tb.updated_by, u.firstname, u.lastname 
                   FROM tick_bites tb
                   LEFT JOIN users u ON tb.updated_by = u.id
                   WHERE tb.person_id = ? 
@@ -327,7 +371,7 @@ function generateDocxReport($person_id, $conn, $phpWord) {
     $klisteStmt = $conn->prepare($klisteSql);
     if ($klisteStmt === false) {
         // Fallback bez JOIN pokud sloupec neexistuje
-        $klisteSql = "SELECT bite_order, created_at, x, y FROM tick_bites WHERE person_id = ? ORDER BY bite_order ASC";
+        $klisteSql = "SELECT bite_order, created_at, x, y, updated_by FROM tick_bites WHERE person_id = ? ORDER BY bite_order ASC";
         $klisteStmt = $conn->prepare($klisteSql);
     }
     $klisteStmt->bind_param("i", $person_id);
@@ -344,13 +388,28 @@ function generateDocxReport($person_id, $conn, $phpWord) {
         $table->addCell(2000)->addText('Přidal', ['bold' => true]);
 
         while ($k = $klisteResult->fetch_assoc()) {
-            $username = isset($k['added_by_username']) ? ($k['added_by_username'] ? $k['added_by_username'] : 'Neznámý') : 'N/A';
+            // OPRAVENÉ ZPRACOVÁNÍ JMÉNA UŽIVATELE PRO DOCX
+            $added_by = 'Neznámý';
+            
+            if (isset($k['firstname']) && isset($k['lastname'])) {
+                $first = trim($k['firstname'] ?? '');
+                $last = trim($k['lastname'] ?? '');
+                
+                if (!empty($first) || !empty($last)) {
+                    $added_by = trim($first . ' ' . $last);
+                } elseif (isset($k['updated_by']) && $k['updated_by'] !== null) {
+                    $added_by = 'ID: ' . $k['updated_by'];
+                }
+            } elseif (isset($k['updated_by']) && $k['updated_by'] !== null) {
+                $added_by = 'ID: ' . $k['updated_by'];
+            }
+            
             $table->addRow();
             $table->addCell(1200)->addText($k['bite_order']);
             $table->addCell(2000)->addText($k['created_at']);
             $table->addCell(1200)->addText(number_format($k['x'], 3));
             $table->addCell(1200)->addText(number_format($k['y'], 3));
-            $table->addCell(2000)->addText($username);
+            $table->addCell(2000)->addText($added_by);
         }
     }
     $klisteStmt->close();
@@ -371,6 +430,9 @@ if (isset($_GET['download_all']) && $_GET['download_all'] == '1') {
     }
 
     $processedCount = 0;
+    // Nový PhpWord pro souhrnný DOCX
+    $summaryPhpWord = new PhpWord();
+    $summaryPatients = [];
     foreach ($patients as $p) {
         $person_id = $p['id'];
         $folderName = $p['surname'] . "_" . $p['first_name'] . "/";
@@ -401,8 +463,35 @@ if (isset($_GET['download_all']) && $_GET['download_all'] == '1') {
             if (file_exists($imgPath)) unlink($imgPath);
         });
         
+        // Přidej do pole pro souhrnný DOCX
+        $summaryPatients[] = array(
+            'surname' => $p['surname'],
+            'first_name' => $p['first_name'],
+            'person_id' => $person_id
+        );
         $processedCount++;
     }
+
+    // Seřaď pacienty abecedně podle příjmení a jména
+    usort($summaryPatients, function($a, $b) {
+        $cmp = strcasecmp($a['surname'], $b['surname']);
+        if ($cmp === 0) return strcasecmp($a['first_name'], $b['first_name']);
+        return $cmp;
+    });
+
+    // Vytvoř souhrnný DOCX
+    foreach ($summaryPatients as $sp) {
+        $person_id = $sp['person_id'];
+        generateDocxReport($person_id, $conn, $summaryPhpWord);
+        // Oddělte sekce stránkovým zlomem (PhpWord přidává sekce automaticky)
+    }
+    $summaryDocxPath = sys_get_temp_dir() . "/vsechny_zpravy.docx";
+    $summaryWriter = IOFactory::createWriter($summaryPhpWord, 'Word2007');
+    $summaryWriter->save($summaryDocxPath);
+    $zip->addFile($summaryDocxPath, "vsechny_zpravy.docx");
+    register_shutdown_function(function() use ($summaryDocxPath) {
+        if (file_exists($summaryDocxPath)) unlink($summaryDocxPath);
+    });
 
     // Přidej souhrnný soubor do root složky
     $summaryContent = "SOUHRN VŠECH PACIENTŮ\n";

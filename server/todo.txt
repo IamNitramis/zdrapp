@@ -1,5 +1,0 @@
-dodělat do exportu všeho jeden docx se všemi reporty v jednom souboru
-
-dodělat aby každá zpráva byla na individuální stránku
-
-dodělat jména do tabulky klíšťat, zatím to háže jen N/A
