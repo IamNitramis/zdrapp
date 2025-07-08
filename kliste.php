@@ -82,111 +82,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
     <link rel="stylesheet" href="assets/css/all.min.css">
 
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%);
-            min-height: 100vh;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
-            padding: 15px 0;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-        }
-
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 600;
-            transition: transform 0.3s ease;
-        }
-
-        .logo:hover {
-            transform: scale(1.05);
-        }
-
-        .logo img {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
-            transition: box-shadow 0.3s ease;
-        }
-
-        .logo:hover img {
-            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
-        }
-
-        .navbar {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-        }
-
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            padding: 12px 20px;
-            border-radius: 25px;
-            font-weight: 500;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            position: relative;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .navbar a:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .navbar a:active {
-            transform: translateY(0);
-        }
-
-        .menu-icon {
-            display: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 8px;
-            transition: background 0.3s ease;
-        }
-
-        .menu-icon:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            min-height: 100vh;
-        }
-
         .hero-section {
             background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
             color: white;
@@ -425,10 +320,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
 
         .points-table th:first-child,
         .points-table td:first-child {
-            width: 60px;
-            min-width: 50px;
-            max-width: 80px;
+            min-width: 10px;
             text-align: center;
+            white-space: nowrap;
         }
 
         .points-table tr:hover td {
@@ -439,169 +333,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
             border-bottom: none;
         }
 
-        .btn, .btn-danger, .btn-primary {
-            white-space: nowrap;
-        }
-
-        .btn {
-            padding: 10px 18px;
-            border: none;
-            border-radius: 10px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 8px;
-            position: relative;
-            overflow: hidden;
-        }
-
-        .btn::before {
-            content: '';
-            position: absolute;
-            top: 0;
-            left: -100%;
-            width: 100%;
-            height: 100%;
-            background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
-            transition: left 0.5s ease;
-        }
-
-        .btn:hover::before {
-            left: 100%;
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
-            color: white;
-            box-shadow: 0 4px 15px rgba(244, 67, 54, 0.3);
-        }
-
-        .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 6px 20px rgba(244, 67, 54, 0.4);
-        }
-
-        .btn-primary {
-            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
-            color: white;
-            padding: 15px 30px;
-            font-size: 1.1rem;
-            box-shadow: 0 6px 20px rgba(56, 142, 60, 0.3);
-        }
-
-        .btn-primary:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 8px 25px rgba(56, 142, 60, 0.4);
-        }
-
-        .back-button-container {
-            text-align: center;
-            margin-top: 40px;
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 50px 20px;
-            color: #4caf50;
-        }
-
-        .empty-state i {
-            font-size: 3.5rem;
-            margin-bottom: 20px;
-            color: #388e3c;
-            opacity: 0.7;
-        }
-
-        .empty-state div {
-            font-size: 1.1rem;
-            font-weight: 600;
-            margin-bottom: 8px;
-        }
-
-        .empty-state small {
-            font-size: 0.9rem;
-            opacity: 0.8;
-        }
-
-        @media (max-width: 1024px) {
-            .main-content {
-                flex-direction: column;
-                gap: 20px;
-            }
-            
-            .section-card {
-                height: auto;
-                min-height: 400px;
-            }
-        }
-
-        @media (max-width: 768px) {
-            .header-container {
-                padding: 0 15px;
-            }
-
-            .menu-icon {
-                display: block;
-            }
-
-            .navbar {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
-                flex-direction: column;
-                padding: 20px;
-                gap: 10px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            }
-
-            .navbar.active {
-                display: flex;
-            }
-
-            .navbar a {
-                text-align: center;
-                width: 100%;
-                margin: 0;
-            }
-
-            .container {
-                padding: 10px;
-            }
-            
-            .hero-section {
-                padding: 30px 20px;
-            }
-            
-            .hero-section h1 {
-                font-size: 2rem;
-            }
-
-            .pinpoint {
-                width: 20px;
-                height: 20px;
-            }
-
-            .pinpoint span {
-                font-size: 10px;
-            }
-
-            .points-table th,
-            .points-table td {
-                padding: 10px 8px;
-                font-size: 0.85rem;
-            }
-
-            .section-card {
-                padding: 20px;
-            }
-        }
+        
     </style>
 </head>
 <body>
@@ -666,7 +398,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
 
         <div class="instructions">
             <h3><i class="fas fa-info-circle"></i> Návod k použití</h3>
-            <p>Klikněte myší na místo na obrázku těla, kde pacienta píchlo klíště. Bod se automaticky uloží a zobrazí v tabulce vpravo. Pro odstranění bodu použijte tlačítko "Odstranit" v tabulce.</p>
+            <p>Klikněte myší na místo na obrázku těla, kde pacienta píchlo klíště. Bod se automaticky uloží a zobrazí v tabulce vpravo. Pro odstranění bodu použijte tlačítko <i class='fas fa-trash'></i> v tabulce.</p>
         </div>
 
         <div class="main-content">
@@ -691,7 +423,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
                     <table class="points-table" id="pointsTable">
                         <thead>
                             <tr>
-                                <th><i class="fas fa-hashtag"></i> Pořadí</th>
+                                <th><i class="fas fa-hashtag"></i></th>
                                 <th><i class="fas fa-calendar"></i> Datum</th>
                                 <th><i class="fas fa-user-edit"></i> Přidal</th>
                                 <th><i class="fas fa-cogs"></i> Akce</th>
@@ -776,7 +508,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
             <td>
                 <button class="btn btn-danger" onclick="removePointById(${id})">
                     <i class="fas fa-trash"></i>
-                    Odstranit
                 </button>
             </td>`;
         tbody.appendChild(tr);
