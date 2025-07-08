@@ -7,6 +7,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
 <html lang="cs">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Přístup zamítnut</title>
     <link rel="stylesheet" href="style.css">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
@@ -25,6 +26,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
         }
         .login-warning {
             max-width: 450px;
+            margin: 20px;
             background: white;
             border-radius: 20px;
             box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
@@ -65,6 +67,19 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
         .login-warning a:hover { 
             transform: translateY(-3px);
             box-shadow: 0 15px 35px rgba(56, 142, 60, 0.4);
+        }
+        
+        @media (max-width: 480px) {
+            .login-warning {
+                margin: 10px;
+                padding: 30px 20px;
+            }
+            .login-warning h2 {
+                font-size: 1.5rem;
+            }
+            .login-warning p {
+                font-size: 1rem;
+            }
         }
     </style>
 </head>
@@ -160,17 +175,23 @@ $conn->close();
     <link rel="stylesheet" href="assets/css/all.min.css">
     
     <style>
+        * {
+            box-sizing: border-box;
+        }
+        
         body {
             margin: 0;
             padding: 0;
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%);
             min-height: 100vh;
+            font-size: 16px;
+            line-height: 1.6;
         }
 
         .header {
             background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
-            padding: 15px 0;
+            padding: 10px 0;
             box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
             position: sticky;
             top: 0;
@@ -184,16 +205,17 @@ $conn->close();
             display: flex;
             justify-content: space-between;
             align-items: center;
-            padding: 0 20px;
+            padding: 0 15px;
+            position: relative;
         }
 
         .logo {
             display: flex;
             align-items: center;
-            gap: 12px;
+            gap: 10px;
             text-decoration: none;
             color: white;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             font-weight: 600;
             transition: transform 0.3s ease;
         }
@@ -203,8 +225,8 @@ $conn->close();
         }
 
         .logo img {
-            width: 45px;
-            height: 45px;
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
             box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
             transition: box-shadow 0.3s ease;
@@ -223,15 +245,16 @@ $conn->close();
         .navbar a {
             color: white;
             text-decoration: none;
-            padding: 12px 20px;
-            border-radius: 25px;
+            padding: 8px 15px;
+            border-radius: 20px;
             font-weight: 500;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
             transition: all 0.3s ease;
             position: relative;
             background: rgba(255, 255, 255, 0.1);
             backdrop-filter: blur(5px);
             border: 1px solid rgba(255, 255, 255, 0.2);
+            white-space: nowrap;
         }
 
         .navbar a:hover {
@@ -245,46 +268,60 @@ $conn->close();
             box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
         }
 
+        .menu-icon {
+            display: none;
+            color: white;
+            font-size: 1.5rem;
+            cursor: pointer;
+            padding: 10px;
+            border-radius: 8px;
+            transition: background 0.3s ease;
+        }
+
+        .menu-icon:hover {
+            background: rgba(255, 255, 255, 0.1);
+        }
+
         .container {
             max-width: 1400px;
-            margin: 30px auto;
-            padding: 20px;
+            margin: 0 auto;
+            padding: 15px;
         }
 
         .page-header {
             background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
             color: white;
-            padding: 40px;
-            border-radius: 20px;
+            padding: 25px 20px;
+            border-radius: 15px;
             text-align: center;
-            margin-bottom: 30px;
+            margin-bottom: 20px;
             box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
         }
 
         .page-header h1 {
-            font-size: 2.5rem;
+            font-size: 2rem;
             margin: 0;
             font-weight: 300;
             text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
         }
 
         .page-header .subtitle {
-            font-size: 1.1rem;
+            font-size: 1rem;
             opacity: 0.9;
             margin-top: 10px;
         }
 
         .stats-container {
             display: flex;
-            gap: 20px;
-            margin-bottom: 25px;
+            gap: 15px;
+            margin-bottom: 20px;
             flex-wrap: wrap;
         }
 
         .stat-card {
-            background: #f1f8e9;
+            background: white;
             border-radius: 15px;
-            padding: 25px;
+            padding: 20px;
             flex: 1;
             min-width: 200px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
@@ -297,13 +334,13 @@ $conn->close();
         }
 
         .stat-card i {
-            font-size: 2.5rem;
+            font-size: 2rem;
             color: #388e3c;
-            margin-bottom: 15px;
+            margin-bottom: 10px;
         }
 
         .stat-number {
-            font-size: 2rem;
+            font-size: 1.8rem;
             font-weight: 700;
             color: #2d3748;
             margin-bottom: 5px;
@@ -317,17 +354,17 @@ $conn->close();
         }
 
         .form-container {
-            background: #f1f8e9;
+            background: white;
             border-radius: 15px;
-            padding: 30px;
-            margin-bottom: 25px;
+            padding: 25px;
+            margin-bottom: 20px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
         }
 
         .form-container h2 {
             color: #2d3748;
             margin-bottom: 20px;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -351,13 +388,12 @@ $conn->close();
 
         .form-control {
             width: 100%;
-            padding: 15px 20px;
+            padding: 12px 15px;
             border: 2px solid #c8e6c9;
             border-radius: 10px;
             font-size: 1rem;
-            background: white;
+            background: #f8f9fa;
             transition: all 0.3s ease;
-            box-sizing: border-box;
         }
 
         .form-control:focus {
@@ -368,19 +404,20 @@ $conn->close();
         }
 
         .btn {
-            padding: 15px 30px;
+            padding: 12px 20px;
             border: none;
             border-radius: 10px;
             cursor: pointer;
-            font-size: 1rem;
+            font-size: 0.9rem;
             font-weight: 600;
             transition: all 0.3s ease;
             text-decoration: none;
             display: inline-flex;
             align-items: center;
             gap: 8px;
-            min-width: 140px;
             justify-content: center;
+            min-height: 44px;
+            min-width: 120px;
         }
 
         .btn-primary {
@@ -417,9 +454,9 @@ $conn->close();
         }
 
         .table-container {
-            background: #f1f8e9;
+            background: white;
             border-radius: 15px;
-            padding: 25px;
+            padding: 20px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             overflow-x: auto;
         }
@@ -427,7 +464,7 @@ $conn->close();
         .table-container h2 {
             color: #2d3748;
             margin-bottom: 20px;
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             display: flex;
             align-items: center;
             gap: 10px;
@@ -438,28 +475,21 @@ $conn->close();
         }
 
         .search-container {
-            background: #f1f8e9;
+            background: white;
             border-radius: 15px;
             padding: 20px;
-            margin-bottom: 25px;
+            margin-bottom: 20px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            max-width: 100%;
-            box-sizing: border-box;
-            display: flex;
-            align-items: center;
-            justify-content: center;
         }
 
         .search-box {
             width: 100%;
-            max-width: 600px;
             padding: 15px 20px;
             border: 2px solid #c8e6c9;
             border-radius: 50px;
             font-size: 1rem;
-            background: white;
+            background: #f8f9fa;
             transition: all 0.3s ease;
-            box-sizing: border-box;
         }
 
         .search-box:focus {
@@ -469,6 +499,12 @@ $conn->close();
             box-shadow: 0 0 0 3px rgba(56, 142, 60, 0.1);
         }
 
+        /* Responzivní tabulka pro mobily */
+        .table-responsive {
+            overflow-x: auto;
+            -webkit-overflow-scrolling: touch;
+        }
+
         #diagnosisTable {
             width: 100%;
             border-collapse: collapse;
@@ -476,6 +512,7 @@ $conn->close();
             border-radius: 10px;
             overflow: hidden;
             box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+            min-width: 600px;
         }
 
         #diagnosisTable thead {
@@ -484,10 +521,10 @@ $conn->close();
         }
 
         #diagnosisTable th {
-            padding: 18px 15px;
+            padding: 12px 10px;
             text-align: left;
             font-weight: 600;
-            font-size: 0.9rem;
+            font-size: 0.85rem;
             text-transform: uppercase;
             letter-spacing: 0.5px;
             cursor: pointer;
@@ -505,7 +542,7 @@ $conn->close();
             font-family: 'Font Awesome 5 Free';
             font-weight: 900;
             position: absolute;
-            right: 10px;
+            right: 5px;
             opacity: 0.6;
         }
 
@@ -516,15 +553,15 @@ $conn->close();
 
         #diagnosisTable tbody tr:hover {
             background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
-            transform: translateY(-2px);
+            transform: translateY(-1px);
             box-shadow: 0 4px 15px rgba(56, 142, 60, 0.1);
         }
 
         #diagnosisTable td {
-            padding: 16px 15px;
+            padding: 12px 10px;
             border-bottom: 1px solid #e8f5e9;
             color: #4a5568;
-            font-size: 0.95rem;
+            font-size: 0.9rem;
         }
 
         #diagnosisTable td:first-child {
@@ -535,9 +572,9 @@ $conn->close();
         .diagnosis-name {
             background: #e8f5e9;
             color: #2e7d32;
-            padding: 8px 16px;
-            border-radius: 20px;
-            font-size: 0.9rem;
+            padding: 6px 12px;
+            border-radius: 15px;
+            font-size: 0.85rem;
             font-weight: 500;
             border: 1px solid #c8e6c9;
             display: inline-block;
@@ -545,112 +582,221 @@ $conn->close();
 
         .empty-state {
             text-align: center;
-            padding: 60px 20px;
+            padding: 40px 20px;
             color: #4a5568;
         }
 
         .empty-state i {
-            font-size: 4rem;
-            margin-bottom: 20px;
+            font-size: 3rem;
+            margin-bottom: 15px;
             color: #a5d6a7;
         }
 
         .empty-state h3 {
-            font-size: 1.5rem;
+            font-size: 1.3rem;
             margin-bottom: 10px;
             color: #4a5568;
         }
 
-        .actions-container {
-            background: #f1f8e9;
+        /* Mobilní karty místo tabulky */
+        .mobile-cards {
+            display: none;
+        }
+
+        .diagnosis-card {
+            background: white;
             border-radius: 15px;
-            padding: 25px;
-            margin-bottom: 25px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            margin-bottom: 15px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+            transition: transform 0.3s ease;
         }
 
-        .actions-container h2 {
+        .diagnosis-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .diagnosis-card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: flex-start;
+            margin-bottom: 15px;
+        }
+
+        .diagnosis-card-id {
+            background: #e8f5e9;
+            color: #2e7d32;
+            padding: 5px 10px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+        }
+
+        .diagnosis-card-name {
+            font-size: 1.1rem;
+            font-weight: 600;
             color: #2d3748;
-            margin-bottom: 20px;
-            font-size: 1.5rem;
+            margin-bottom: 10px;
+        }
+
+        .diagnosis-card-meta {
+            font-size: 0.9rem;
+            color: #4a5568;
+            margin-bottom: 15px;
+        }
+
+        .diagnosis-card-actions {
             display: flex;
-            align-items: center;
             gap: 10px;
-        }
-
-        .actions-container h2 i {
-            color: #388e3c;
-        }
-
-        .action-buttons {
-            display: flex;
-            gap: 15px;
             flex-wrap: wrap;
         }
 
-        .menu-icon {
-            display: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 8px;
-            transition: background 0.3s ease;
-        }
+        /* Responzivní breakpointy */
+        /* Nahraďte existující CSS pro .navbar a mobilní responzivní část tímto kódem: */
 
-        .menu-icon:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
+.navbar {
+    display: flex;
+    gap: 5px;
+    align-items: center;
+}
 
-        @media (max-width: 768px) {
-            .container {
-                padding: 10px;
-            }
-            
-            .page-header h1 {
-                font-size: 2rem;
-            }
-            
-            .stats-container {
-                flex-direction: column;
-            }
-            
-            .table-container {
-                overflow-x: auto;
-            }
-            
-            .action-buttons {
-                flex-direction: column;
-            }
-            
-            .btn {
-                width: 100%;
-                justify-content: center;
-            }
+.navbar a {
+    color: white;
+    text-decoration: none;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    position: relative;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    white-space: nowrap;
+}
 
-            .menu-icon {
+.navbar a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.navbar a.active {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.menu-icon {
+    display: none;
+    color: white;
+    font-size: 1.5rem;
+    cursor: pointer;
+    padding: 10px;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+}
+
+.menu-icon:hover {
+    background: rgba(255, 255, 255, 0.1);
+}
+
+/* MOBILNÍ MENU - OPRAVENÉ S !important */
+@media (max-width: 768px) {
+    .header-container {
+        flex-direction: row;
+        align-items: center;
+        justify-content: space-between;
+        padding: 0 10px;
+    }
+    .logo {
+        flex: 1 1 auto;
+        justify-content: flex-start;
+    }
+    .menu-icon {
+        display: block !important;
+        align-self: stretch;
+        margin: 0;
+        font-size: 2.2rem;
+        padding: 16px 18px 16px 18px;
+        /* Move to far right */
+        order: 2;
+    }
+    .navbar {
+        display: none !important;
+        position: absolute;
+        top: 100%;
+        left: 0;
+        right: 0;
+        background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+        flex-direction: column;
+        align-items: stretch;
+        padding: 18px 0 14px 0;
+        border-radius: 0 0 15px 15px;
+        box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+        z-index: 1000;
+        gap: 0 !important;
+    }
+    .navbar.open, .navbar.active {
+        display: flex !important;
+    }
+    .navbar a {
+        width: 100%;
+        text-align: left;
+        margin: 0;
+        padding: 20px 28px 20px 28px;
+        border-radius: 0;
+        border-bottom: 1px solid rgba(255,255,255,0.08);
+        font-size: 1.18rem;
+        box-sizing: border-box;
+    }
+    .navbar a:last-child {
+        border-bottom: none;
+    }
+}
+
+        @media (max-width: 600px) {
+            .table-responsive {
+                display: none;
+            }
+            
+            .mobile-cards {
                 display: block;
             }
             
-            .navbar {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+            .diagnosis-card-actions {
                 flex-direction: column;
-                padding: 20px;
-                border-radius: 0 0 15px 15px;
             }
             
-            .navbar.open {
-                display: flex;
-            }
-
-            .navbar a {
+            .diagnosis-card-actions .btn {
                 width: 100%;
-                text-align: center;
+                margin-bottom: 5px;
+            }
+        }
+
+        @media (max-width: 480px) {
+            .page-header h1 {
+                font-size: 1.4rem;
+            }
+            
+            .form-container {
+                padding: 15px;
+            }
+            
+            .table-container {
+                padding: 15px;
+            }
+            
+            .search-container {
+                padding: 15px;
+            }
+            
+            .logo {
+                font-size: 1.1rem;
+            }
+            
+            .logo img {
+                width: 35px;
+                height: 35px;
             }
         }
     </style>
@@ -698,12 +844,13 @@ $conn->close();
         }
 
         function searchTable() {
-            var input, filter, table, tr, td, i, txtValue;
+            var input, filter, table, tr, i, txtValue;
             input = document.getElementById("searchInput");
             filter = input.value.toUpperCase();
             table = document.getElementById("diagnosisTable");
             tr = table.getElementsByTagName("tr");
 
+            // Hledání v tabulce
             for (i = 1; i < tr.length; i++) {
                 tr[i].style.display = "none";
                 td = tr[i].getElementsByTagName("td");
@@ -717,6 +864,17 @@ $conn->close();
                     }
                 }
             }
+
+            // Hledání v mobilních kartách
+            var cards = document.querySelectorAll('.diagnosis-card');
+            cards.forEach(function(card) {
+                var cardText = card.textContent || card.innerText;
+                if (cardText.toUpperCase().indexOf(filter) > -1) {
+                    card.style.display = "";
+                } else {
+                    card.style.display = "none";
+                }
+            });
         }
 
         function toggleMenu() {
@@ -732,6 +890,26 @@ $conn->close();
                 row.style.animation = 'fadeInUp 0.6s ease forwards';
             });
         });
+        
+        document.addEventListener('DOMContentLoaded', function() {
+    const navbarLinks = document.querySelectorAll('.navbar a');
+    const navbar = document.getElementById('navbar');
+    
+    navbarLinks.forEach(link => {
+        link.addEventListener('click', function() {
+            navbar.classList.remove('open');
+        });
+    });
+});
+// Zavření menu při kliknutí mimo
+document.addEventListener('click', function(event) {
+    const navbar = document.getElementById('navbar');
+    const menuIcon = document.querySelector('.menu-icon');
+    
+    if (!navbar.contains(event.target) && !menuIcon.contains(event.target)) {
+        navbar.classList.remove('open');
+    }
+});
 
         // Add CSS for fade in animation
         const style = document.createElement('style');
