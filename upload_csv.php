@@ -10,63 +10,6 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
     <title>Přístup zamítnut</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="assets/css/all.min.css">
-    <style>
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%);
-            color: #333;
-        }
-        .login-warning {
-            max-width: 450px;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-            padding: 50px 40px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .login-warning i {
-            font-size: 4rem;
-            color: #e67e22;
-            margin-bottom: 20px;
-        }
-        .login-warning h2 { 
-            color: #2d3748; 
-            margin-bottom: 15px; 
-            font-size: 1.8rem;
-            font-weight: 600;
-        }
-        .login-warning p {
-            color: #718096;
-            font-size: 1.1rem;
-            margin-bottom: 30px;
-            line-height: 1.5;
-        }
-        .login-warning a {
-            display: inline-block;
-            padding: 15px 35px;
-            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
-            color: #fff;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-        }
-        .login-warning a:hover { 
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
-        }
-    </style>
 </head>
 <body>
     <div class="login-warning">
@@ -192,362 +135,6 @@ $conn->close();
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="logo.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%);
-            min-height: 100vh;
-        }
-
-        .header {
-            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
-            padding: 15px 0;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-        }
-
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 600;
-            transition: transform 0.3s ease;
-        }
-
-        .logo:hover {
-            transform: scale(1.05);
-        }
-
-        .logo img {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
-            transition: box-shadow 0.3s ease;
-        }
-
-        .logo:hover img {
-            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
-        }
-
-        .navbar {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-        }
-
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            padding: 12px 20px;
-            border-radius: 25px;
-            font-weight: 500;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            position: relative;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .navbar a:hover, .navbar a.active {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .navbar a:active {
-            transform: translateY(0);
-        }
-
-        .menu-icon {
-            display: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 8px;
-            transition: background 0.3s ease;
-        }
-
-        .menu-icon:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .container {
-            max-width: 800px;
-            margin: 30px auto;
-            padding: 20px;
-        }
-
-        .page-header {
-            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
-            color: white;
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            margin-bottom: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-        }
-
-        .page-header h1 {
-            font-size: 2.5rem;
-            margin: 0;
-            font-weight: 300;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .page-header .subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-top: 10px;
-        }
-
-        .upload-container {
-            background: white;
-            border-radius: 20px;
-            padding: 40px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
-        .file-upload-area {
-            border: 3px dashed #cbd5e0;
-            border-radius: 15px;
-            padding: 60px 20px;
-            text-align: center;
-            transition: all 0.3s ease;
-            cursor: pointer;
-            position: relative;
-            background: #f8f9fa;
-        }
-
-        .file-upload-area:hover, .file-upload-area.dragover {
-            border-color: #388e3c;
-            background: #f0f4ff;
-            transform: translateY(-5px);
-            box-shadow: 0 10px 25px rgba(102, 126, 234, 0.1);
-        }
-
-        .file-upload-area i {
-            font-size: 4rem;
-            color: #cbd5e0;
-            margin-bottom: 20px;
-            transition: color 0.3s ease;
-        }
-
-        .file-upload-area:hover i {
-            color: #388e3c;
-        }
-
-        .file-upload-area h3 {
-            color: #4a5568;
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            font-weight: 600;
-        }
-
-        .file-upload-area p {
-            color: #718096;
-            font-size: 1rem;
-            margin-bottom: 20px;
-        }
-
-        .file-input {
-            position: absolute;
-            width: 100%;
-            height: 100%;
-            opacity: 0;
-            cursor: pointer;
-            top: 0;
-            left: 0;
-        }
-
-        .upload-btn {
-            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
-            color: white;
-            border: none;
-            padding: 15px 40px;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-            margin-top: 20px;
-        }
-
-        .upload-btn:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
-        }
-
-        .upload-btn:disabled {
-            background: #cbd5e0;
-            cursor: not-allowed;
-            transform: none;
-            box-shadow: none;
-        }
-
-        .alert {
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            font-weight: 500;
-            display: flex;
-            align-items: center;
-            gap: 15px;
-            animation: slideIn 0.5s ease;
-        }
-
-        .alert-success {
-            background: #d4edda;
-            color: #155724;
-            border: 1px solid #c3e6cb;
-        }
-
-        .alert-error {
-            background: #f8d7da;
-            color: #721c24;
-            border: 1px solid #f5c6cb;
-        }
-
-        .alert i {
-            font-size: 1.5rem;
-        }
-
-        .info-card {
-            background: white;
-            border-radius: 15px;
-            padding: 30px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            margin-bottom: 30px;
-        }
-
-        .info-card h3 {
-            color: #2d3748;
-            font-size: 1.3rem;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .info-card ul {
-            color: #4a5568;
-            line-height: 1.6;
-            padding-left: 20px;
-        }
-
-        .info-card li {
-            margin-bottom: 8px;
-        }
-
-        .file-info {
-            background: #e6f3ff;
-            border: 1px solid #b3d9ff;
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 15px;
-            display: none;
-        }
-
-        .file-info.show {
-            display: block;
-            animation: fadeIn 0.3s ease;
-        }
-
-        .progress-bar {
-            width: 100%;
-            height: 6px;
-            background: #e2e8f0;
-            border-radius: 3px;
-            overflow: hidden;
-            margin: 15px 0;
-            display: none;
-        }
-
-        .progress-fill {
-            height: 100%;
-            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
-            width: 0%;
-            transition: width 0.3s ease;
-        }
-
-        @keyframes slideIn {
-            from {
-                transform: translateY(-20px);
-                opacity: 0;
-            }
-            to {
-                transform: translateY(0);
-                opacity: 1;
-            }
-        }
-
-        @keyframes fadeIn {
-            from { opacity: 0; }
-            to { opacity: 1; }
-        }
-
-        @media (max-width: 768px) {
-            .container {
-                margin: 20px;
-                padding: 10px;
-            }
-            
-            .page-header h1 {
-                font-size: 2rem;
-            }
-            
-            .upload-container {
-                padding: 25px;
-            }
-            
-            .file-upload-area {
-                padding: 40px 15px;
-            }
-            
-            .navbar {
-                display: none;
-                flex-direction: column;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: #388e3c;
-                backdrop-filter: blur(10px);
-                padding: 20px;
-                gap: 10px;
-            }
-            
-            .navbar.open {
-                display: flex;
-            }
-            
-            .menu-icon {
-                display: block;
-            }
-        }
-    </style>
 </head>
 
 <body>
@@ -645,30 +232,37 @@ $conn->close();
             </form>
         </div>
 
-        <div class="info-card">
-            <h3>
-                <i class="fas fa-info-circle"></i>
-                Požadavky na CSV soubor
-            </h3>
-            <ul>
-                <li><strong>Formát:</strong> CSV soubor s kódováním UTF-8</li>
-                <li><strong>Sloupce:</strong> Jméno, Příjmení, Datum narození, Rodné číslo, Léky, Alergie</li>
-                <li><strong>Oddělovač:</strong> Čárka (,)</li>
-                <li><strong>Maximální velikost:</strong> 10 MB</li>
-                <li><strong>Datum narození:</strong> Ve formátu YYYY-MM-DD</li>
-                <li><strong>Duplicita:</strong> Záznamy s existujícím rodným číslem budou přeskočeny</li>
-            </ul>
-        </div>
-
-        <div class="info-card">
-            <h3>
-                <i class="fas fa-lightbulb"></i>
-                Příklad CSV souboru
-            </h3>
-            <div style="background: #f8f9fa; border-radius: 8px; padding: 15px; font-family: monospace; font-size: 0.9rem;">
-                Jan,Novák,1985-03-15,8503150123,Paralen,Alergie na pyl<br>
-                Marie,Svobodová,1990-07-22,9007220456,,Penicilin<br>
-                Petr,Dvořák,1978-11-08,7811080789,Ibuprofen,
+        <div class="info-cards-wrapper">
+            <div class="info-cards-container">
+                <div class="info-card-container">
+                    <div class="info-card">
+                        <h3>
+                            <i class="fas fa-info-circle"></i>
+                            Požadavky na CSV soubor
+                        </h3>
+                        <ul>
+                            <li><strong>Formát:</strong> CSV soubor s kódováním UTF-8</li>
+                            <li><strong>Sloupce:</strong> Jméno, Příjmení, Datum narození, Rodné číslo, Léky, Alergie</li>
+                            <li><strong>Oddělovač:</strong> Čárka (,)</li>
+                            <li><strong>Maximální velikost:</strong> 10 MB</li>
+                            <li><strong>Datum narození:</strong> Ve formátu YYYY-MM-DD</li>
+                            <li><strong>Duplicita:</strong> Záznamy s existujícím rodným číslem budou přeskočeny</li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="info-card-container">
+                    <div class="info-card">
+                        <h3>
+                            <i class="fas fa-lightbulb"></i>
+                            Příklad CSV souboru
+                        </h3>
+                        <div style="background: #f8f9fa; border-radius: 8px; padding: 15px; font-family: monospace; font-size: 0.9rem;">
+                            Jan,Novák,1985-03-15,8503150123,Paralen,Alergie na pyl<br>
+                            Marie,Svobodová,1990-07-22,9007220456,,Penicilin<br>
+                            Petr,Dvořák,1978-11-08,7811080789,Ibuprofen,
+                        </div>
+                    </div>
+                </div>
             </div>
         </div>
     </div>
@@ -800,5 +394,47 @@ $conn->close();
         }, 3000);
         <?php endif; ?>
     </script>
+
+    <style>
+    .info-cards-wrapper {
+        max-width: 900px;
+        margin: 0 auto 30px auto;
+        padding: 0 10px;
+    }
+    .info-cards-container {
+        display: flex;
+        gap: 20px;
+        flex-wrap: wrap;
+        justify-content: center;
+        margin-bottom: 0;
+    }
+    .info-card-container {
+        max-width: 420px;
+        width: 100%;
+        padding: 0 8px;
+        box-sizing: border-box;
+        display: flex;
+        justify-content: center;
+    }
+    .info-card {
+        flex: 1 1 320px;
+        min-width: 260px;
+        max-width: 420px;
+        margin-bottom: 0;
+    }
+    @media (max-width: 900px) {
+        .info-cards-container {
+            flex-direction: column;
+            gap: 15px;
+        }
+        .info-card-container {
+            max-width: 100%;
+            padding: 0;
+        }
+        .info-card {
+            max-width: 100%;
+        }
+    }
+    </style>
 </body>
 </html>

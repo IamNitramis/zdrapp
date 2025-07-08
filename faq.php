@@ -38,137 +38,15 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="assets/css/all.min.css">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%);
-        }
-        .header {
-            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
-            padding: 15px 0;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-        }
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-        }
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 600;
-            transition: transform 0.3s ease;
-        }
-        .logo:hover {
-            transform: scale(1.05);
-        }
-        .logo img {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
-            transition: box-shadow 0.3s ease;
-        }
-        .logo:hover img {
-            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
-        }
-        .navbar {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-        }
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            padding: 12px 20px;
-            border-radius: 25px;
-            font-weight: 500;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            position: relative;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .navbar a:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-        .navbar a:active {
-            transform: translateY(0);
-        }
-        .menu-icon {
-            display: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 8px;
-            transition: background 0.3s ease;
-        }
-        .menu-icon:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-        .container {
-            max-width: 900px;
-            margin: 40px auto;
-            background: #fff;
-            border-radius: 20px;
-            box-shadow: 0 8px 40px rgba(56,142,60,0.08);
-            padding: 40px 30px;
-        }
-        .faq-title { text-align: center; font-size: 2.2rem; color: #388e3c; margin-bottom: 30px; }
-        .faq-list { list-style: none; padding: 0; margin: 0; }
-        .faq-item { border-bottom: 1px solid #e0e0e0; }
-        .faq-question { cursor: pointer; padding: 22px 0; font-size: 1.15rem; font-weight: 600; color: #2d3748; display: flex; align-items: center; justify-content: space-between; transition: color 0.2s; }
-        .faq-question:hover { color: #43a047; }
-        .faq-answer {
-            display: block;
-            max-height: 0;
-            overflow: hidden;
-            padding: 0 0 0 0;
-            color: #4a5568;
-            font-size: 1rem;
-            line-height: 1.6;
-            transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), padding 0.4s;
-        }
-        .faq-item.active .faq-answer {
-            max-height: 500px;
-            padding: 12px 0 18px 0;
-            animation: fadeIn 0.4s;
-        }
-        .faq-icon { margin-left: 15px; color: #388e3c; font-size: 1.2rem; transition: transform 0.3s; }
-        .faq-item.active .faq-icon { transform: rotate(90deg); }
-        @keyframes fadeIn { from { opacity: 0; } to { opacity: 1; } }
-        @media (max-width: 600px) { .container { padding: 15px 5px; } .faq-title { font-size: 1.3rem; } }
-    </style>
     <script>
         function toggleMenu() {
             const navbar = document.getElementById('navbar');
             navbar.classList.toggle('active');
+            navbar.classList.toggle('open');
         }
-        document.addEventListener('click', function(event) {
-            const navbar = document.getElementById('navbar');
-            const menuIcon = document.querySelector('.menu-icon');
-            if (!navbar.contains(event.target) && !menuIcon.contains(event.target)) {
-                navbar.classList.remove('active');
-            }
-        });
+        
         document.addEventListener('DOMContentLoaded', function() {
+            // FAQ functionality
             var items = document.querySelectorAll('.faq-question');
             items.forEach(function(item) {
                 item.addEventListener('click', function() {
@@ -176,6 +54,28 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                     parent.classList.toggle('active');
                 });
             });
+            
+            // Mobile menu functionality
+            const navbarLinks = document.querySelectorAll('.navbar a');
+            const navbar = document.getElementById('navbar');
+            
+            navbarLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    navbar.classList.remove('active');
+                    navbar.classList.remove('open');
+                });
+            });
+        });
+        
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const navbar = document.getElementById('navbar');
+            const menuIcon = document.querySelector('.menu-icon');
+            
+            if (!navbar.contains(event.target) && !menuIcon.contains(event.target)) {
+                navbar.classList.remove('active');
+                navbar.classList.remove('open');
+            }
         });
     </script>
 </head>
@@ -214,7 +114,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                     <i class="fas fa-chart-bar"></i>
                     Statistiky
                 </a>
-                <a href="faq.php">
+                <a href="faq.php" class="active">
                     <i class="fas fa-question-circle"></i>
                     FAQ
                 </a>

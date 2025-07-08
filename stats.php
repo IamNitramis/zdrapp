@@ -50,187 +50,6 @@ $conn->close();
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="logo.png">
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%);
-            min-height: 100vh;
-        }
-        .stats-container {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-        .stat-card {
-            background: white;
-            border-radius: 15px;
-            padding: 35px 30px;
-            min-width: 220px;
-            box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
-            text-align: center;
-            transition: transform 0.3s ease;
-            margin-bottom: 20px;
-        }
-        .stat-card:hover {
-            transform: translateY(-5px);
-        }
-        .stat-card i {
-            font-size: 2.5rem;
-            margin-bottom: 15px;
-        }
-        .stat-number {
-            font-size: 2.2rem;
-            font-weight: 700;
-            color: #2d3748;
-            margin-bottom: 5px;
-        }
-        .stat-label {
-            color: #718096;
-            font-size: 1rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-        .page-header {
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: white;
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            margin-bottom: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-        }
-        .page-header h1 {
-            font-size: 2.5rem;
-            margin: 0;
-            font-weight: 300;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-        .page-header .subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-top: 10px;
-        }
-        @media (max-width: 900px) {
-            .stats-container {
-                flex-direction: column;
-                align-items: center;
-            }
-            .stat-card {
-                width: 100%;
-                min-width: unset;
-            }
-        }
-        .header {
-            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
-            padding: 15px 0;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-        }
-
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 600;
-            transition: transform 0.3s ease;
-        }
-
-        .logo:hover {
-            transform: scale(1.05);
-        }
-
-        .logo img {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
-            transition: box-shadow 0.3s ease;
-        }
-
-        .logo:hover img {
-            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
-        }
-
-        .navbar {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-        }
-
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            padding: 12px 20px;
-            border-radius: 25px;
-            font-weight: 500;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            position: relative;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .navbar a:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .navbar a.active {
-            background: rgba(255, 255, 255, 0.3);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .container {
-            max-width: 1400px;
-            margin: 30px auto;
-            padding: 20px;
-        }
-
-        .page-header {
-            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
-            color: white;
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            margin-bottom: 30px;
-            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.2);
-        }
-
-        .page-header h1 {
-            font-size: 2.5rem;
-            margin: 0;
-            font-weight: 300;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .page-header .subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-top: 10px;
-        }
-
-    </style>
 </head>
 <body>
     <div class="header">
@@ -251,7 +70,7 @@ $conn->close();
                     <i class="fas fa-upload"></i>
                     Nahrát data
                 </a>
-                <a href="add_diagnosis.php" class="active">
+                <a href="add_diagnosis.php">
                     <i class="fas fa-plus-circle"></i>
                     Přidat diagnózu
                 </a>
@@ -263,7 +82,7 @@ $conn->close();
                     <i class="fas fa-file-medical"></i>
                     Přidat lékařskou zprávu
                 </a>
-                <a href="stats.php">
+                <a href="stats.php" class="active">
                     <i class="fas fa-chart-bar"></i>
                     Statistiky
                 </a>
