@@ -320,10 +320,14 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
         </div>
 
         <?php
+        // Načtení databázové konfigurace
+        require_once __DIR__ . '/config/database.php';
+        
         // Připojení k databázi pro statistiky
-        $conn = new mysqli("localhost", "root", "", "zdrapp");
-        if ($conn->connect_error) {
-            die("Connection failed: " . $conn->connect_error);
+        try {
+            $conn = getDatabase();
+        } catch (Exception $e) {
+            die("Chyba připojení k databázi: " . $e->getMessage());
         }
 
         // Počet pacientů

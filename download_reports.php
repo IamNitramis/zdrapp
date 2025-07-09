@@ -28,9 +28,11 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
 <?php exit; endif; ?>
 
 <?php
-$conn = new mysqli("localhost", "root", "", "zdrapp");
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+require_once __DIR__ . '/config/database.php';
+try {
+    $conn = getDatabase();
+} catch (Exception $e) {
+    die("Chyba připojení k databázi: " . $e->getMessage());
 }
 
 // Získání seznamu pacientů

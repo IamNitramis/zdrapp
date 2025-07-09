@@ -1,5 +1,9 @@
 <?php
 session_start();
+
+// Načtení databázové konfigurace
+require_once __DIR__ . '/config/database.php';
+
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
 <!DOCTYPE html>
 <html lang="cs">
@@ -25,9 +29,10 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
 
 <?php
 // Připojení k databázi
-$conn = new mysqli("localhost", "root", "", "zdrapp");
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+try {
+    $conn = getDatabase();
+} catch (Exception $e) {
+    die("Chyba připojení k databázi: " . $e->getMessage());
 }
 
 // Získání statistik

@@ -1,10 +1,10 @@
 <?php
 // Nastavení připojení k databázi
-$conn = new mysqli("localhost", "root", "", "zdrapp");
-
-// Kontrola připojení
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+require_once __DIR__ . '/config/database.php';
+try {
+    $conn = getDatabase();
+} catch (Exception $e) {
+    die("Chyba připojení k databázi: " . $e->getMessage());
 }
 
 // Získání ID osoby z URL a jeho sanitizace
@@ -20,7 +20,6 @@ $result = $stmt->get_result();
 if ($result->num_rows === 0) {
     echo "Person not found.";
     $stmt->close();
-    $conn->close();
     exit;
 }
 
@@ -39,7 +38,6 @@ if ($stmt->execute()) {
 }
 
 $stmt->close();
-$conn->close();
 
 // Přesměrování zpět na seznam
 header("Location: show_data.php");

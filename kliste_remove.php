@@ -1,5 +1,10 @@
 <?php
-$conn = new mysqli("localhost", "root", "", "zdrapp");
+require_once __DIR__ . '/config/database.php';
+try {
+    $conn = getDatabase();
+} catch (Exception $e) {
+    die("Chyba připojení k databázi: " . $e->getMessage());
+}
 $id = intval($_GET['id']);
 
 // Zjisti person_id před smazáním
@@ -18,5 +23,4 @@ if ($row = $res->fetch_assoc()) {
 } else {
     echo "NOT FOUND";
 }
-$conn->close();
 ?>

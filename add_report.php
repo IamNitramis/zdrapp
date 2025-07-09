@@ -11,9 +11,11 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 }
 
 // Připojení k databázi
-$conn = new mysqli("localhost", "root", "", "zdrapp");
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+require_once __DIR__ . '/config/database.php';
+try {
+    $conn = getDatabase();
+} catch (Exception $e) {
+    die("Chyba připojení k databázi: " . $e->getMessage());
 }
 
 // Načtení všech diagnóz
@@ -199,15 +201,20 @@ $conn->close();
                         <option value="">-- Vyberte diagnózu --</option>
                         <?php
                         // Znovu načti diagnózy pro select
-                        $conn2 = new mysqli("localhost", "root", "", "zdrapp");
-                        $sqlDiagnoses2 = "SELECT id, name FROM diagnoses ORDER BY name";
-                        $resultDiagnoses2 = $conn2->query($sqlDiagnoses2);
-                        while ($row = $resultDiagnoses2->fetch_assoc()):
+                        try {
+                            $conn2 = getDatabase();
+                            $sqlDiagnoses2 = "SELECT id, name FROM diagnoses ORDER BY name";
+                            $resultDiagnoses2 = $conn2->query($sqlDiagnoses2);
+                            while ($row = $resultDiagnoses2->fetch_assoc()):
                         ?>
                             <option value="<?php echo $row['id']; ?>" <?php if ($row['id'] == $selectedDiagnosisId) echo 'selected'; ?>>
                                 <?php echo htmlspecialchars($row['name']); ?>
                             </option>
-                        <?php endwhile; $conn2->close(); ?>
+                        <?php endwhile; 
+                        } catch (Exception $e) {
+                            echo "<option value=''>Chyba při načítání diagnóz</option>";
+                        }
+                        ?>
                     </select>
                 </div>
 

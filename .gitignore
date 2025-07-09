@@ -1,0 +1,29 @@
+# Vývojové soubory
+*.log
+.env
+config/local.php
+
+# Temporary files
+*.tmp
+*.temp
+temp/
+tmp/
+
+# Backup files
+*.bak
+*.backup
+backups/*.csv
+
+# IDE files
+.vscode/
+.idea/
+*.swp
+*.swo
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# Cache files
+cache/
+*.cache

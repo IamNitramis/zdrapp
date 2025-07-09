@@ -1,5 +1,9 @@
 <?php
 session_start();
+
+// Načtení databázové konfigurace
+require_once __DIR__ . '/config/database.php';
+
 // Only allow access if logged in and is admin (optional, can be removed if not needed)
 // if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 //     header('Location: login.php');
@@ -7,9 +11,10 @@ session_start();
 // }
 
 // Připojení k databázi
-$conn = new mysqli("localhost", "root", "", "zdrapp");
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+try {
+    $conn = getDatabase();
+} catch (Exception $e) {
+    die("Chyba připojení k databázi: " . $e->getMessage());
 }
 
 $message = '';

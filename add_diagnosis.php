@@ -1,6 +1,9 @@
 <?php
 session_start(); // Spustí session, aby bylo možné kontrolovat přihlášení
 
+// Načtení databázové konfigurace
+require_once __DIR__ . '/config/database.php';
+
 // Kontrola, zda je uživatel přihlášen
 if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
 <!DOCTYPE html>
@@ -99,10 +102,10 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
 
 <?php
 // Připojení k databázi
-$conn = new mysqli("localhost", "root", "", "zdrapp");
-
-if ($conn->connect_error) {
-    die("Connection failed: " . $conn->connect_error);
+try {
+    $conn = getDatabase();
+} catch (Exception $e) {
+    die("Chyba připojení k databázi: " . $e->getMessage());
 }
 
 // Přidání nové diagnózy
