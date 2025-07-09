@@ -728,7 +728,7 @@ $conn->close();
     <title>Stáhnout lékařské zprávy</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="logo.png">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="assets/css/all.min.css" rel="stylesheet">
 </head>
 <body>
     <div class="header">
