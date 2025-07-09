@@ -97,7 +97,7 @@ CREATE TABLE tick_bites (
   person_id int(11) NOT NULL,
   x double NOT NULL,
   y double NOT NULL,
-  created_at datetime NOT NULL
+  created_at datetime NOT NULL,
   bite_order INT DEFAULT 1 
   ) ;
 
