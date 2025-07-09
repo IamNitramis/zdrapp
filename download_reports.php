@@ -12,6 +12,63 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
     <title>Přístup zamítnut</title>
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="assets/css/all.min.css">
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+            color: #333;
+        }
+        .login-warning {
+            max-width: 450px;
+            background: white;
+            border-radius: 20px;
+            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
+            padding: 50px 40px;
+            text-align: center;
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+        .login-warning i {
+            font-size: 4rem;
+            color: #e67e22;
+            margin-bottom: 20px;
+        }
+        .login-warning h2 { 
+            color: #2d3748; 
+            margin-bottom: 15px; 
+            font-size: 1.8rem;
+            font-weight: 600;
+        }
+        .login-warning p {
+            color: #718096;
+            font-size: 1.1rem;
+            margin-bottom: 30px;
+            line-height: 1.5;
+        }
+        .login-warning a {
+            display: inline-block;
+            padding: 15px 35px;
+            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+            color: #fff;
+            border-radius: 50px;
+            text-decoration: none;
+            font-weight: 600;
+            font-size: 1.1rem;
+            transition: all 0.3s ease;
+            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+        }
+        .login-warning a:hover { 
+            transform: translateY(-3px);
+            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
+        }
+    </style>
 </head>
 <body>
     <div class="login-warning">
@@ -96,6 +153,38 @@ function generateKlisteImage($person_id, $conn, $outputPath) {
     $success = imagepng($im, $outputPath);
     imagedestroy($im);
     return $success;
+}
+
+// Funkce pro vyčištění HTML pro PhpWord
+function cleanHtmlForPhpWord($html) {
+    if (empty(trim($html))) {
+        return '';
+    }
+
+    // Potlačení chyb, pokud je HTML velmi poškozené
+    libxml_use_internal_errors(true);
+    $dom = new DOMDocument();
+    
+    // Načteme HTML, obalíme ho a specifikujeme kódování
+    @$dom->loadHTML('<?xml encoding="UTF-8"><div>' . $html . '</div>', LIBXML_HTML_NOIMPLIED | LIBXML_HTML_NODEFDTD);
+    
+    // Získáme opravené HTML
+    $body = $dom->getElementsByTagName('body')->item(0);
+    $cleanHtml = '';
+    if ($body) {
+        foreach ($body->childNodes as $child) {
+            $cleanHtml .= $dom->saveHTML($child);
+        }
+    }
+    
+    libxml_clear_errors();
+
+    // Pokud je výsledek prázdný, vrátíme alespoň prostý text
+    if (empty(trim(strip_tags($cleanHtml)))) {
+        return strip_tags($html);
+    }
+
+    return trim($cleanHtml);
 }
 
 // Funkce pro generování obsahu TXT souboru
@@ -269,22 +358,77 @@ function generateDocxReport($person_id, $conn, $phpWord) {
     $stmt->execute();
     $result = $stmt->get_result();
 
-    // Přidání zpráv
-    $section->addText('LÉKAŘSKÉ ZPRÁVY:', ['bold' => true, 'size' => 14]);
-    $section->addTextBreak();
-
-    $first = true;
+    $reportCount = 0;
     while ($row = $result->fetch_assoc()) {
-        if (!$first) {
+        $reportCount++;
+        if ($reportCount > 1) {
             $section->addPageBreak();
         }
-        $first = false;
+        
         $section->addTextBreak();
-        // Přidání textu zprávy (může obsahovat HTML)
-        \PhpOffice\PhpWord\Shared\Html::addHtml($section, $row['report_text']);
+
+        if (!empty($row['report_text'])) {
+            // Potlačení varování a chyb při zpracování HTML
+            $oldErrorReporting = error_reporting(E_ERROR | E_PARSE);
+            libxml_use_internal_errors(true);
+            
+            try {
+                // Konfigurace pro lepší zachování formátování
+                $htmlOptions = [
+                    'encoding' => 'UTF-8',
+                    'stylesheet' => true,
+                    'table' => [
+                        'borderSize' => 1,
+                        'borderColor' => '000000'
+                    ]
+                ];
+                
+                // Nejdříve zkusíme přidat HTML přímo s maximálním zachováním formátování
+                \PhpOffice\PhpWord\Shared\Html::addHtml($section, $row['report_text'], false, false);
+            } catch (Exception $e) {
+                try {
+                    // Pokud selže, zkusíme s vylepšenou čistící funkcí
+                    $betterHtml = improveHtmlForPhpWord($row['report_text']);
+                    if (!empty($betterHtml)) {
+                        \PhpOffice\PhpWord\Shared\Html::addHtml($section, $betterHtml, false, false);
+                    } else {
+                        // Fallback na prostý text se zachováním řádků a základního formátování
+                        $plainText = strip_tags($row['report_text']);
+                        $lines = explode("\n", $plainText);
+                        foreach ($lines as $line) {
+                            if (!empty(trim($line))) {
+                                $section->addText(trim($line));
+                            } else {
+                                $section->addTextBreak();
+                            }
+                        }
+                    }
+                } catch (Exception $e2) {
+                    // Finální fallback na prostý text
+                    $plainText = strip_tags($row['report_text']);
+                    $lines = explode("\n", $plainText);
+                    foreach ($lines as $line) {
+                        if (!empty(trim($line))) {
+                            $section->addText(trim($line));
+                        } else {
+                            $section->addTextBreak();
+                        }
+                    }
+                }
+            } finally {
+                libxml_clear_errors();
+                error_reporting($oldErrorReporting);
+            }
+        } else {
+            $section->addText('Žádný text zprávy.', ['italic' => true]);
+        }
         $section->addTextBreak();
     }
     $stmt->close();
+
+    if ($reportCount === 0) {
+        $section->addText('Pro tohoto pacienta nebyly nalezeny žádné lékařské zprávy.', ['italic' => true]);
+    }
 
     // Přidání obrázku klíšťat
     $section->addPageBreak();
@@ -356,6 +500,8 @@ function generateDocxReport($person_id, $conn, $phpWord) {
             $table->addCell(1200)->addText(number_format($k['y'], 3));
             $table->addCell(2000)->addText($added_by);
         }
+    } else {
+        $section->addText('Žádná klíšťata nebyla zaznamenána.');
     }
     $klisteStmt->close();
 

@@ -36,7 +36,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     $templateText = trim($_POST['template_text']);
     $selectedDiagnosisId = $diagnosisId;
 
-    if ($diagnosisId && !empty($templateText)) {
+    // Odstraníme prázdné HTML tagy z TinyMCE obsahu
+    $cleanedText = trim(strip_tags($templateText));
+
+    if ($diagnosisId && !empty($cleanedText)) {
         // Zjisti, zda už šablona pro tuto diagnózu existuje
         $sqlCheck = "SELECT id FROM templates WHERE diagnosis_id = ?";
         $stmtCheck = $conn->prepare($sqlCheck);
@@ -73,7 +76,11 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         }
         $stmtCheck->close();
     } else {
-        $message = "Prosím vyberte diagnózu a zadejte text šablony.";
+        if (!$diagnosisId) {
+            $message = "Prosím vyberte diagnózu.";
+        } else {
+            $message = "Prosím zadejte text šablony.";
+        }
         $messageType = "error";
     }
 } elseif (isset($_GET['diagnosis_id'])) {
@@ -99,8 +106,6 @@ if ($selectedDiagnosisId) {
     $stmtDiagnosisName->fetch();
     $stmtDiagnosisName->close();
 }
-
-$conn->close();
 ?>
 
 <!DOCTYPE html>
@@ -191,27 +196,27 @@ $conn->close();
                 Konfigurace šablony
             </h2>
             
-            <form id="templateForm" action="" method="POST">
+            <form id="templateForm" action="" method="POST" novalidate>
                 <div class="form-group">
                     <label for="diagnosis_id" class="form-label">
                         <i class="fas fa-list"></i>
                         Vyberte diagnózu:
                     </label>
-                    <select name="diagnosis_id" id="diagnosis_id" class="form-select" required onchange="loadTemplateForDiagnosis(this)">
+                    <select name="diagnosis_id" id="diagnosis_id" class="form-select" onchange="loadTemplateForDiagnosis(this)">
                         <option value="">-- Vyberte diagnózu --</option>
                         <?php
                         // Znovu načti diagnózy pro select
-                        try {
-                            $conn2 = getDatabase();
-                            $sqlDiagnoses2 = "SELECT id, name FROM diagnoses ORDER BY name";
-                            $resultDiagnoses2 = $conn2->query($sqlDiagnoses2);
+                        $sqlDiagnoses2 = "SELECT id, name FROM diagnoses ORDER BY name";
+                        $resultDiagnoses2 = $conn->query($sqlDiagnoses2);
+                        if ($resultDiagnoses2) {
                             while ($row = $resultDiagnoses2->fetch_assoc()):
                         ?>
                             <option value="<?php echo $row['id']; ?>" <?php if ($row['id'] == $selectedDiagnosisId) echo 'selected'; ?>>
                                 <?php echo htmlspecialchars($row['name']); ?>
                             </option>
-                        <?php endwhile; 
-                        } catch (Exception $e) {
+                        <?php 
+                            endwhile; 
+                        } else {
                             echo "<option value=''>Chyba při načítání diagnóz</option>";
                         }
                         ?>
@@ -224,8 +229,7 @@ $conn->close();
                         Text šablony:
                     </label>
                     <textarea name="template_text" id="template_text" class="form-textarea" 
-                              placeholder="Zadejte text šablony... Můžete používat placeholdery jako {{name}}, {{birth_date}}, {{temperature}} atd." 
-                              required><?php echo htmlspecialchars($templateText); ?></textarea>
+                              placeholder="Zadejte text šablony... Můžete používat placeholdery jako {{name}}, {{birth_date}}, {{current_day}} atd."><?php echo htmlspecialchars($templateText); ?></textarea>
                 </div>
 
                 <div class="help-container">
@@ -244,6 +248,7 @@ $conn->close();
                             <li><code>{{diagnosis}}</code> – Název diagnózy a datum přiřazení</li>
                             <li><code>{{note}}</code> – Poznámka k diagnóze</li>
                             <li><code>{{author}}</code> – Autor poslední změny zprávy. (doporučujeme používat na konci zprávy jako podpis)</li>
+                            <li><code>{{current_day}}</code> – Aktuální datum (formát dd.mm.rrrr)</li>
                         </ul>
                     </div>
                 </div>
@@ -260,47 +265,22 @@ $conn->close();
 
     <!-- VLOŽTE TENTO KOMPLETNÍ BLOK PŘED </body> -->
     <script>
-        // Inicializace TinyMCE editoru
+        // Zjednodušená inicializace TinyMCE
         tinymce.init({
             selector: '#template_text',
             plugins: 'lists table',
-            toolbar: 'undo redo | bold italic underline | bullist numlist | table',
+            toolbar: 'undo redo | bold italic underline | bullist numlist | table | fontsize',
             menubar: false,
             branding: false,
-            height: 500
+            height: 400
         });
 
         let isSubmitting = false;
 
-        // Zpracování odeslání formuláře
-        document.getElementById('templateForm').addEventListener('submit', function(e) {
-            isSubmitting = true;
-            
-            // KLÍČOVÉ: Uloží obsah z editoru do skrytého <textarea>
-            tinymce.triggerSave(); 
-            
-            const diagnosisId = document.getElementById('diagnosis_id').value;
-            const templateText = document.getElementById('template_text').value.trim();
-            
-            if (!diagnosisId) {
-                e.preventDefault(); // Zastaví odeslání
-                alert('Prosím vyberte diagnózu.');
-                isSubmitting = false;
-                return;
-            }
-            
-            if (!templateText) {
-                e.preventDefault(); // Zastaví odeslání
-                alert('Prosím zadejte text šablony.');
-                isSubmitting = false;
-                return;
-            }
-        });
-
         // Načtení šablony po změně diagnózy
         function loadTemplateForDiagnosis(sel) {
             if (isSubmitting) {
-                return; // Zabrání přesměrování během odesílání
+                return;
             }
             
             const id = sel.value;
@@ -329,6 +309,25 @@ $conn->close();
             if (menuIcon && !navbar.contains(event.target) && !menuIcon.contains(event.target)) {
                 navbar.classList.remove('active');
             }
+        });
+
+        // Jednoduchá validace před odesláním
+        document.getElementById('templateForm').addEventListener('submit', function(e) {
+            // Jednoduše uložíme obsah z TinyMCE
+            if (tinymce.get('template_text')) {
+                tinymce.get('template_text').save();
+            }
+            
+            // Základní validace
+            const diagnosisId = document.getElementById('diagnosis_id').value;
+            if (!diagnosisId) {
+                alert('Prosím vyberte diagnózu.');
+                e.preventDefault();
+                return false;
+            }
+            
+            isSubmitting = true;
+            // Nechej formulář se odeslat normálně
         });
     </script>
 </body>

@@ -291,9 +291,12 @@ $temperature = mt_rand(360, 370) / 10; // 36.0 - 38.0 °C
 $oxygen_saturation = mt_rand(98, 100); // 98 - 100 %
 $heart_rate = mt_rand(60, 100);        // 60 - 100 bpm
 
-// Nahrazení placeholderů skutečnými hodnotami, včetně {{note}} a {{author}}
+// Aktuální datum
+$current_day = date('d.m.Y');
+
+// Nahrazení placeholderů skutečnými hodnotami, včetně {{note}}, {{author}} a {{current_day}}
 $report = str_replace(
-    ['{{name}}', '{{birth_date}}', '{{temperature}}', '{{oxygen_saturation}}', '{{heart_rate}}', '{{diagnosis}}', '{{note}}', '{{author}}'],
+    ['{{name}}', '{{birth_date}}', '{{temperature}}', '{{oxygen_saturation}}', '{{heart_rate}}', '{{diagnosis}}', '{{note}}', '{{author}}', '{{current_date}}'],
     [
         htmlspecialchars($person['first_name'] . ' ' . $person['surname']),
         htmlspecialchars($person['birth_date']),
@@ -302,7 +305,8 @@ $report = str_replace(
         $heart_rate,
         htmlspecialchars($diagnosis['diagnosis_name'] . " (Zaznamenáno: " . $assignedAt . ")"),
         htmlspecialchars($noteText),
-        htmlspecialchars($authorName)
+        htmlspecialchars($authorName),
+        $current_day
     ],
     $template
 );
@@ -440,6 +444,10 @@ $conn->close();
                 <a href="stats.php">
                     <i class="fas fa-chart-bar"></i>
                     Statistiky
+                </a>
+                <a href="faq.php">
+                    <i class="fas fa-question-circle"></i>
+                    FAQ
                 </a>
                 <a href="logout.php">
                     <i class="fas fa-sign-out-alt"></i>

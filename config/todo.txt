@@ -1,0 +1,3 @@
+do každé nove vytvorene diagnozy insertnout zakladni template se vsema placeholderama, aby se to nemuselo vypisovat
+
+opravit stats.php, hlavicka trochu jebe

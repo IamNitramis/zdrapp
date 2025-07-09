@@ -13,7 +13,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Přístup zamítnut</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="assets/css/all.min.css" rel="stylesheet">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -159,6 +159,14 @@ $diagnosesResult = $conn->query($diagnosesSql);
 $diagnoses = [];
 while ($row = $diagnosesResult->fetch_assoc()) {
     $diagnoses[] = $row;
+}
+
+// Načtení lékařských zpráv
+$reportsSql = "SELECT id, report_date, patient_name, diagnosis, LEFT(report_text, 100) AS report_preview FROM medical_reports ORDER BY report_date DESC";
+$reportsResult = $conn->query($reportsSql);
+$medicalReports = [];
+while ($row = $reportsResult->fetch_assoc()) {
+    $medicalReports[] = $row;
 }
 
 // Statistiky
@@ -427,6 +435,37 @@ document.addEventListener('click', function(event) {
                 <h3>Žádné diagnózy</h3>
                 <p>V systému nejsou zatím žádné diagnózy. Přidejte první diagnózu pomocí formuláře výše.</p>
             </div>
+            <?php endif; ?>
+        </div>
+
+        <div class="table-container">
+            <h2><i class="fas fa-file-medical"></i> Seznam lékařských zpráv</h2>
+            
+            <?php if (!empty($medicalReports)): ?>
+            <table id="medicalReportsTable">
+                <thead>
+                    <tr>
+                        <th><i class="fas fa-hashtag"></i> ID</th>
+                        <th><i class="fas fa-calendar-alt"></i> Datum</th>
+                        <th><i class="fas fa-user"></i> Pacient</th>
+                        <th><i class="fas fa-stethoscope"></i> Diagnóza</th>
+                        <th><i class="fas fa-file-alt"></i> Náhled zprávy</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    <?php foreach ($medicalReports as $report): ?>
+                    <tr>
+                        <td><?php echo $report['id']; ?></td>
+                        <td><?php echo $report['report_date']; ?></td>
+                        <td><?php echo $report['patient_name']; ?></td>
+                        <td><?php echo $report['diagnosis']; ?></td>
+                        <td><?php echo $report['report_preview']; ?>...</td>
+                    </tr>
+                    <?php endforeach; ?>
+                </tbody>
+            </table>
+            <?php else: ?>
+            <p>Žádné lékařské zprávy nebyly nalezeny.</p>
             <?php endif; ?>
         </div>
     </div>

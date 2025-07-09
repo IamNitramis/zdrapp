@@ -181,6 +181,7 @@ $conn->close();
             background: #f1f8e9;
             border-radius: 15px;
             padding: 25px;
+            max-width: 800px;
             margin-bottom: 25px;
             box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
             transition: transform 0.3s ease, box-shadow 0.3s ease;
@@ -481,6 +482,32 @@ $conn->close();
             min-width: 320px;
             max-width: 400px;
         }
+
+        /* Přepsání šířky kontejneru pro přizpůsobení obsahu */
+        .container {
+            max-width: 1000px !important;
+            padding: 20px !important;
+            box-sizing: border-box !important;
+        }
+
+        /* Zajištění, že flex sekce se rozprostřou na celou dostupnou šířku */
+        .flex-sections {
+            width: 100%;
+            max-width: 1400px;
+            margin: 0 auto;
+        }
+
+        /* Responsive úpravy */
+        @media (max-width: 1200px) {
+            .flex-sections {
+                flex-direction: column;
+                gap: 20px;
+            }
+            .section-medalergies {
+                max-width: none;
+                min-width: 0;
+            }
+        }
         
     </style>
 </head>
@@ -536,6 +563,57 @@ $conn->close();
             <h1><i class="fas fa-user-circle"></i> <?php echo htmlspecialchars($person['first_name'] . ' ' . $person['surname']); ?></h1>
             <div class="subtitle">Detail pacienta a zdravotní záznamy</div>
         </div>
+                <div class="section-card section-add-note">
+            <h2 class="section-title">
+                <i class="fas fa-plus-circle"></i>
+                Přidat diagnózu a poznámku
+            </h2>
+            <form action="" method="POST" class="form-container">
+                <div class="form-group">
+                    <label for="diagnosis" class="form-label">
+                        <i class="fas fa-list-alt"></i>
+                        Vyber diagnózu:
+                    </label>
+                    <select name="diagnosis_id" id="diagnosis" class="form-select" required>
+                        <option value="">-- Vyberte diagnózu --</option>
+                        <?php while ($row = $all_diagnoses->fetch_assoc()): ?>
+                            <option value="<?php echo htmlspecialchars($row['id']); ?>">
+                                <?php echo htmlspecialchars($row['name']); ?>
+                            </option>
+                        <?php endwhile; ?>
+                    </select>
+                </div>
+                <div class="form-links">
+                    <a href="add_diagnosis.php" class="form-link">
+                        <i class="fas fa-plus"></i>
+                        Přidat diagnózu
+                    </a>
+                    <a href="add_report.php" class="form-link">
+                        <i class="fas fa-file-medical"></i>
+                        Přidat template lékařské zprávy
+                    </a>
+                </div>
+                <div class="form-group">
+                    <label for="note" class="form-label">
+                        <i class="fas fa-sticky-note"></i>
+                        Poznámka:
+                    </label>
+                    <textarea name="note" id="note" class="form-textarea" 
+                              placeholder="Napište, jak probíhalo ošetření, co jste podali za medikaci..." required></textarea>
+                </div>
+                <div class="form-actions">
+                    <button type="submit" class="btn btn-primary">
+                        <i class="fas fa-save"></i>
+                        Uložit záznam
+                    </button>
+                    <a href="kliste.php?person_id=<?php echo $person_id; ?>" class="btn btn-orange">
+                        <i class="fas fa-bug"></i>
+                        Klíšťata
+                    </a>
+                </div>
+            </form>
+        </div>
+    
         <div class="flex-sections">
             <div class="section-card section-notes">
                 <h2 class="section-title">
@@ -617,56 +695,6 @@ $conn->close();
                     </div>
                 </form>
             </div>
-        </div>
-        <div class="section-card section-add-note">
-            <h2 class="section-title">
-                <i class="fas fa-plus-circle"></i>
-                Přidat diagnózu a poznámku
-            </h2>
-            <form action="" method="POST" class="form-container">
-                <div class="form-group">
-                    <label for="diagnosis" class="form-label">
-                        <i class="fas fa-list-alt"></i>
-                        Vyber diagnózu:
-                    </label>
-                    <select name="diagnosis_id" id="diagnosis" class="form-select" required>
-                        <option value="">-- Vyberte diagnózu --</option>
-                        <?php while ($row = $all_diagnoses->fetch_assoc()): ?>
-                            <option value="<?php echo htmlspecialchars($row['id']); ?>">
-                                <?php echo htmlspecialchars($row['name']); ?>
-                            </option>
-                        <?php endwhile; ?>
-                    </select>
-                </div>
-                <div class="form-links">
-                    <a href="add_diagnosis.php" class="form-link">
-                        <i class="fas fa-plus"></i>
-                        Přidat diagnózu
-                    </a>
-                    <a href="add_report.php" class="form-link">
-                        <i class="fas fa-file-medical"></i>
-                        Přidat template lékařské zprávy
-                    </a>
-                </div>
-                <div class="form-group">
-                    <label for="note" class="form-label">
-                        <i class="fas fa-sticky-note"></i>
-                        Poznámka:
-                    </label>
-                    <textarea name="note" id="note" class="form-textarea" 
-                              placeholder="Napište, jak probíhalo ošetření, co jste podali za medikaci..." required></textarea>
-                </div>
-                <div class="form-actions">
-                    <button type="submit" class="btn btn-primary">
-                        <i class="fas fa-save"></i>
-                        Přidat záznam
-                    </button>
-                    <a href="kliste.php?person_id=<?php echo $person_id; ?>" class="btn btn-orange">
-                        <i class="fas fa-bug"></i>
-                        Klíšťata
-                    </a>
-                </div>
-            </form>
         </div>
     </div>
 

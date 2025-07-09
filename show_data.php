@@ -11,6 +11,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
     <link rel="stylesheet" href="style.css">
     <link href="assets/css/all.min.css" rel="stylesheet">
     <style>
+        
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
             margin: 0;
@@ -261,6 +262,114 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
     .stat-card:hover {
         transform: translateY(-5px);
     }
+    /* Alert styles - kompaktní verze a zarovnání */
+    .alert-diagnosis {
+        background: linear-gradient(135deg, #ff8a80 0%, #ff5722 100%);
+        color: white;
+        padding: 14px 18px 16px 18px;
+        border-radius: 10px;
+        margin: 18px auto 16px auto;
+        box-shadow: 0 2px 8px rgba(255, 87, 34, 0.13);
+        border-left: 4px solid #d32f2f;
+        font-size: 1em;
+        max-width: 600px;
+        width: 100%;
+        min-width: 0;
+    }
+    .alert-header {
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        gap: 10px;
+        margin-bottom: 10px;
+        text-align: center;
+    }
+    .alert-header i {
+        font-size: 1.2rem;
+        color: #ffeb3b;
+    }
+    .alert-header h3 {
+        margin: 0;
+        font-size: 1.13rem;
+        font-weight: 600;
+        letter-spacing: 0.01em;
+    }
+    .alert-content {
+        background: rgba(255, 255, 255, 0.08);
+        border-radius: 7px;
+        padding: 10px 12px 12px 12px;
+        margin-top: 5px;
+    }
+    .alert-summary {
+        font-size: 1.07em;
+        margin-bottom: 8px;
+        font-weight: 500;
+        text-align: center;
+    }
+    .alert-content > div:not(.alert-summary) {
+        text-align: center;
+    }
+    .alert-patients {
+        display: flex;
+        flex-wrap: wrap;
+        gap: 7px;
+        margin-top: 8px;
+        justify-content: center;
+    }
+    .patient-tag {
+        background: rgba(255, 255, 255, 0.18);
+        padding: 4px 12px 4px 12px;
+        border-radius: 13px;
+        font-size: 0.97em;
+        font-weight: 500;
+        border: 1px solid rgba(255, 255, 255, 0.18);
+        margin-bottom: 2px;
+        text-align: left;
+        min-width: 120px;
+        max-width: 95vw;
+    }
+    .patient-tag strong {
+        display: block;
+        text-align: center;
+        margin-bottom: 2px;
+        font-weight: 600;
+    }
+    .patient-tag ul {
+        margin: 4px 0 0 0;
+        padding-left: 14px;
+        text-align: left;
+    }
+    .patient-tag li {
+        margin-bottom: 4px;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.97em;
+    }
+    .patient-tag li span {
+        color: #fffde7;
+    }
+    .patient-tag li .fa-calendar-alt {
+        color: #ffeb3b;
+        margin-right: 2px;
+    }
+    @media (max-width: 700px) {
+        .alert-diagnosis {
+            max-width: 98vw;
+            padding: 8px 2vw 10px 2vw;
+        }
+        .alert-content {
+            padding: 7px 2vw 10px 2vw;
+        }
+        .alert-patients {
+            gap: 4px;
+        }
+        .patient-tag {
+            min-width: 90px;
+            font-size: 0.93em;
+            padding: 3px 6px;
+        }
+    }
     </style>
 </head>
 
@@ -383,7 +492,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
         ?>
 
         <?php if (!empty($patients_without_reports)): ?>
-        <div class="alert">
+        <div class="alert-diagnosis">
             <div class="alert-header">
                 <i class="fas fa-exclamation-triangle"></i>
                 <h3>Upozornění - Chybějící zprávy</h3>

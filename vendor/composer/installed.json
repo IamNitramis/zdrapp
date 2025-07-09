@@ -168,6 +168,6 @@
             "install-path": "../phpoffice/phpword"
         }
     ],
-    "dev": true,
+    "dev": false,
     "dev-package-names": []
 }
