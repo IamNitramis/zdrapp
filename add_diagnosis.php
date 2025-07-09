@@ -162,11 +162,35 @@ while ($row = $diagnosesResult->fetch_assoc()) {
 }
 
 // Načtení lékařských zpráv
-$reportsSql = "SELECT id, report_date, patient_name, diagnosis, LEFT(report_text, 100) AS report_preview FROM medical_reports ORDER BY report_date DESC";
+$reportsSql = "SELECT mr.id, mr.created_at, 
+               CONCAT(p.first_name, ' ', p.surname) AS patient_name,
+               d.name AS diagnosis, 
+               LEFT(mr.report_text, 100) AS report_preview 
+               FROM medical_reports mr
+               LEFT JOIN persons p ON mr.person_id = p.id
+               LEFT JOIN diagnoses d ON mr.diagnosis_id = d.id
+               ORDER BY mr.created_at DESC";
 $reportsResult = $conn->query($reportsSql);
 $medicalReports = [];
-while ($row = $reportsResult->fetch_assoc()) {
-    $medicalReports[] = $row;
+if ($reportsResult) {
+    while ($row = $reportsResult->fetch_assoc()) {
+        $medicalReports[] = $row;
+    }
+} else {
+    // Pokud dotaz selhal, zkusíme jednodušší dotaz
+    $reportsSql = "SELECT id, created_at, report_text FROM medical_reports ORDER BY created_at DESC LIMIT 10";
+    $reportsResult = $conn->query($reportsSql);
+    if ($reportsResult) {
+        while ($row = $reportsResult->fetch_assoc()) {
+            $medicalReports[] = [
+                'id' => $row['id'],
+                'created_at' => $row['created_at'],
+                'patient_name' => 'N/A',
+                'diagnosis' => 'N/A',
+                'report_preview' => substr($row['report_text'], 0, 100)
+            ];
+        }
+    }
 }
 
 // Statistiky
@@ -438,36 +462,7 @@ document.addEventListener('click', function(event) {
             <?php endif; ?>
         </div>
 
-        <div class="table-container">
-            <h2><i class="fas fa-file-medical"></i> Seznam lékařských zpráv</h2>
-            
-            <?php if (!empty($medicalReports)): ?>
-            <table id="medicalReportsTable">
-                <thead>
-                    <tr>
-                        <th><i class="fas fa-hashtag"></i> ID</th>
-                        <th><i class="fas fa-calendar-alt"></i> Datum</th>
-                        <th><i class="fas fa-user"></i> Pacient</th>
-                        <th><i class="fas fa-stethoscope"></i> Diagnóza</th>
-                        <th><i class="fas fa-file-alt"></i> Náhled zprávy</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php foreach ($medicalReports as $report): ?>
-                    <tr>
-                        <td><?php echo $report['id']; ?></td>
-                        <td><?php echo $report['report_date']; ?></td>
-                        <td><?php echo $report['patient_name']; ?></td>
-                        <td><?php echo $report['diagnosis']; ?></td>
-                        <td><?php echo $report['report_preview']; ?>...</td>
-                    </tr>
-                    <?php endforeach; ?>
-                </tbody>
-            </table>
-            <?php else: ?>
-            <p>Žádné lékařské zprávy nebyly nalezeny.</p>
-            <?php endif; ?>
-        </div>
+       
     </div>
 </body>
 </html>
