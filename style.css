@@ -1,294 +1,1530 @@
-/* Globální nastavení */
+/* --- GLOBAL RESET & BASE STYLES --- */
+* {
+    box-sizing: border-box;
+}
+
+html {
+    overflow-x: hidden;
+    max-width: 100%;
+}
+
 body {
-    font-family: Arial, sans-serif;
     margin: 0;
     padding: 0;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: linear-gradient(135deg, #f1f8e9 0%, #c8e6c9 100%);
     display: flex;
     flex-direction: column;
-    align-items: flex-start; /* Zajištění, že obsah nebude centrován */
-    justify-content: flex-start; /* Ujistíme se, že obsah začne od vrchu */
+    align-items: center;
+    justify-content: flex-start;
     min-height: 100vh;
-    color: #333;
+    font-size: 16px;
+    line-height: 1.6;
+    overflow-x: hidden;
+    max-width: 100%;
 }
 
-/* Hlavička */
+/* --- HEADER --- */
 .header {
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-    padding: 15px 20px;
-    color: white;
-    width: 100%;
-    z-index: 100;
-    position: fixed;
+    background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+    padding: 10px 0;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
+    position: sticky;
     top: 0;
-    left: 0;
-    background: #333; /* změna z modré na tmavě šedou */
+    z-index: 1000;
+    backdrop-filter: blur(10px);
+    width: 100%;
+    min-width: 0;
+    margin: 0;
 }
 
-.header .logo img {
-    width: 50px;
-    height: auto;
+.header-container {
+    max-width: 1200px;
+    margin: 0 auto;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 0 15px;
+    position: relative;
+    width: 100%;
+    min-width: 0;
 }
 
-.header .logo,
-.header .navbar {
+.logo {
     display: flex;
     align-items: center;
+    gap: 10px;
+    text-decoration: none;
+    color: white;
+    font-size: 1.3rem;
+    font-weight: 600;
+    transition: transform 0.3s ease;
+    margin-right: 10px;
 }
 
+.logo:hover {
+    transform: scale(1.05);
+}
+
+.logo img {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
+    transition: box-shadow 0.3s ease;
+}
+
+.logo:hover img {
+    box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
+}
+
+/* --- NAVBAR --- */
 .navbar {
     display: flex;
+    gap: 5px;
     align-items: center;
 }
 
 .navbar a {
     color: white;
-    padding: 10px 20px;
     text-decoration: none;
-    margin-right: 30px;
-    font-size: 16px;
-    transition: background-color 0.3s;
+    padding: 8px 15px;
+    border-radius: 20px;
+    font-weight: 500;
+    font-size: 0.9rem;
+    transition: all 0.3s ease;
+    position: relative;
+    background: rgba(255, 255, 255, 0.1);
+    backdrop-filter: blur(5px);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+    white-space: nowrap;
+}
+.navbar a:hover {
+    background: rgba(255, 255, 255, 0.2);
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
+}
+
+.navbar a.active {
+    background: rgba(255, 255, 255, 0.3);
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
 }
 
 .navbar a[href="logout.php"] {
-    background-color: #dc3545; /* Červená barva */
-    color: white;
-    padding: 10px 20px;
-    border-radius: 5px;
-    font-size: 16px;
-    transition: background-color 0.3s;
+    background: #e53935 !important;
+    color: #fff !important;
+    border: 1px solid #b71c1c !important;
+    box-shadow: 0 5px 15px rgba(229, 57, 53, 0.2);
 }
 
-.navbar a[href="logout.php"]:hover {
-    background-color: #c82333; /* Tmavší červená při najetí */
-    border-radius: 5px;
-}
-
-.navbar a:hover {
-    background-color: #444; /* změna z modré na tmavě šedou */
-    border-radius: 5px;
+.navbar a[href="logout.php"]:hover,
+.navbar a[href="logout.php"].active {
+    background: #b71c1c !important;
+    color: #fff !important;
+    box-shadow: 0 8px 25px rgba(229, 57, 53, 0.3);
 }
 
 .menu-icon {
-    font-size: 30px;
     display: none;
+    color: white;
+    font-size: 1.5rem;
     cursor: pointer;
+    padding: 8px;
+    border-radius: 8px;
+    transition: background 0.3s ease;
+    background: rgba(255, 255, 255, 0.1);
+    border: 1px solid rgba(255, 255, 255, 0.2);
+}
+
+.menu-icon:hover {
+    background: rgba(255, 255, 255, 0.2);
+}
+
+/* --- CONTAINER --- */
+.container {
+    width: 100%;
+    max-width: 1240px; /* nebo jiná max šířka */
+    margin: 0 auto;
+    padding: 15px;
+    border-radius: 10px;
+    background: rgba(255, 255, 255, 0.9);
+    margin-top: 30px;
+    display: flex;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    flex-direction: column;
+    align-items: center;
+    box-sizing: border-box;
+}
+
+/* --- PAGE HEADER --- */
+.page-header {
+    background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+    color: white;
+    padding: 25px 20px;
+    border-radius: 15px;
+    text-align: center;
+    margin-bottom: 20px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
+    display: inline-block;
+    width: 100%;
+    max-width: 540px;
+    min-width: 0;
+    box-sizing: border-box;
+}
+
+.page-header h1 {
+    font-size: 2rem;
+    margin: 0;
+    font-weight: 300;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+
+.page-header .subtitle {
+    font-size: 1rem;
+    opacity: 0.9;
+    margin-top: 10px;
+}
+
+/* --- STATS --- */
+.stats-container {
+    display: flex;
+    gap: 20px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    justify-content: center;
+}
+
+.stat-card {
+    background: white;
+    border-radius: 15px;
+    padding: 35px 30px;
+    min-width: 220px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    text-align: center;
+    transition: transform 0.3s ease;
+    margin-bottom: 20px;
+}
+
+/* Stat-card přes celou šířku pokud je jediný */
+.stats-container .stat-card:only-child {
+    flex-basis: 100%;
+    min-width: 0;
+    max-width: 100%;
+}
+
+/* --- STATS & FORM LAYOUT --- */
+.stats-form-container {
+    display: flex;
+    gap: 25px;
+    margin-bottom: 25px;
+    flex-wrap: wrap;
+    align-items: flex-start;
+}
+
+.stats-form-container .stats-container {
+    flex: 0 0 auto;
+    margin-bottom: 0;
+}
+
+.stats-form-container .form-container {
+    flex: 1;
+    min-width: 350px;
+    margin-bottom: 0;
+}
+
+.stat-card:hover {
+    transform: translateY(-5px);
+}
+
+.stat-card i {
+    font-size: 2.5rem;
+    margin-bottom: 15px;
+}
+
+.stat-number {
+    font-size: 2.2rem;
+    font-weight: 700;
+    color: #2d3748;
+    margin-bottom: 5px;
+}
+
+.stat-label {
+    color: #718096;
+    font-size: 1rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+}
+
+/* --- FORM --- */
+.form-container {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+}
+
+.form-container h2 {
+    color: #2d3748;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-container h2 i {
+    color: #388e3c;
+}
+
+.form-group {
+    margin-bottom: 20px;
+}
+
+.form-group label {
+    display: block;
+    margin-bottom: 8px;
+    color: #4a5568;
+    font-weight: 600;
+    font-size: 0.95rem;
+}
+
+.form-control {
+    width: 100%;
+    padding: 12px 15px;
+    border: 2px solid #c8e6c9;
+    border-radius: 10px;
+    font-size: 1rem;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+}
+
+.form-control:focus {
+    outline: none;
+    border-color: #388e3c;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(56, 142, 60, 0.3);
+}
+
+.btn {
+    padding: 12px 20px;
+    border: none;
+    border-radius: 10px;
+    cursor: pointer;
+    font-size: 0.9rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    justify-content: center;
+    min-height: 44px;
+    min-width: 120px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
+    color: white;
+    box-shadow: 0 8px 25px rgba(56, 142, 60, 0.3);
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(56, 142, 60, 0.4);
+}
+
+.btn-danger {
+    background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    color: white;
+    box-shadow: 0 8px 25px rgba(255, 107, 107, 0.3);
+}
+
+.btn-danger:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(255, 107, 107, 0.4);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #4caf50 0%, #2e7d32 100%);
+    color: white;
+    box-shadow: 0 8px 25px rgba(76, 175, 80, 0.3);
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(76, 175, 80, 0.4);
+}
+
+.btn-success {
+    background: linear-gradient(135deg, #48bb78 0%, #38a169 100%);
     color: white;
 }
 
-/* Responzivita hlavičky */
+.btn-success:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(72, 187, 120, 0.3);
+}
+
+/* --- TABLES --- */
+.table-container {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+    overflow-x: auto;
+    width: 100%;
+    max-width: 800px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+.table-container h2 {
+    color: #2d3748;
+    margin-bottom: 20px;
+    font-size: 1.3rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.table-container h2 i {
+    color: #388e3c;
+}
+
+.search-container {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 20px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    width: 100%;
+    max-width: 340px;
+    margin-left: auto;
+    margin-right: auto;
+    display: block;
+}
+
+.search-box {
+    width: 100%;
+    max-width: 320px;
+    padding: 10px 16px;
+    border: 2px solid #c8e6c9;
+    border-radius: 50px;
+    font-size: 1rem;
+    background: #f8f9fa;
+    transition: all 0.3s ease;
+    margin: 0 auto;
+    display: block;
+}
+
+.search-box:focus {
+    outline: none;
+    border-color: #388e3c;
+    background: white;
+    box-shadow: 0 0 0 3px rgba(56, 142, 60, 0.3);
+}
+
+.table-responsive {
+    overflow-x: auto;
+    -webkit-overflow-scrolling: touch;
+}
+
+#diagnosisTable {
+    width: 100%;
+    border-collapse: collapse;
+    background: white;
+    border-radius: 10px;
+    overflow: hidden;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+    min-width: 500px;
+}
+
+#diagnosisTable thead {
+    background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+    color: white;
+}
+
+#diagnosisTable th {
+    padding: 12px 15px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.85rem;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    cursor: pointer;
+    background-color: #2e7d32;
+    transition: background-color 0.3s ease;
+    position: relative;
+}
+
+#diagnosisTable th:hover {
+    background: #1b5e20;
+}
+
+#diagnosisTable th::after {
+    content: '\f0dc';
+    font-family: 'Font Awesome 5 Free';
+    font-weight: 900;
+    position: absolute;
+    right: 5px;
+    opacity: 0.6;
+}
+
+#diagnosisTable tbody tr {
+    transition: all 0.3s ease;
+    border-bottom: 1px solid #e8f5e9;
+}
+
+#diagnosisTable tbody tr:hover {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    transform: translateY(-1px);
+    box-shadow: 0 4px 15px rgba(56, 142, 60, 0.1);
+}
+
+#diagnosisTable td {
+    padding: 12px 15px;
+    border-bottom: 1px solid #e8f5e9;
+    color: #4a5568;
+    font-size: 0.9rem;
+}
+
+#diagnosisTable td:first-child {
+    font-weight: 600;
+    color: #388e3c;
+}
+
+.diagnosis-name {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 6px 12px;
+    border-radius: 15px;
+    font-size: 0.85rem;
+    font-weight: 500;
+    border: 1px solid #c8e6c9;
+    display: inline-block;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px 20px;
+    color: #4a5568;
+}
+
+.empty-state i {
+    font-size: 3rem;
+    margin-bottom: 15px;
+    color: #a5d6a7;
+}
+
+.empty-state h3 {
+    font-size: 1.3rem;
+    margin-bottom: 10px;
+    color: #4a5568;
+}
+
+/* --- MOBILE CARDS --- */
+.mobile-cards {
+    display: none;
+}
+
+.diagnosis-card {
+    background: white;
+    border-radius: 15px;
+    padding: 20px;
+    margin-bottom: 15px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.diagnosis-card:hover {
+    transform: translateY(-2px);
+}
+
+.diagnosis-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 15px;
+}
+
+.diagnosis-card-id {
+    background: #e8f5e9;
+    color: #2e7d32;
+    padding: 5px 10px;
+    border-radius: 20px;
+    font-size: 0.8rem;
+    font-weight: 600;
+}
+
+.diagnosis-card-name {
+    font-size: 1.1rem;
+    font-weight: 600;
+    color: #2d3748;
+    margin-bottom: 10px;
+}
+
+.diagnosis-card-meta {
+    font-size: 0.9rem;
+    color: #4a5568;
+    margin-bottom: 15px;
+}
+
+.diagnosis-card-actions {
+    display: flex;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
+/* --- NOVÉ PRVKY Z add_report.php --- */
+.section-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+}
+
+.section-card:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+
+.section-title {
+    color: #4a5568;
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-bottom: 2px solid #e2e8f0;
+    padding-bottom: 10px;
+}
+
+.section-title i {
+    color: #388e3c;
+}
+
+.alert {
+    padding: 15px;
+    border-radius: 12px;
+    margin-bottom: 20px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    font-weight: 500;
+}
+
+.alert-success {
+    background: linear-gradient(135deg, #d4edda 0%, #c3e6cb 100%);
+    color: #155724;
+    border: 1px solid #c3e6cb;
+}
+
+.alert-error {
+    background: #fed7d7;
+    color: #c53030;
+    padding: 15px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    border: 1px solid #feb2b2;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.form-label {
+    display: block;
+    font-weight: 600;
+    color: #4a5568;
+    margin-bottom: 8px;
+    font-size: 1rem;
+}
+
+.form-select {
+    width: 100%;
+    padding: 12px 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    background: white;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    cursor: pointer;
+}
+
+.form-select:focus {
+    outline: none;
+    border-color: #388e3c;
+    box-shadow: 0 0 0 3px rgba(56, 142, 60, 0.1);
+}
+
+.form-textarea {
+    width: 100%;
+    max-width: 100%;
+    box-sizing: border-box;
+    padding: 16px;
+    border: 2px solid #e2e8f0;
+    border-radius: 12px;
+    font-size: 1rem;
+    transition: border-color 0.3s ease, box-shadow 0.3s ease;
+    background: #f8f9fa;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+    min-height: 500px;
+    resize: vertical;
+    line-height: 1.6;
+}
+
+.form-textarea:focus {
+    outline: none;
+    border-color: #388e3c;
+    box-shadow: 0 0 0 3px rgba(102, 126, 234, 0.1);
+    background: white;
+}
+
+.btn {
+    padding: 12px 24px;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 1rem;
+    font-weight: 500;
+    transition: all 0.3s ease;
+    text-decoration: none;
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    margin: 0 5px;
+}
+
+.btn-primary {
+    background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+    color: white;
+}
+
+.btn-primary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(102, 126, 234, 0.3);
+}
+
+.btn-secondary {
+    background: linear-gradient(135deg, #e67e22 0%, #d35400 100%);
+    color: white;
+}
+
+.btn-secondary:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 5px 15px rgba(230, 126, 34, 0.3);
+}
+
+.form-actions {
+    display: flex;
+    gap: 15px;
+    justify-content: center;
+    margin-top: 25px;
+    flex-wrap: wrap;
+}
+
+.help-container {
+    margin-top: 20px;
+    text-align: right;
+}
+
+.help-box {
+    background: linear-gradient(135deg, #f8f9ff 0%, #e6f2ff 100%);
+    border-left: 4px solid #388e3c;
+    border-radius: 8px;
+    padding: 20px;
+    margin-top: 15px;
+    display: none;
+}
+
+.help-box.active {
+    display: block;
+    animation: slideDown 0.3s ease-out;
+}
+
+@keyframes slideDown {
+    from {
+        opacity: 0;
+        transform: translateY(-10px);
+    }
+    to {
+        opacity: 1;
+        transform: translateY(0);
+    }
+}
+
+.help-box h4 {
+    color: #4a5568;
+    margin: 0 0 15px 0;
+    font-size: 1.1rem;
+}
+
+.help-box ul {
+    margin: 0;
+    padding-left: 20px;
+}
+
+.help-box li {
+    margin-bottom: 8px;
+    list-style: none;
+    color: #718096;
+}
+
+.help-box code {
+    background: #388e3c;
+    color: white;
+    padding: 2px 6px;
+    border-radius: 4px;
+    font-family: 'Consolas', 'Monaco', 'Courier New', monospace;
+}
+
+.diagnosis-info {
+    border: 1px solid #e2e8f0;
+    border-radius: 12px;
+    padding: 20px;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    margin-bottom: 25px;
+    position: relative;
+    overflow: hidden;
+}
+
+.diagnosis-info::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+}
+
+.diagnosis-info h3 {
+    margin: 0;
+    color: #2d3748;
+    font-size: 1.2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.diagnosis-info p {
+    margin: 5px 0;
+    color: #4a5568;
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+/* --- NOVÉ PRVKY Z download_reports.php --- */
+.download-section {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+
+.download-section:hover {
+    transform: translateY(-2px);
+}
+
+.download-section h3 {
+    color: #2d3748;
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.download-section h3 i {
+    color: #388e3c;
+}
+
+.download-section p {
+    color: #718096;
+    margin-bottom: 20px;
+    line-height: 1.6;
+    font-size: 1rem;
+}
+
+.patient-count {
+    background:rgb(108, 165, 111);
+    color: white;
+    padding: 8px 16px;
+    border-radius: 20px;
+    font-size: 0.9rem;
+    font-weight: 600;
+    display: inline-block;
+    margin-top: 10px;
+    box-shadow: 0 4px 15px rgba(116, 185, 255, 0.3);
+}
+
+/* --- HOMEPAGE UNIQUE CLASSES (index.php) --- */
+.hero-section {
+    background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+    color: white;
+    padding: 60px 40px;
+    border-radius: 20px;
+    text-align: center;
+    margin-bottom: 40px;
+    box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
+    position: relative;
+    overflow: hidden;
+}
+.hero-section::before {
+    content: '';
+    position: absolute;
+    top: -50%;
+    left: -50%;
+    width: 200%;
+    height: 200%;
+    background: radial-gradient(circle, rgba(255, 255, 255, 0.1) 0%, transparent 70%);
+    animation: pulse 4s ease-in-out infinite;
+}
+@keyframes pulse {
+    0%, 100% { transform: scale(1); opacity: 0.5; }
+    50% { transform: scale(1.05); opacity: 0.8; }
+}
+.hero-content {
+    position: relative;
+    z-index: 1;
+}
+.hero-section h1 {
+    font-size: 3rem;
+    margin: 0 0 20px 0;
+    font-weight: 300;
+    text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
+}
+.hero-section p {
+    font-size: 1.3rem;
+    margin-bottom: 30px;
+    opacity: 0.9;
+    line-height: 1.6;
+}
+.features {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+    gap: 30px;
+    margin-bottom: 40px;
+}
+.feature-card {
+    background: white;
+    border-radius: 15px;
+    padding: 30px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+}
+.feature-card:hover {
+    transform: translateY(-5px);
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.15);
+}
+.feature-card::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 4px;
+    background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+}
+.feature-icon {
+    font-size: 3rem;
+    color: #388e3c;
+    margin-bottom: 20px;
+    display: block;
+}
+.feature-card h2 {
+    color: #2d3748;
+    font-size: 1.5rem;
+    margin-bottom: 15px;
+    font-weight: 600;
+}
+.feature-card p {
+    color: #4a5568;
+    line-height: 1.6;
+    margin: 0;
+}
+.cta-section {
+    text-align: center;
+    margin-top: 50px;
+}
+.cta-button {
+    display: inline-block;
+    background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+    color: white;
+    text-decoration: none;
+    padding: 18px 40px;
+    border-radius: 30px;
+    font-size: 1.1rem;
+    font-weight: 600;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
+    position: relative;
+    overflow: hidden;
+}
+.cta-button::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: -100%;
+    width: 100%;
+    height: 100%;
+    background: linear-gradient(90deg, transparent, rgba(255, 255, 255, 0.2), transparent);
+    transition: left 0.5s ease;
+}
+.cta-button:hover::before {
+    left: 100%;
+}
+.cta-button:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 12px 30px rgba(102, 126, 234, 0.4);
+}
+.cta-button i {
+    margin-right: 10px;
+}
+.stats-section {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 20px;
+    margin-top: 40px;
+}
+.stat-card {
+    background: white;
+    border-radius: 15px;
+    padding: 25px;
+    text-align: center;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+    transition: transform 0.3s ease;
+}
+.stat-card:hover {
+    transform: translateY(-3px);
+}
+.stat-number {
+    font-size: 2.5rem;
+    font-weight: 700;
+    color: #388e3c;
+    margin-bottom: 10px;
+}
+.stat-label {
+    color: #4a5568;
+    font-weight: 500;
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    font-size: 0.9rem;
+}
 @media (max-width: 768px) {
+    .header-container {
+        padding: 0 15px;
+    }
+    
     .navbar {
         display: none;
-        flex-direction: column;
         position: absolute;
-        top: 60px;
+        top: 100%;
         left: 0;
-        width: 100%;
-        background-color: #333; /* změna z modré na tmavě šedou */
-        z-index: 100;
+        right: 0;
+        background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+        flex-direction: column;
+        padding: 20px;
+        gap: 10px;
+        box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
     }
-
-    .navbar a {
-        padding: 15px 20px;
-        width: 100%;
-        text-align: left;
-    }
-
-    .menu-icon {
-        display: block;
-    }
-
+    
+    .navbar.active,
     .navbar.open {
         display: flex;
     }
+    
+    .navbar a {
+        text-align: center;
+        width: 100%;
+        margin: 0;
+        padding: 12px 20px;
+        font-size: 1rem;
+    }
+    
+    .menu-icon {
+        display: block;
+    }
+    
+    .container {
+        padding: 10px;
+    }
+    .page-header h1 {
+        font-size: 1.8rem;
+    }
+    .form-actions {
+        flex-direction: column;
+    }
+    .form-textarea {
+        min-height: 400px;
+    }
+    .download-section {
+        padding: 15px;
+    }
+    .stat-card {
+        min-width: unset;
+        padding: 15px;
+    }
+    .stats-form-container {
+        flex-direction: column;
+    }
+    .stats-form-container .form-container {
+        min-width: 0;
+    }
 }
 
-/* Hlavní obsah */
-.container {
-    background: white;
-    padding: 20px;
-    border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    width: 90%;
-    max-width: 1000px;
-    min-width: 300px;
-    overflow: auto;
-    margin-top: 100px; /* Ujistíme se, že obsah nebude překrývat hlavičku */
-    align-self: center;
+@media (max-width: 600px) {
+    .table-responsive {
+        display: none;
+    }
+    .mobile-cards {
+        display: block;
+    }
+    .diagnosis-card-actions {
+        flex-direction: column;
+    }
+    .diagnosis-card-actions .btn {
+        width: 100%;
+        margin-bottom: 5px;
+    }
+    .search-container {
+        width: 100%;
+        min-width: 0;
+        padding: 10px;
+    }
+    .search-box {
+        width: 100%;
+        min-width: 0;
+        font-size: 0.95rem;
+        padding: 8px 12px;
+    }
+    .stats-container {
+        width: 100%;
+        min-width: 0;
+        padding: 10px;
+    }
+    .stat-card {
+        width: 100%;
+        min-width: 0;
+        box-sizing: border-box;
+    }
+    .form-container {
+        width: 100%;
+        min-width: 0;
+        padding: 10px;
+    }
+    .table-container {
+        width: 100%;
+        min-width: 0;
+        padding: 10px;
+    }
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 8px 0;
+    }
+    
+    .header-container {
+        padding: 0 10px;
+    }
+    
+    .logo {
+        font-size: 1.1rem;
+    }
+    
+    .logo img {
+        width: 35px;
+        height: 35px;
+    }
+    
+    .menu-icon {
+        font-size: 1.3rem;
+        padding: 6px;
+    }
+    
+    .navbar a {
+        padding: 10px 15px;
+        font-size: 0.9rem;
+    }
+    
+    .page-header {
+        padding: 20px 15px;
+        margin-bottom: 15px;
+    }
+    
+    .page-header h1 {
+        font-size: 1.4rem;
+    }
+    
+    .page-header .subtitle {
+        font-size: 0.9rem;
+    }
+    
+    .container {
+        padding: 10px;
+        margin-top: 20px;
+    }
+    
+    .form-container {
+        padding: 15px;
+    }
+    .table-container {
+        padding: 15px;
+    }
+    .search-container {
+        padding: 15px;
+    }
+}
+
+/* --- FAQ PAGE UNIQUE STYLES --- */
+.faq-title {
+    text-align: center;
+    font-size: 2.2rem;
+    color: #388e3c;
+    margin-bottom: 30px;
+}
+.faq-list {
+    list-style: none;
+    padding: 0;
+    margin: 0;
+}
+.faq-item {
+    border-bottom: 1px solid #e0e0e0;
+}
+.faq-question {
+    cursor: pointer;
+    padding: 22px 0;
+    font-size: 1.15rem;
+    font-weight: 600;
+    color: #2d3748;
     display: flex;
-    flex-direction: column;
-    justify-content: center;
-    align-items: center; /* Tohle zarovná obsah na střed */
+    align-items: center;
+    justify-content: space-between;
+    transition: color 0.2s;
+}
+.faq-question:hover {
+    color: #43a047;
+}
+.faq-answer {
+    display: block;
+    max-height: 0;
+    overflow: hidden;
+    padding: 0 0 0 0;
+    color: #4a5568;
+    font-size: 1rem;
+    line-height: 1.6;
+    transition: max-height 0.4s cubic-bezier(0.4,0,0.2,1), padding 0.4s;
+}
+.faq-item.active .faq-answer {
+    max-height: 500px;
+    padding: 12px 0 18px 0;
+    animation: fadeIn 0.4s;
+}
+.faq-icon {
+    margin-left: 15px;
+    color: #388e3c;
+    font-size: 1.2rem;
+    transition: transform 0.3s;
+}
+.faq-item.active .faq-icon {
+    transform: rotate(90deg);
+}
+@keyframes fadeIn {
+    from { opacity: 0; }
+    to { opacity: 1; }
+}
+@media (max-width: 600px) {
+    .container { padding: 15px 5px; }
+    .faq-title { font-size: 1.3rem; }
 }
 
-h1 {
+/* --- UNIKÁTNÍ TŘÍDY Z kliste.php --- */
+.instructions {
+    background: linear-gradient(135deg, #e8f5e9 0%, #c8e6c9 100%);
+    border: 1px solid #4caf50;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 30px;
+    position: relative;
+    overflow: hidden;
+    box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
+}
+.instructions::before {
+    content: '';
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 4px;
+    height: 100%;
+    background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
+}
+.instructions h3 {
+    margin: 0 0 15px 0;
+    color: #2e7d32;
+    font-size: 1.2rem;
+    font-weight: 600;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+.instructions p {
+    margin: 0;
+    color: #2d3748;
+    line-height: 1.6;
+}
+.body-img-container {
+    position: relative;
+    display: inline-block;
+    width: 100%;
+    border-radius: 15px;
+    overflow: hidden;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    background: #ffffff;
+    transition: transform 0.3s ease;
+}
+.body-img-container img {
+    max-width: 100%;
+    height: auto;
+    cursor: crosshair;
+    display: block;
+    transition: filter 0.3s ease;
+}
+.body-img-container:hover img {
+    filter: brightness(1.05);
+}
+.pinpoint {
+    position: absolute;
+    width: 22px;
+    height: 22px;
+    background: linear-gradient(135deg, #f44336 0%, #d32f2f 100%);
+    border-radius: 50%;
+    transform: translate(-50%, -50%);
+    pointer-events: auto;
+    border: 3px solid #fff;
+    box-shadow: 0 6px 20px rgba(244, 67, 54, 0.5);
+    cursor: pointer;
+    transition: all 0.3s ease;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    animation: pulseGlow 2s infinite;
+}
+.pinpoint:hover {
+    transform: translate(-50%, -50%) scale(1.3);
+    box-shadow: 0 8px 25px rgba(244, 67, 54, 0.7);
+}
+.pinpoint span {
+    color: #fff;
+    font-weight: bold;
+    font-size: 11px;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.6);
+}
+@keyframes pulseGlow {
+    0% { box-shadow: 0 6px 20px rgba(244, 67, 54, 0.5); }
+    50% { box-shadow: 0 6px 30px rgba(244, 67, 54, 0.8); }
+    100% { box-shadow: 0 6px 20px rgba(244, 67, 54, 0.5); }
+}
+.points-table-wrapper {
+    max-height: 720px;
+    overflow-y: auto;
+    width: 100%;
+    border-radius: 10px;
+    box-shadow: inset 0 2px 4px rgba(0, 0, 0, 0.1);
+}
+.points-table {
+    width: 100%;
+    min-width: 0;
+    table-layout: fixed;
+    background: #ffffff;
+    border-radius: 10px;
+    overflow: hidden;
+}
+.points-table th,
+.points-table td {
+    word-break: break-word;
+    white-space: normal;
+    overflow: hidden;
+    text-overflow: ellipsis;
+}
+.points-table th {
+    background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+    color: white;
+    padding: 16px 12px;
+    text-align: left;
+    font-weight: 600;
+    font-size: 0.95rem;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.2);
+}
+.points-table td {
+    padding: 14px 12px;
+    border-bottom: 1px solid #e8f5e9;
+    transition: background-color 0.3s ease;
+}
+.points-table th:first-child,
+.points-table td:first-child {
+    width: 60px;
+    min-width: 50px;
+    max-width: 80px;
     text-align: center;
 }
+.points-table tr:hover td {
+    background-color: #f1f8e9;
+}
+.points-table tr:last-child td {
+    border-bottom: none;
+}
+.back-button-container {
+    text-align: center;
+    margin-top: 40px;
+}
 
-/* Tabulky */
-table {
+/* --- UNIKÁTNÍ TŘÍDY Z upload_csv.php --- */
+.upload-container {
+    background: white;
+    border-radius: 20px;
+    padding: 40px;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+    margin-bottom: 30px;
+}
+.file-upload-area {
+    border: 3px dashed #cbd5e0;
+    border-radius: 15px;
+    padding: 60px 20px;
+    text-align: center;
+    transition: all 0.3s ease;
+    cursor: pointer;
+    position: relative;
+    background: #f8f9fa;
+}
+.file-upload-area:hover, .file-upload-area.dragover {
+    border-color: #388e3c;
+    background: #f0f4ff;
+    transform: translateY(-5px);
+    box-shadow: 0 10px 25px rgba(102, 126, 234, 0.1);
+}
+.file-upload-area i {
+    font-size: 4rem;
+    color: #cbd5e0;
+    margin-bottom: 20px;
+    transition: color 0.3s ease;
+}
+.file-upload-area:hover i {
+    color: #388e3c;
+}
+.file-upload-area h3 {
+    color: #4a5568;
+    font-size: 1.5rem;
+    margin-bottom: 10px;
+    font-weight: 600;
+}
+.file-upload-area p {
+    color: #718096;
+    font-size: 1rem;
+    margin-bottom: 20px;
+}
+.file-input {
+    position: absolute;
     width: 100%;
-    border-collapse: collapse;
-    margin-top: 20px;
+    height: 100%;
+    opacity: 0;
+    cursor: pointer;
+    top: 0;
+    left: 0;
 }
-
-th, td {
-    padding: 12px;
-    text-align: left;
-    border: 1px solid #ddd;
-}
-
-th {
-    background: #f4f4f4;
-    font-weight: bold;
-}
-
-td {
-    background: #fff;
-    color: #333;
-}
-
-tr:hover {
-    background: #f0f0f0;
-}
-
-/* Tlačítka */
-button {
-    background-color: #007bff;
+.upload-btn {
+    background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
     color: white;
     border: none;
-    padding: 10px 15px;
+    padding: 15px 40px;
+    border-radius: 50px;
+    font-size: 1.1rem;
+    font-weight: 600;
     cursor: pointer;
-    border-radius: 5px;
-    font-size: 14px;
-    margin-right: 5px;
-}
-
-button:hover {
-    background-color: #0056b3;
-}
-
-button.delete {
-    background: #dc3545;
-    margin-bottom: 5px;
-}
-
-button.delete:hover {
-    background: #c82333;
-}
-
-button.detail {
-    background: #28a745;
-    margin-bottom: 5px;
-}
-
-button.detail:hover {
-    background: #218838;
-}
-
-td .buttons {
-    display: flex;
-    justify-content: space-between;
-    margin-bottom: 5px;
-}
-
-/* Odkazy */
-a {
-    text-decoration: none;
-    color: red;
-    margin-left: 10px;
-}
-
-a:hover {
-    text-decoration: underline;
-}
-
-/* Formuláře */
-form {
-    margin-bottom: 20px;
-}
-
-textarea {
-    width: 100%;
-    padding: 10px;
-    margin-bottom: 10px;
-    border-radius: 5px;
-    border: 1px solid #ddd;
-    resize: vertical;
-}
-
-/* Panel přihlášeného uživatele */
-.top-right {
-    position: absolute;
-    top: 10px;
-    right: 10px;
-    font-size: 16px;
-    color: white;
-}
-
-.top-right a {
-    color: white;
-    text-decoration: none;
-    margin-left: 15px;
-    font-weight: bold;
-}
-
-.top-right a:hover {
-    text-decoration: underline;
-}
-.features {
-    display: flex;
-    justify-content: space-around;
-    flex-wrap: wrap;
-    margin: 20px 0;
-}
-
-.feature {
-    background: #fff;
-    padding: 20px;
-    margin: 10px;
-    border-radius: 10px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
-    width: 250px;
-    transition: transform 0.2s;
-}
-
-.feature:hover {
-    transform: scale(1.05);
-}
-
-.cta-button {
-    display: inline-block;
+    transition: all 0.3s ease;
+    box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
     margin-top: 20px;
-    padding: 15px 20px;
-    background-color: #007bff;  
-    color: white;
-    text-decoration: none;
-    border-radius: 5px;
-    font-size: 18px;
-    transition: background-color 0.3s;
-    margin-bottom: 20px;
 }
-
-.cta-button:hover {
-    background-color: #0056b3;
+.upload-btn:hover {
+    transform: translateY(-3px);
+    box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
 }
-
-/* Upload container - pro stránku pro nahrání CSV */
-.uploadcontainer {
-    background: white;
-    padding: 20px;
+.upload-btn:disabled {
+    background: #cbd5e0;
+    cursor: not-allowed;
+    transform: none;
+    box-shadow: none;
+}
+.file-info {
+    background: #e6f3ff;
+    border: 1px solid #b3d9ff;
     border-radius: 10px;
-    box-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
-    width: 90%;
-    max-width: 600px; /* Zúžení šířky formuláře pro lepší vzhled */
-    min-width: 300px;
-    margin-top: 100px; /* Ujistíme se, že obsah nebude překrývat hlavičku */
-    align-self: center;
+    padding: 15px;
+    margin-top: 15px;
+    display: none;
+}
+.file-info.show {
+    display: block;
+    animation: fadeIn 0.3s ease;
+}
+.progress-bar {
+    width: 100%;
+    height: 6px;
+    background: #e2e8f0;
+    border-radius: 3px;
+    overflow: hidden;
+    margin: 15px 0;
+    display: none;
+}
+.progress-fill {
+    height: 100%;
+    background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+    width: 0%;
+    transition: width 0.3s ease;
+}
+
+/* --- PATIENT INFO --- */
+.patient-info {
+    background: #f1f8e9;
+    border-radius: 15px;
+    padding: 25px;
+    margin-bottom: 25px;
+    box-shadow: 0 8px 25px rgba(0, 0, 0, 0.1);
+    display: grid;
+    outline: #11802b 2px solid;
+    grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+    gap: 20px;
+}
+
+.patient-info-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+.info-card{
+    width: 100%;
+    max-width: 1240px; /* nebo jiná max šířka */
+    margin: 0 auto;
+    padding: 15px;
+    border-radius: 10px;
+    background: #f8f9fa;
+    margin-top: 30px;
     display: flex;
+    box-shadow: 0 15px 35px rgba(0, 0, 0, 0.3);
     flex-direction: column;
-    justify-content: center;
     align-items: center;
+    box-sizing: border-box;
 }

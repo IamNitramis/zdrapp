@@ -9,7 +9,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
     <meta charset="UTF-8">
     <title>Přístup zamítnut</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="assets/css/all.min.css" rel="stylesheet">
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -92,609 +92,176 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="stylesheet" href="assets/css/all.min.css">    
     <style>
-        body {
-            margin: 0;
-            padding: 0;
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #e8f5e9 0%, #a5d6a7 100%);
-        }
-
-        .header {
-            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
-            padding: 15px 0;
-            box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            position: sticky;
-            top: 0;
-            z-index: 1000;
-            backdrop-filter: blur(10px);
-        }
-
-        .header-container {
-            max-width: 1200px;
-            margin: 0 auto;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            padding: 0 20px;
-        }
-
-        .logo {
-            display: flex;
-            align-items: center;
-            gap: 12px;
-            text-decoration: none;
-            color: white;
-            font-size: 1.5rem;
-            font-weight: 600;
-            transition: transform 0.3s ease;
-        }
-
-        .logo:hover {
-            transform: scale(1.05);
-        }
-
-        .logo img {
-            width: 45px;
-            height: 45px;
-            border-radius: 50%;
-            box-shadow: 0 4px 15px rgba(255, 255, 255, 0.2);
-            transition: box-shadow 0.3s ease;
-        }
-
-        .logo:hover img {
-            box-shadow: 0 6px 20px rgba(255, 255, 255, 0.3);
-        }
-
-        .navbar {
-            display: flex;
-            gap: 5px;
-            align-items: center;
-        }
-
-        .navbar a {
-            color: white;
-            text-decoration: none;
-            padding: 12px 20px;
-            border-radius: 25px;
-            font-weight: 500;
-            font-size: 0.95rem;
-            transition: all 0.3s ease;
-            position: relative;
-            background: rgba(255, 255, 255, 0.1);
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-
-        .navbar a:hover {
-            background: rgba(255, 255, 255, 0.2);
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.2);
-        }
-
-        .navbar a:active {
-            transform: translateY(0);
-        }
-
-        .menu-icon {
-            display: none;
-            color: white;
-            font-size: 1.5rem;
-            cursor: pointer;
-            padding: 10px;
-            border-radius: 8px;
-            transition: background 0.3s ease;
-        }
-
-        .menu-icon:hover {
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 20px;
-            margin-top: 30px;
-            min-height: 100vh;
-        }
-
-        .hero-section {
-            background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
-            color: white;
-            padding: 40px;
-            border-radius: 20px;
-            text-align: center;
-            margin-bottom: 30px;
-            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.2);
-            position: relative;
-            overflow: hidden;
-        }
-
-        .hero-section::before {
-            content: '';
-            position: absolute;
-            top: -50%;
-            left: -50%;
-            width: 200%;
-            height: 200%;
-            background: radial-gradient(circle, rgba(255,255,255,0.08) 0%, transparent 70%);
-            animation: pulse 4s ease-in-out infinite;
-        }
-
-        @keyframes pulse {
-            0%, 100% { transform: scale(1); opacity: 0.5; }
-            50% { transform: scale(1.05); opacity: 0.8; }
-        }
-
-        .hero-content {
-            position: relative;
-            z-index: 1;
-        }
-
-        .hero-section h1 {
-            font-size: 2.5rem;
-            margin: 0;
-            font-weight: 300;
-            text-shadow: 2px 2px 4px rgba(0, 0, 0, 0.3);
-        }
-
-        .hero-section .subtitle {
-            font-size: 1.1rem;
-            opacity: 0.9;
-            margin-top: 10px;
-        }
-
-        .stats-container {
-            display: flex;
-            gap: 20px;
-            margin-bottom: 25px;
-            flex-wrap: wrap;
-            justify-content: center;
-        }
-
-        .stat-card {
-            background: #f1f8e9;
-            border-radius: 15px;
-            padding: 25px;
-            text-align: center;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            transition: transform 0.3s ease;
-            min-width: 200px;
-            flex: 1 1 0;
-            max-width: 300px;
-        }
-
-        .stat-card:hover {
-            transform: translateY(-3px);
-        }
-
-        .stat-card i {
-            font-size: 2.5rem;
-            color: #388e3c;
-            margin-bottom: 15px;
-        }
-
-        .stat-number {
-            font-size: 2rem;
-            font-weight: 700;
-            color: #2d3748;
-            margin-bottom: 5px;
-        }
-
-        .stat-label {
-            color: #4a5568;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-        }
-
-        .search-container {
-            background: #f1f8e9;
-            border-radius: 15px;
-            padding: 20px;
-            margin-bottom: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            max-width: 100%;
-            box-sizing: border-box;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .search-box {
-            width: 100%;
-            max-width: 600px;
-            padding: 15px 20px;
-            border: 2px solid #c8e6c9;
-            border-radius: 50px;
-            font-size: 1rem;
-            background: white;
-            transition: all 0.3s ease;
-            box-sizing: border-box;
-        }
-
-        .search-box:focus {
-            outline: none;
-            border-color: #388e3c;
-            box-shadow: 0 0 0 3px rgba(56, 142, 60, 0.1);
-        }
-
+    /* Lokální styl pro tabulku pacientů – barvy z style.css */
+    .table-container {
+        margin-top: 30px;
+        background: #fff;
+        border-radius: 15px;
+        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        padding: 20px;
+        overflow-x: auto;
+        max-width: 1200px;
+        width: 100%;
+    }
+    #dataTable {
+        width: 100%;
+        border-collapse: separate;
+        border-spacing: 0;
+        background: #fff;
+        border-radius: 10px;
+        overflow: hidden;
+        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+        font-size: 1.04em;
+        min-width: 800px;
+    }
+    #dataTable thead th {
+        background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+        color: #fff;
+        font-weight: 700;
+        padding: 14px 10px;
+        border-bottom: 2px solid #e8f5e9;
+        cursor: pointer;
+        text-align: left;
+        position: sticky;
+        top: 0;
+        z-index: 2;
+        letter-spacing: 0.03em;
+        font-size: 1em;
+        text-shadow: 1px 1px 2px rgba(0,0,0,0.12);
+    }
+    #dataTable tbody td {
+        padding: 12px 10px;
+        border-bottom: 1px solid #e8f5e9;
+        background: #fff;
+        vertical-align: middle;
+        color: #4a5568;
+    }
+    #dataTable tbody tr:last-child td {
+        border-bottom: none;
+    }
+    #dataTable .medication-pill {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 16px;
+        font-size: 0.98em;
+        font-weight: 500;
+        background: #e8f5e9;
+        color: #2e7d32;
+        margin-right: 2px;
+        border: 1px solid #c8e6c9;
+    }
+    #dataTable .allergy-pill {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 16px;
+        font-size: 0.98em;
+        font-weight: 500;
+        background: #fffde7;
+        color: #b71c1c;
+        margin-right: 2px;
+        border: 1px solid #ffe082;
+    }
+    #dataTable .no-data-pill {
+        display: inline-block;
+        padding: 4px 12px;
+        border-radius: 16px;
+        font-size: 0.98em;
+        font-weight: 500;
+        background: #ececec;
+        color: #888;
+        margin-right: 2px;
+        border: 1px solid #e0e0e0;
+    }
+    #dataTable .buttons {
+        display: flex;
+        gap: 8px;
+    }
+    #dataTable .btn {
+        padding: 6px 16px;
+        border-radius: 8px;
+        font-size: 0.98em;
+        font-weight: 600;
+        text-decoration: none;
+        color: #fff;
+        background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
+        border: none;
+        box-shadow: 0 2px 8px rgba(56,142,60,0.10);
+        transition: background 0.18s, box-shadow 0.18s, transform 0.18s;
+        display: inline-flex;
+        align-items: center;
+        gap: 6px;
+    }
+    #dataTable .btn-detail {
+        background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
+    }
+    #dataTable .btn-danger {
+        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+    }
+    #dataTable .btn:hover {
+        filter: brightness(1.08);
+        transform: translateY(-2px) scale(1.03);
+        box-shadow: 0 4px 16px rgba(56,142,60,0.13);
+    }
+    #dataTable .empty-state {
+        text-align: center;
+        color: #4a5568;
+        font-size: 1.1em;
+        padding: 32px 0;
+        background: #f8fafc;
+        border-radius: 0 0 10px 10px;
+    }
+    #dataTable .empty-state i {
+        font-size: 2.2em;
+        margin-bottom: 8px;
+        color: #a5d6a7;
+    }
+    #dataTable .empty-state h3 {
+        margin: 0;
+        font-size: 1.1em;
+        font-weight: 500;
+    }
+    @media (max-width: 900px) {
         .table-container {
-            background: #f1f8e9;
-            border-radius: 15px;
-            padding: 25px;
-            box-shadow: 0 5px 15px rgba(0, 0, 0, 0.1);
-            overflow-x: auto;
+            padding: 10px 2px;
         }
-
-        #dataTable {
-            width: 100%;
-            border-collapse: collapse;
-            background: white;
-            border-radius: 10px;
-            overflow: hidden;
-            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.05);
+        #dataTable thead th, #dataTable tbody td {
+            padding: 8px 4px;
+            font-size: 0.97em;
         }
-
-        #dataTable thead {
-            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
-            color: white;
-        }
-
-        #dataTable th {
-            padding: 18px 15px;
-            text-align: left;
-            font-weight: 600;
-            font-size: 0.9rem;
-            text-transform: uppercase;
-            letter-spacing: 0.5px;
-            cursor: pointer;
-            background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
-            transition: background-color 1s ease;
-            position: relative;
-        }
-
-        
-
-        #dataTable th::after {
-            content: '\f0dc';
-            font-family: 'Font Awesome 5 Free';
-            font-weight: 900;
-            position: absolute;
-            right: 10px;
-            opacity: 0.6;
-        }
-
-        #dataTable tbody tr {
-            border-bottom: 1px solid #e8f5e9;
-        }
-
-        #dataTable tbody tr:hover {
-            background: linear-gradient(135deg, #f1f8e9 0%, #e8f5e9 100%);
-            box-shadow: 0 4px 15px rgba(56, 142, 60, 0.1);
-        }
-
-        #dataTable td {
-            padding: 16px 15px;
-            border-bottom: 1px solid #e8f5e9;
-            color: #2d3748;
-            font-size: 0.95rem;
-        }
-
-        #dataTable td:first-child {
-            font-weight: 600;
-            color: #388e3c;
-        }
-
-        .buttons {
-            display: flex;
-            gap: 10px;
-            flex-direction: column;
-            align-items: center;
-        }
-
-        .btn {
-            padding: 8px 16px;
-            border: none;
-            border-radius: 8px;
-            cursor: pointer;
-            font-size: 0.9rem;
-            font-weight: 500;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            min-width: 100px;
-            justify-content: center;
-        }
-
-        .btn-detail {
-            background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
-            color: white;
-        }
-
-        .btn-detail:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(56, 142, 60, 0.3);
-        }
-
-        .btn-danger {
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
-            color: white;
-        }
-
-        .btn-danger:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
-        }
-
-        .empty-state {
-            text-align: center;
-            padding: 60px 20px;
-            color: #4a5568;
-        }
-
-        .empty-state i {
-            font-size: 4rem;
-            margin-bottom: 20px;
-            color: #a5d6a7;
-        }
-
-        .empty-state h3 {
-            font-size: 1.5rem;
-            margin-bottom: 10px;
-            color: #2d3748;
-        }
-
-        .medication-pill {
-            background: #e8f5e9;
-            color: #388e3c;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            border: 1px solid #c8e6c9;
-        }
-
-        .allergy-pill {
-            background: #ffebee;
-            color: #d32f2f;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-weight: 500;
-            border: 1px solid #ffcdd2;
-        }
-
-        .no-data-pill {
-            background: #f5f5f5;
-            color: #757575;
-            padding: 4px 12px;
-            border-radius: 20px;
-            font-size: 0.8rem;
-            font-style: italic;
-            border: 1px solid #e0e0e0;
-        }
-
-        /* Alert styles */
-        .alert {
-            background: linear-gradient(135deg, #ff8a80 0%, #ff5722 100%);
-            color: white;
-            padding: 20px;
-            border-radius: 15px;
-            margin-bottom: 25px;
-            box-shadow: 0 8px 25px rgba(255, 87, 34, 0.3);
-            border-left: 5px solid #d32f2f;
-        }
-
-        .alert-header {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .alert-header i {
-            font-size: 1.5rem;
-            color: #ffeb3b;
-        }
-
-        .alert-header h3 {
-            margin: 0;
-            font-size: 1.3rem;
-            font-weight: 600;
-        }
-
-        .alert-content {
-            background: rgba(255, 255, 255, 0.1);
-            border-radius: 10px;
-            padding: 15px;
-            margin-top: 10px;
-        }
-
-        .alert-patients {
-            display: flex;
-            flex-wrap: wrap;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .patient-tag {
-            background: rgba(255, 255, 255, 0.2);
-            padding: 5px 12px;
-            border-radius: 20px;
-            font-size: 0.85rem;
-            font-weight: 500;
-            backdrop-filter: blur(5px);
-            border: 1px solid rgba(255, 255, 255, 0.3);
-        }
-
-        .alert-summary {
-            font-size: 1.1rem;
-            margin-bottom: 10px;
-            font-weight: 500;
-        }
-
-        @media (max-width: 768px) {
-            .header-container {
-                padding: 0 15px;
-            }
-
-            .menu-icon {
-                display: block;
-            }
-
-            .navbar {
-                display: none;
-                position: absolute;
-                top: 100%;
-                left: 0;
-                right: 0;
-                background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
-                flex-direction: column;
-                padding: 20px;
-                gap: 10px;
-                box-shadow: 0 4px 20px rgba(0, 0, 0, 0.15);
-            }
-
-            .navbar.active {
-                display: flex;
-            }
-
-            .navbar a {
-                text-align: center;
-                width: 100%;
-                margin: 0;
-            }
-
-            .container {
-                padding: 10px;
-            }
-            
-            .hero-section h1 {
-                font-size: 2rem;
-            }
-            
-            .stats-container {
-                grid-template-columns: 1fr;
-            }
-            
-            .table-container {
-                overflow-x: auto;
-            }
-            
-            .buttons {
-                flex-direction: row;
-                gap: 5px;
-            }
-            
-            .btn {
-                min-width: 80px;
-                font-size: 0.8rem;
-                padding: 6px 12px;
-            }
-
-            .alert-patients {
-                flex-direction: column;
-            }
-        }
+    }
+    /* Rozšíření sloupce Datum narození */
+    #dataTable th:nth-child(4),
+    #dataTable td:nth-child(4) {
+        min-width: 140px;
+        width: 160px;
+        max-width: 200px;
+        white-space: nowrap;
+    }
+    .stats-container {
+        display: flex;
+        gap: 15px;
+        flex-wrap: wrap;
+        justify-content: center;
+        width: 100%;
+        margin-bottom: 20px;
+        max-width: 1200px;
+    }
+    .stat-card {
+        background: white;
+        border-radius: 15px;
+        padding: 20px;
+        flex: 1 1 220px;
+        min-width: 200px;
+        max-width: 320px;
+        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
+        text-align: center;
+        transition: transform 0.3s ease;
+        margin-bottom: 0;
+    }
+    .stat-card:hover {
+        transform: translateY(-5px);
+    }
     </style>
-
-    <script>
-        function sortTable(n) {
-            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-            table = document.getElementById("dataTable");
-            switching = true;
-            dir = "asc";
-
-            while (switching) {
-                switching = false;
-                rows = table.rows;
-
-                for (i = 1; i < (rows.length - 1); i++) {
-                    shouldSwitch = false;
-                    x = rows[i].getElementsByTagName("TD")[n];
-                    y = rows[i + 1].getElementsByTagName("TD")[n];
-
-                    if (n === 0) { // ID sloupec - řadit číselně
-                        var xVal = parseInt(x.textContent || x.innerText, 10);
-                        var yVal = parseInt(y.textContent || y.innerText, 10);
-                        if (dir == "asc") {
-                            if (xVal > yVal) {
-                                shouldSwitch = true;
-                                break;
-                            }
-                        } else if (dir == "desc") {
-                            if (xVal < yVal) {
-                                shouldSwitch = true;
-                                break;
-                            }
-                        }
-                    } else { // Ostatní sloupce - řadit textově
-                        if (dir == "asc") {
-                            if ((x.textContent || x.innerText).toLowerCase() > (y.textContent || y.innerText).toLowerCase()) {
-                                shouldSwitch = true;
-                                break;
-                            }
-                        } else if (dir == "desc") {
-                            if ((x.textContent || x.innerText).toLowerCase() < (y.textContent || y.innerText).toLowerCase()) {
-                                shouldSwitch = true;
-                                break;
-                            }
-                        }
-                    }
-                }
-
-                if (shouldSwitch) {
-                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                    switching = true;
-                    switchcount++;
-                } else {
-                    if (switchcount == 0 && dir == "asc") {
-                        dir = "desc";
-                        switching = true;
-                    }
-                }
-            }
-        }
-
-        function searchTable() {
-            var input, filter, table, tr, td, i, txtValue;
-            input = document.getElementById("searchInput");
-            filter = input.value.toUpperCase();
-            table = document.getElementById("dataTable");
-            tr = table.getElementsByTagName("tr");
-
-            for (i = 1; i < tr.length; i++) {
-                tr[i].style.display = "none";
-                td = tr[i].getElementsByTagName("td");
-                for (var j = 0; j < td.length; j++) {
-                    if (td[j]) {
-                        txtValue = td[j].textContent || td[j].innerText;
-                        if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                            tr[i].style.display = "";
-                            break;
-                        }
-                    }
-                }
-            }
-        }
-
-        function toggleMenu() {
-            const navbar = document.getElementById('navbar');
-            navbar.classList.toggle('active');
-        }
-
-        // Close mobile menu when clicking outside
-        document.addEventListener('click', function(event) {
-            const navbar = document.getElementById('navbar');
-            const menuIcon = document.querySelector('.menu-icon');
-            
-            if (!navbar.contains(event.target) && !menuIcon.contains(event.target)) {
-                navbar.classList.remove('active');
-            }
-        });
-    </script>
 </head>
 
 <body>
@@ -708,7 +275,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                 <i class="fas fa-bars"></i>
             </div>
             <div class="navbar" id="navbar">
-                <a href="show_data.php">
+                <a href="show_data.php" class="active">
                     <i class="fas fa-users"></i>
                     Přehled
                 </a>
@@ -822,9 +389,9 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                     <strong><?php echo $total_notes_without_reports; ?></strong> poznámek u <strong><?php echo count($patients_without_reports); ?></strong> pacientů nemá vygenerovanou zprávu.
                 </div>
                 <div>Pacienti s chybějícími zprávami:</div>
-                <div class="alert-patients" style="flex-direction:column;gap:18px;align-items:stretch;">
+                <div class="alert-patients">
                     <?php foreach ($patients_without_reports as $patient): ?>
-                        <div class="patient-tag" style="background:rgba(255,255,255,0.15);padding:12px 18px;">
+                        <div class="patient-tag">
                             <strong><?php echo htmlspecialchars($patient['first_name'] . ' ' . $patient['surname']); ?></strong>
                             <ul style="margin:8px 0 0 0;padding-left:18px;">
                                 <?php foreach ($patient['notes'] as $note): ?>
@@ -924,5 +491,93 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
             </table>
         </div>
     </div>
+
+    <script>
+        function toggleMenu() {
+            const navbar = document.getElementById('navbar');
+            navbar.classList.toggle('active');
+            navbar.classList.toggle('open');
+        }
+
+        function sortTable(n) {
+            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
+            table = document.getElementById("dataTable");
+            switching = true;
+            dir = "asc";
+            while (switching) {
+                switching = false;
+                rows = table.rows;
+                for (i = 1; i < (rows.length - 1); i++) {
+                    shouldSwitch = false;
+                    x = rows[i].getElementsByTagName("TD")[n];
+                    y = rows[i + 1].getElementsByTagName("TD")[n];
+                    if (dir == "asc") {
+                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    } else if (dir == "desc") {
+                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
+                            shouldSwitch = true;
+                            break;
+                        }
+                    }
+                }
+                if (shouldSwitch) {
+                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
+                    switching = true;
+                    switchcount++;
+                } else {
+                    if (switchcount == 0 && dir == "asc") {
+                        dir = "desc";
+                        switching = true;
+                    }
+                }
+            }
+        }
+
+        function searchTable() {
+            var input, filter, table, tr, td, i, txtValue;
+            input = document.getElementById("searchInput");
+            filter = input.value.toUpperCase();
+            table = document.getElementById("dataTable");
+            tr = table.getElementsByTagName("tr");
+            for (i = 0; i < tr.length; i++) {
+                td = tr[i].getElementsByTagName("td")[1];
+                if (td) {
+                    txtValue = td.textContent || td.innerText;
+                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
+                        tr[i].style.display = "";
+                    } else {
+                        tr[i].style.display = "none";
+                    }
+                }
+            }
+        }
+
+        // Mobile menu functionality
+        document.addEventListener('DOMContentLoaded', function() {
+            const navbarLinks = document.querySelectorAll('.navbar a');
+            const navbar = document.getElementById('navbar');
+            
+            navbarLinks.forEach(link => {
+                link.addEventListener('click', function() {
+                    navbar.classList.remove('active');
+                    navbar.classList.remove('open');
+                });
+            });
+        });
+
+        // Close menu when clicking outside
+        document.addEventListener('click', function(event) {
+            const navbar = document.getElementById('navbar');
+            const menuIcon = document.querySelector('.menu-icon');
+            
+            if (!navbar.contains(event.target) && !menuIcon.contains(event.target)) {
+                navbar.classList.remove('active');
+                navbar.classList.remove('open');
+            }
+        });
+    </script>
 </body>
 </html>
