@@ -566,7 +566,7 @@ $conn->close();
                 <div class="section-card section-add-note">
             <h2 class="section-title">
                 <i class="fas fa-plus-circle"></i>
-                Přidat diagnózu a poznámku
+                Přidat diagnózu a nález
             </h2>
             <form action="" method="POST" class="form-container">
                 <div class="form-group">
@@ -596,7 +596,7 @@ $conn->close();
                 <div class="form-group">
                     <label for="note" class="form-label">
                         <i class="fas fa-sticky-note"></i>
-                        Poznámka:
+                        Nález:
                     </label>
                     <textarea name="note" id="note" class="form-textarea" 
                               placeholder="Napište, jak probíhalo ošetření, co jste podali za medikaci..." required></textarea>
@@ -618,7 +618,7 @@ $conn->close();
             <div class="section-card section-notes">
                 <h2 class="section-title">
                     <i class="fas fa-stethoscope"></i>
-                    Diagnózy a poznámky
+                    Diagnózy a nálezy
                 </h2>
                 <?php if ($diagnoses->num_rows > 0): ?>
                     <?php while ($row = $diagnoses->fetch_assoc()): ?>

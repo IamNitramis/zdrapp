@@ -1,3 +1,5 @@
 do každé nove vytvorene diagnozy insertnout zakladni template se vsema placeholderama, aby se to nemuselo vypisovat
 
-opravit stats.php, hlavicka trochu jebe
+pridat sloupec ?deleted? do tabulky diagnoses, aby kdyz se odstrani diagnoza, zustaly prirazene poznamky - non cascade delete. prakticky jen skryte, aby je add_diagnosis a add_report nezobrazovaly
+
+opravit "Poznámka" na "Nález"
