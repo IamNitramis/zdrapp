@@ -111,11 +111,36 @@ try {
 // Přidání nové diagnózy
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_diagnosis'])) {
     $newDiagnosis = $conn->real_escape_string($_POST['new_diagnosis']);
+    // Přednastavený text šablony
+    $templateText ="<p><span style='font-size: 14pt;'><strong>L&Eacute;KAŘSK&Aacute; ZPR&Aacute;VA</strong></span></p>
+                    <p><strong>Pacient:</strong> {{name}}</p>
+                    <p><strong>Datum narozen&iacute;:</strong> {{birth_date}}</p>
+                    <p>&nbsp;</p>
+                    <p><strong>Klinick&eacute; hodnoty</strong></p>
+                    <ul>
+                    <li><strong>Tělesn&aacute; teplota:</strong> {{temperature}}</li>
+                    <li><strong>Saturace kysl&iacute;kem:</strong> {{oxygen_saturation}}</li>
+                    <li><strong>Srdečn&iacute; tep:</strong> {{heart_rate}}</li>
+                    </ul>
+                    <p><strong>Diagnostick&eacute; &uacute;daje</strong></p>
+                    <p>&nbsp;</p>
+                    <p><strong>Diagn&oacute;za:</strong> {{diagnosis}}</p>
+                    <p><strong>Pozn&aacute;mka k diagn&oacute;ze:</strong></p>
+                    <p>{{note}}</p>
+                    <p>&nbsp;</p>
+                    <p>Autor z&aacute;znamu: {{author}}</p>
+                    <p>Datum vyhotoven&iacute;: {{current_date}}</p>";
     $user_id = $_SESSION['user_id'] ?? null;
     $stmt = $conn->prepare("INSERT INTO diagnoses (name, updated_by) VALUES (?, ?)");
     $stmt->bind_param("si", $newDiagnosis, $user_id);
 
     if ($stmt->execute()) {
+        $diagnosis_id = $conn->insert_id;
+        // Vložit šablonu do tabulky templates
+        $stmt2 = $conn->prepare("INSERT INTO templates (diagnosis_id, template_text, created_at) VALUES (?, ?, NOW())");
+        $stmt2->bind_param("is", $diagnosis_id, $templateText);
+        $stmt2->execute();
+        $stmt2->close();
         header("Location: add_diagnosis.php");
         exit;
     } else {
@@ -143,8 +168,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['update_diagnosis_id']
 
 // Smazání diagnózy
 if (isset($_GET['delete_diagnosis_id'])) {
-    $diagnosisId = $_GET['delete_diagnosis_id'];
-    $deleteSql = "DELETE FROM diagnoses WHERE id = $diagnosisId";
+    $diagnosisId = intval($_GET['delete_diagnosis_id']);
+    $deleteSql = "UPDATE diagnoses SET deleted = 1 WHERE id = $diagnosisId";
     if ($conn->query($deleteSql) === TRUE) {
         header("Location: add_diagnosis.php");
         exit;
@@ -154,7 +179,7 @@ if (isset($_GET['delete_diagnosis_id'])) {
 }
 
 // Načtení seznamu diagnóz
-$diagnosesSql = "SELECT *, (SELECT username FROM users WHERE users.id = diagnoses.updated_by) AS updated_by_username FROM diagnoses ORDER BY name ASC";
+$diagnosesSql = "SELECT *, (SELECT username FROM users WHERE users.id = diagnoses.updated_by) AS updated_by_username FROM diagnoses WHERE deleted = 0 ORDER BY name ASC";
 $diagnosesResult = $conn->query($diagnosesSql);
 $diagnoses = [];
 while ($row = $diagnosesResult->fetch_assoc()) {
@@ -407,6 +432,7 @@ document.addEventListener('click', function(event) {
                         <input type="text" name="new_diagnosis" id="new_diagnosis" 
                                class="form-control" placeholder="Zadejte název nové diagnózy" required>
                     </div>
+                    <!-- Výchozí šablona se nyní přidává automaticky v PHP -->
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-plus"></i> Přidat diagnózu
                     </button>

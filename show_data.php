@@ -453,7 +453,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
             SELECT p.id AS person_id, p.first_name, p.surname, n.id AS note_id, n.note, n.diagnosis_id, d.name AS diagnosis_text, n.created_at
             FROM persons p
             INNER JOIN diagnosis_notes n ON p.id = n.person_id
-            LEFT JOIN diagnoses d ON n.diagnosis_id = d.id
+            LEFT JOIN diagnoses d ON n.diagnosis_id = d.id AND d.deleted = 0
             LEFT JOIN medical_reports r ON n.id = r.diagnosis_note_id
             WHERE r.diagnosis_note_id IS NULL
             ORDER BY p.surname, p.first_name, n.created_at

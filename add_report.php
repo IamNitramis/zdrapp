@@ -19,7 +19,7 @@ try {
 }
 
 // Načtení všech diagnóz
-$sqlDiagnoses = "SELECT id, name FROM diagnoses ORDER BY name";
+$sqlDiagnoses = "SELECT id, name FROM diagnoses WHERE deleted = 0 ORDER BY name";
 $resultDiagnoses = $conn->query($sqlDiagnoses);
 if (!$resultDiagnoses) {
     die("Error fetching diagnoses: " . $conn->error);
@@ -206,7 +206,7 @@ if ($selectedDiagnosisId) {
                         <option value="">-- Vyberte diagnózu --</option>
                         <?php
                         // Znovu načti diagnózy pro select
-                        $sqlDiagnoses2 = "SELECT id, name FROM diagnoses ORDER BY name";
+                        $sqlDiagnoses2 = "SELECT id, name FROM diagnoses WHERE deleted = 0 ORDER BY name";
                         $resultDiagnoses2 = $conn->query($sqlDiagnoses2);
                         if ($resultDiagnoses2) {
                             while ($row = $resultDiagnoses2->fetch_assoc()):

@@ -1,3 +1,28 @@
+<?php
+$required = [
+    'bz2',
+    'curl',
+    'gd',
+    'mysqli',
+    'pdo_mysql',
+    'exif',
+    'gettext',
+    'mbstring',
+];
+$loaded = get_loaded_extensions();
+$missing = array_filter($required, function ($ext) use ($loaded) {
+    return !in_array($ext, $loaded);
+});
+if (!empty($missing)) {
+    echo "<pre style='color: red; font-size: 1.2em;'>❌ Následující PHP rozšíření chybí nebo nejsou aktivní:\n";
+    foreach ($missing as $ext) {
+        echo " - $ext\n";
+    }
+    echo "\n🔧 Zkontroluj konfiguraci <b>php.ini</b> a povol chybějící rozšíření. Bez aktivních rozšíření systém nebude správně funkční!\n";
+    echo "\n<a href='https://www.php.net/manual/en/install.pecl.extensions.php' target='_blank'>Nápověda k rozšířením PHP</a></pre>";
+    exit;
+}
+?>
 <!DOCTYPE html>
 <html lang="en">
 <head>

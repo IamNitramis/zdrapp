@@ -29,7 +29,7 @@ $noteId = intval($_GET['id']);
 $sql = "
     SELECT dn.note, d.id AS diagnosis_id, d.name AS diagnosis_name, dn.created_at, dn.person_id 
     FROM diagnosis_notes dn
-    JOIN diagnoses d ON dn.diagnosis_id = d.id
+    JOIN diagnoses d ON dn.diagnosis_id = d.id AND d.deleted = 0
     WHERE dn.id = ?
 ";
 

@@ -115,7 +115,7 @@ $stmt->execute();
 $diagnoses = $stmt->get_result();
 
 // Načtení všech diagnóz pro výběr
-$sql = "SELECT * FROM diagnoses ORDER BY name ASC";
+$sql = "SELECT * FROM diagnoses WHERE deleted = 0 ORDER BY name ASC";
 $all_diagnoses = $conn->query($sql);
 
 $stmt->close();
