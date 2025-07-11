@@ -139,3 +139,39 @@ Teď můžeš ve svém prohlížeči otevřít:
 
 http://moje-aplikace.local
 a měla by se načíst tvoje aplikace z htdocs/moje-aplikace.
+
+## Požadovaná rozšíření PHP
+
+| Rozšíření   | Popis                                           |
+|-------------|--------------------------------------------------|
+| `bz2`       | Komprese souborů                                |
+| `curl`      | HTTP požadavky (často bývá vypnuté)             |
+| `gd`        | Zpracování obrázků (často bývá vypnuté)         |
+| `mysqli`    | MySQL databáze                                  |
+| `pdo_mysql` | Moderní přístup k MySQL                         |
+| `exif`      | Čtení metadata z obrázků                        |
+| `gettext`   | Lokalizace a překlady                           |
+| `mbstring`  | Podpora pro práci s UTF-8 a vícbytovými znaky   |
+
+---
+
+## 🔧 Jak povolit rozšíření v `php.ini`
+
+1. Najdi svůj konfigurační soubor `php.ini`:
+   - V příkazové řádce můžeš spustit:  
+     ```bash
+     php --ini
+     ```
+   - Nebo v PHP skriptu zobrazit:
+     ```php
+     <?php phpinfo(); ?>
+     ```
+
+2. Otevři soubor `php.ini` v textovém editoru (např. Notepad, VS Code, nano).
+
+3. Najdi řádky s požadovanými rozšířeními. Budou vypadat třeba takto (mohou být zakomentované pomocí `;`):
+
+   ```ini
+   ;extension=curl
+   ;extension=gd
+   ;extension=mbstring
