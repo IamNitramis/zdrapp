@@ -1,120 +1,138 @@
-# ZDRAPP - Bezpečná databázová konfigurace
 
-## Nastavení databázového připojení
+# 🩺 ZDRAPP
 
-### 1. Vytvoření konfiguračního souboru
+## ⚙️ Nastavení připojení k databázi
 
-Zkopírujte `.env.example` jako `.env`:
+### 1️⃣ Vytvoř konfigurační soubor `.env`
 
-### 2. Upravení konfigurace
+Zkopíruj soubor `.env.example` jako `.env`:
 
-Otevřete soubor `.env` a upravte databázové údaje podle vašeho prostředí:
+```bash
+cp .env.example .env
+```
+
+---
+
+### 2️⃣ Uprav přihlašovací údaje k databázi
+
+Otevři soubor `.env` a nastav hodnoty dle svého prostředí:
 
 ```env
 DB_HOST=localhost
-DB_USERNAME=váš_username
-DB_PASSWORD=vaše_heslo
+DB_USERNAME=vas_uzivatel
+DB_PASSWORD=vase_heslo
 DB_DATABASE=zdrapp
 DB_PORT=3306
 ```
 
-### 3. Bezpečnost
+---
 
-- **NIKDY** nepřidávejte soubor `.env` do Git repozitáře
-- Soubor `.env` obsahuje citlivé údaje
-- Soubor `.gitignore` již obsahuje pravidlo pro ignorování `.env`
+### 3️⃣ Bezpečnostní upozornění
+
+- 🔒 **Nikdy** nezaznamenávej `.env` do verzovacího systému (Git)!
+- `.env` obsahuje citlivé údaje – přístup k databázi
+- Soubor `.gitignore` už obsahuje pravidlo pro ignoraci `.env`
 
 ---
 
-## 📊 Vytvoření nové databáze pro ZdrAPP
+## 🛠️ Vytvoření databáze pro ZdrAPP
 
-### Krok 1: Vytvoření databáze
+### 🔹 Krok 1: Vytvoření databáze
 
-#### Varianta A: Přes phpMyAdmin
-1. Otevřete phpMyAdmin v prohlížeči: `http://localhost/phpmyadmin/`
-2. Přihlaste se pomocí uživatelského jména `root` (obvykle bez hesla v lokálním prostředí)
-3. Klikněte na záložku **"Databáze"**
-4. Do pole **"Název databáze"** zadejte: `zdrapp`
-5. Vyberte kódování: `utf8mb4_czech_ci` (pro správnou podporu diakritiky)
-6. Klikněte na tlačítko **"Vytvořit"**
+#### 🧭 Varianta A: Přes phpMyAdmin
 
-#### Varianta B: Přes příkazový řádek MySQL
-1. Otevřete příkazový řádek (cmd) nebo PowerShell
-2. Přejděte do složky MySQL:
-   ```powershell
-   cd C:\xampp\mysql\bin
-   ```
-3. Přihlaste se do MySQL:
-   ```powershell
-   .\mysql.exe -u root -p
-   ```
-4. Vytvořte databázi:
-   ```sql
-   CREATE DATABASE zdrapp CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci;
-   USE zdrapp;
-   ```
+1. Otevři [http://localhost/phpmyadmin/](http://localhost/phpmyadmin/)
+2. Přihlas se jako `root` (v XAMPP obvykle bez hesla)
+3. Klikni na **„Databáze“**
+4. Zadej název databáze: `zdrapp`
+5. Vyber kódování: `utf8mb4_czech_ci`
+6. Klikni na **„Vytvořit“**
 
-### Krok 2: Import struktury databáze
+#### 🧱 Varianta B: Přes příkazový řádek
 
-#### Pokud máte SQL soubor ze složky `server/`:
-1. **Přes phpMyAdmin:**
-   - Vyberte databázi `zdrapp`
-   - Klikněte na záložku **"Import"**
-   - Klikněte **"Procházet"** a vyberte soubor `server/zdrapp_import.sql`
-   - Klikněte **"Provést"**
+```powershell
+cd C:\xampp\mysql\bin
+.\mysql.exe -u root -p
+```
 
-2. **Přes příkazový řádek:**
-   ```powershell
-   cd C:\xampp\mysql\bin
-   .\mysql.exe -u root -p zdrapp < "C:\xampp\htdocs\htdocs\ZdrAPP_Secure\server\zdrapp_import.sql"
-   ```
-
-### Krok 4
-3: Ověření připojení
-
-1. Upravte soubor `.env` s údaji o databázi
-2. Otestujte připojení spuštěním aplikace v prohlížeči
-
-### 🚨 Řešení problémů
-
-**Chyba připojení:**
-- Zkontrolujte, zda běží MySQL služba v XAMPP
-- Ověřte správnost údajů v `.env` souboru
-- Zkontrolujte, zda databáze `zdrapp` existuje
-
-**Chyba kódování:**
-- Ujistěte se, že databáze používá `utf8mb4_czech_ci`
-- Zkontrolujte, zda PHP soubory jsou uloženy v UTF-8 bez BOM
+```sql
+CREATE DATABASE zdrapp CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci;
+USE zdrapp;
+```
 
 ---
 
-# Nastavení lokální domény a VirtualHost pro XAMPP na Windows
+### 🔹 Krok 2: Import databázové struktury
 
-Tento návod popisuje, jak ve Windows nastavit vlastní lokální doménu (např. `moje-aplikace.local`) pomocí souboru `hosts` a nakonfigurovat VirtualHost v Apache (XAMPP), aby se projekt načítal přes tuto doménu.
+#### 📥 Import přes phpMyAdmin
+
+1. Vyber databázi `zdrapp`
+2. Klikni na **„Import“**
+3. Vyber soubor `server/zdrapp_import.sql`
+4. Klikni na **„Provést“**
+
+#### 💻 Import přes příkazový řádek
+
+```powershell
+cd C:\xampp\mysql\bin
+.\mysql.exe -u root -p zdrapp < "C:\xampp\htdocs\ZdrAPP_Secure\server\zdrapp_import.sql"
+```
 
 ---
 
-## 🖥️ 1. Úprava souboru `hosts` (lokální DNS záznam)
+### 🔹 Krok 3: Ověření připojení
 
-1. Otevři soubor:
+1. Ujisti se, že v `.env` jsou správné údaje
+2. Spusť aplikaci v prohlížeči a otestuj načtení
+
+---
+
+## 🚨 Nejčastější problémy a jejich řešení
+
+### ❌ Nelze se připojit k databázi
+
+- Ověř, že běží **MySQL služba** ve XAMPP
+- Zkontroluj údaje v `.env`
+- Ujisti se, že databáze `zdrapp` existuje
+
+### ❌ Problémy s kódováním (diakritika)
+
+- Ujisti se, že databáze má `utf8mb4_czech_ci`
+- PHP soubory musí být uloženy jako **UTF-8 bez BOM**
+
+---
+
+# 🌐 Nastavení lokální domény a VirtualHost (Windows + XAMPP)
+
+## 1️⃣ Lokální DNS záznam – soubor `hosts`
+
+1. Otevři jako administrátor soubor:
+
+```
 C:\Windows\System32\drivers\etc\hosts
+```
 
+2. Přidej řádek:
 
-2. Přidej na konec souboru řádek:
+```
 127.0.0.1 moje-aplikace.local
+```
 
-
-3. Ulož soubor.
+3. Ulož.
 
 ---
 
-## ⚙️ 2. Nastavení VirtualHost v Apache (XAMPP)
+## 2️⃣ VirtualHost konfigurace (Apache – XAMPP)
 
 1. Otevři soubor:
+
+```
 C:\xampp\apache\conf\extra\httpd-vhosts.conf
+```
 
+2. Na konec přidej:
 
-2. Přidej na konec souboru blok pro svou aplikaci:
+```apache
 <VirtualHost *:80>
     ServerName moje-aplikace.local
     DocumentRoot "C:/xampp/htdocs/moje-aplikace"
@@ -124,54 +142,75 @@ C:\xampp\apache\conf\extra\httpd-vhosts.conf
         Require all granted
     </Directory>
 </VirtualHost>
+```
 
-Ujisti se, že je v hlavním konfiguračním souboru Apache povolen soubor httpd-vhosts.conf:
+3. Povol načítání VirtualHostů v hlavním konfiguráku Apache:
 
 Otevři:
+
+```
 C:\xampp\apache\conf\httpd.conf
-Najdi a odkomentuj (odstraň #) tento řádek:
+```
 
+Najdi řádek:
+
+```apache
+#Include conf/extra/httpd-vhosts.conf
+```
+
+Odkomentuj ho (odstraň `#`):
+
+```apache
 Include conf/extra/httpd-vhosts.conf
-Restartuj Apache přes XAMPP Control Panel.
+```
 
-✅ Hotovo
-Teď můžeš ve svém prohlížeči otevřít:
+4. Restartuj Apache přes **XAMPP Control Panel**
 
+✅ Hotovo! Otevři v prohlížeči:
+
+```
 http://moje-aplikace.local
-a měla by se načíst tvoje aplikace z htdocs/moje-aplikace.
-
-## Požadovaná rozšíření PHP
-
-| Rozšíření   | Popis                                           |
-|-------------|--------------------------------------------------|
-| `bz2`       | Komprese souborů                                |
-| `curl`      | HTTP požadavky (často bývá vypnuté)             |
-| `gd`        | Zpracování obrázků (často bývá vypnuté)         |
-| `mysqli`    | MySQL databáze                                  |
-| `pdo_mysql` | Moderní přístup k MySQL                         |
-| `exif`      | Čtení metadata z obrázků                        |
-| `gettext`   | Lokalizace a překlady                           |
-| `mbstring`  | Podpora pro práci s UTF-8 a vícbytovými znaky   |
+```
 
 ---
 
-## 🔧 Jak povolit rozšíření v `php.ini`
+## 📦 Požadovaná rozšíření PHP
 
-1. Najdi svůj konfigurační soubor `php.ini`:
-   - V příkazové řádce můžeš spustit:  
-     ```bash
-     php --ini
-     ```
-   - Nebo v PHP skriptu zobrazit:
-     ```php
-     <?php phpinfo(); ?>
-     ```
+| Rozšíření   | Popis                                           |
+|-------------|--------------------------------------------------|
+| `bz2`       | Práce s komprimovanými soubory                  |
+| `curl`      | HTTP požadavky (API, externí komunikace)        |
+| `gd`        | Manipulace s obrázky                            |
+| `mysqli`    | Připojení k MySQL databázi                      |
+| `pdo_mysql` | Moderní PDO přístup k MySQL                     |
+| `exif`      | Metadata obrázků (např. orientace z fotoaparátu)|
+| `gettext`   | Lokalizace / vícejazyčnost                      |
+| `mbstring`  | Práce s UTF-8 a vícbytovými znaky               |
 
-2. Otevři soubor `php.ini` v textovém editoru (např. Notepad, VS Code, nano).
+---
 
-3. Najdi řádky s požadovanými rozšířeními. Budou vypadat třeba takto (mohou být zakomentované pomocí `;`):
+## 🛠️ Jak povolit rozšíření v `php.ini`
+
+1. Najdi svůj `php.ini`:
+
+   ```bash
+   php --ini
+   ```
+
+   nebo v PHP skriptu:
+
+   ```php
+   <?php phpinfo(); ?>
+   ```
+
+2. Otevři `php.ini` v editoru (např. VS Code)
+
+3. Najdi řádky s `extension=...` a **odkomentuj je**:
 
    ```ini
-   ;extension=curl
-   ;extension=gd
-   ;extension=mbstring
+   ;extension=curl     →   extension=curl
+   ;extension=gd       →   extension=gd
+   ;extension=mbstring →   extension=mbstring
+   ```
+
+4. Restartuj Apache, aby se změny projevily
