@@ -672,28 +672,20 @@ $conn->close();
                     <i class="fas fa-notes-medical"></i>
                     Medikace a alergie
                 </h2>
-                <form action="" method="post" class="form-container" style="margin-bottom:0;">
                     <div class="form-group">
                         <label for="medications" class="form-label">
                             <i class="fas fa-pills"></i>
                             Medikace:
                         </label>
-                        <input type="text" name="medications" id="medications" class="form-select" value="<?php echo htmlspecialchars($person['medications'] ?? ''); ?>" placeholder="Zadejte medikaci">
+                        <input type="text" name="medications" id="medications" class="form-select" value="<?php echo htmlspecialchars($person['medications'] ?? ''); ?>" disabled>
                     </div>
                     <div class="form-group">
                         <label for="allergies" class="form-label">
                             <i class="fas fa-allergies"></i>
                             Alergie:
                         </label>
-                        <input type="text" name="allergies" id="allergies" class="form-select" value="<?php echo htmlspecialchars($person['allergies'] ?? ''); ?>" placeholder="Zadejte alergie">
+                        <input type="text" name="allergies" id="allergies" class="form-select" value="<?php echo htmlspecialchars($person['allergies'] ?? ''); ?>" disabled>
                     </div>
-                    <div class="form-actions">
-                        <button type="submit" name="save_med_all" class="btn btn-primary">
-                            <i class="fas fa-save"></i>
-                            Uložit změny
-                        </button>
-                    </div>
-                </form>
             </div>
         </div>
     </div>
