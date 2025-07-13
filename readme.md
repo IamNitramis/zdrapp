@@ -1,6 +1,52 @@
 
 # 🩺 ZDRAPP
 
+## 🖥️ Použití XAMPP pro ZDRAPP
+
+### 1️⃣ Instalace XAMPP
+
+1. Stáhni XAMPP z oficiální stránky: https://www.apachefriends.org/cz/index.html
+2. Spusť instalátor a nainstaluj do výchozí složky `C:\xampp`.
+3. Po instalaci spusť **XAMPP Control Panel** (ikona na ploše nebo v nabídce Start).
+
+### 2️⃣ Spuštění služeb
+
+V XAMPP Control Panelu spusť:
+- **Apache** (webserver)
+- **MySQL** (databáze)
+
+Obě služby musí svítit zeleně (Running).
+
+### 3️⃣ Umístění aplikace
+
+Zkopíruj složku projektu (např. `zdrapp`) do `C:\xampp\htdocs\`.
+Výsledná cesta: `C:\xampp\htdocs\zdrapp`
+
+### 4️⃣ Přístup k aplikaci
+
+Otevři prohlížeč a zadej:
+
+```
+http://localhost/zdrapp
+```
+
+Pokud máš nastavený VirtualHost, použij vlastní doménu (viz níže).
+
+### 5️⃣ Správa XAMPP
+
+- **Spuštění/ukončení služeb:** tlačítka Start/Stop v XAMPP Control Panelu
+- **Logy:** klikni na tlačítko "Logs" u Apache/MySQL pro zobrazení chyb
+- **phpMyAdmin:** rychlý přístup na http://localhost/phpmyadmin pro správu databáze
+- **Konfigurace PHP:** soubor `C:\xampp\php\php.ini` (lze otevřít přímo z Control Panelu)
+
+### 6️⃣ Nejčastější problémy
+
+- **Port 80/3306 je obsazen:** Změň port v nastavení XAMPP nebo ukonči jiný program (např. Skype, IIS)
+- **Chyba "Access denied for user 'root'@'localhost'":** Zkontroluj heslo v `.env` a v phpMyAdmin
+- **Změny v kódu se neprojevují:** Vymaž cache prohlížeče nebo restartuj Apache
+
+---
+
 ## ⚙️ Nastavení připojení k databázi
 
 ### 1️⃣ Vytvoř konfigurační soubor `.env`
