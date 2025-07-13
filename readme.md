@@ -5,7 +5,7 @@
 
 ### 1️⃣ Instalace XAMPP
 
-1. Stáhni XAMPP z oficiální stránky: https://www.apachefriends.org/cz/index.html
+1. Stáhni XAMPP z oficiální stránky: https://www.apachefriends.org/download.html
 2. Spusť instalátor a nainstaluj do výchozí složky `C:\xampp`.
 3. Po instalaci spusť **XAMPP Control Panel** (ikona na ploše nebo v nabídce Start).
 
