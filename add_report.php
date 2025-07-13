@@ -14,6 +14,8 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
 require_once __DIR__ . '/config/database.php';
 try {
     $conn = getDatabase();
+    // Nastavení charsetu na UTF-8 pro správné ukládání diakritiky
+    $conn->set_charset('utf8mb4');
 } catch (Exception $e) {
     die("Chyba připojení k databázi: " . $e->getMessage());
 }

@@ -118,6 +118,13 @@ $diagnoses = $stmt->get_result();
 $sql = "SELECT * FROM diagnoses WHERE deleted = 0 ORDER BY name ASC";
 $all_diagnoses = $conn->query($sql);
 
+// Přehled všech lékařských zpráv pro daného člověka (před uzavřením $conn)
+$sql_reports = "SELECT r.id, r.report_text, r.created_at, d.name AS diagnosis_name, d.id AS diagnosis_id, n.note AS note_text, n.id AS note_id FROM medical_reports r JOIN diagnoses d ON r.diagnosis_id = d.id JOIN diagnosis_notes n ON r.diagnosis_note_id = n.id WHERE r.person_id = ? ORDER BY r.created_at DESC";
+$stmt_reports = $conn->prepare($sql_reports);
+$stmt_reports->bind_param("i", $person_id);
+$stmt_reports->execute();
+$result_reports = $stmt_reports->get_result();
+
 $stmt->close();
 $conn->close();
 ?>
@@ -604,7 +611,7 @@ $conn->close();
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i>
-                        Přidat
+                        Uložit záznam
                     </button>
                     <a href="kliste.php?person_id=<?php echo $person_id; ?>" class="btn btn-orange">
                         <i class="fas fa-bug"></i>

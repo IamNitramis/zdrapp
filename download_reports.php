@@ -259,7 +259,7 @@ function generateReportContent($person_id, $conn) {
 
     $content .= "\nTABULKA KLÍŠŤAT:\n";
     $content .= str_repeat("-", 80) . "\n";
-    $content .= sprintf("%-8s %-20s %-10s %-10s %-20s\n", "Pořadí", "Datum přidání", "X pozice", "Y pozice", "Přidal");
+    $content .= sprintf("%-8s %-20s %-20s\n", "Pořadí", "Datum přidání", "Přidal");
     $content .= str_repeat("-", 80) . "\n";
     
     $hasBites = false;
@@ -281,11 +281,9 @@ function generateReportContent($person_id, $conn) {
             $added_by = 'ID: ' . $k['updated_by'];
         }
         
-        $content .= sprintf("%-8s %-20s %-10.3f %-10.3f %-20s\n", 
+        $content .= sprintf("%-8s %-20s %-20s\n", 
             $k['bite_order'], 
             $k['created_at'], 
-            $k['x'], 
-            $k['y'],
             $added_by
         );
         $hasBites = true;
@@ -472,8 +470,6 @@ function generateDocxReport($person_id, $conn, $phpWord) {
         $table->addRow();
         $table->addCell(1200)->addText('Pořadí', ['bold' => true]);
         $table->addCell(2000)->addText('Datum přidání', ['bold' => true]);
-        $table->addCell(1200)->addText('X pozice', ['bold' => true]);
-        $table->addCell(1200)->addText('Y pozice', ['bold' => true]);
         $table->addCell(2000)->addText('Přidal', ['bold' => true]);
 
         while ($k = $klisteResult->fetch_assoc()) {
@@ -496,8 +492,6 @@ function generateDocxReport($person_id, $conn, $phpWord) {
             $table->addRow();
             $table->addCell(1200)->addText($k['bite_order']);
             $table->addCell(2000)->addText($k['created_at']);
-            $table->addCell(1200)->addText(number_format($k['x'], 3));
-            $table->addCell(1200)->addText(number_format($k['y'], 3));
             $table->addCell(2000)->addText($added_by);
         }
     } else {

@@ -288,3 +288,12 @@ ALTER TABLE tick_bites ADD CONSTRAINT fk_tick_bites_updated_by FOREIGN KEY (upda
 ALTER TABLE users
 ADD COLUMN firstname VARCHAR(100) NOT NULL AFTER role,
 ADD COLUMN lastname VARCHAR(100) NOT NULL AFTER firstname;
+
+ALTER TABLE diagnoses CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci;
+ALTER TABLE diagnosis_notes CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci;
+ALTER TABLE medical_reports CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci;
+ALTER TABLE persons CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci;
+ALTER TABLE persons_backup CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci;
+ALTER TABLE person_diagnoses CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci;
+ALTER TABLE templates CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci;
+ALTER TABLE tick_bites CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci;
