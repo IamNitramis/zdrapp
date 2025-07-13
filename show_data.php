@@ -501,6 +501,13 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                 <div class="alert-summary">
                     <strong><?php echo $total_notes_without_reports; ?></strong> poznámek u <strong><?php echo count($patients_without_reports); ?></strong> pacientů nemá vygenerovanou zprávu.
                 </div>
+                <div style="text-align:center;margin-bottom:10px;">
+                    <form action="batch_generate_reports.php" method="post" style="display:inline;">
+                        <button type="submit" class="btn btn-success" style="background:linear-gradient(135deg,#43a047 0%,#388e3c 100%);color:#fff;padding:8px 22px;font-size:1.08em;border-radius:8px;font-weight:700;box-shadow:0 2px 8px rgba(56,142,60,0.18);margin-bottom:6px;">
+                            <i class="fas fa-magic"></i> Automaticky vygenerovat vše
+                        </button>
+                    </form>
+                </div>
                 <div>Pacienti s chybějícími zprávami:</div>
                 <div class="alert-patients">
                     <?php foreach ($patients_without_reports as $patient): ?>

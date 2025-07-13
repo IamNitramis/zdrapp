@@ -185,7 +185,7 @@ $conn->close();
                         <i class="fas fa-sticky-note"></i>
                         Obsah poznámky:
                     </label>
-                    <textarea name="updated_note" id="updated_note" class="form-textarea" 
+                    <textarea name="updated_note" id="updated_note" class="form-textarea" style="min-height:60px;max-height:400px;" 
                               placeholder="Upravte obsah poznámky..." required><?php echo htmlspecialchars($note['note']); ?></textarea>
                 </div>
 
@@ -196,11 +196,11 @@ $conn->close();
                     </button>
                     <a href="person_details.php?id=<?php echo htmlspecialchars($_GET['person_id'] ?? $note['person_id']); ?>" class="btn btn-secondary">
                         <i class="fas fa-times"></i>
-                        Zrušit
+                        Zpět
                     </a>
                     <a href="report.php?diagnosis_note_id=<?php echo htmlspecialchars($noteId); ?>&diagnosis_id=<?php echo htmlspecialchars($note['diagnosis_id']); ?>&person_id=<?php echo htmlspecialchars($note['person_id']); ?>&surname=<?php echo htmlspecialchars($_GET['surname'] ?? ''); ?>" class="btn btn-success">
                         <i class="fas fa-file-medical"></i>
-                        Generovat zprávu
+                        Lékařská zpráva
                     </a>
                 </div>
             </form>
@@ -223,11 +223,12 @@ $conn->close();
             }
         });
 
-        // Auto-resize textarea
+        // Auto-resize textarea (menší výchozí výška)
         const textarea = document.getElementById('updated_note');
+        textarea.style.height = '60px';
         textarea.addEventListener('input', function() {
             this.style.height = 'auto';
-            this.style.height = Math.max(400, this.scrollHeight) + 'px';
+            this.style.height = Math.min(400, Math.max(60, this.scrollHeight)) + 'px';
         });
 
         // Smooth scrolling for better UX

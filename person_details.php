@@ -604,7 +604,7 @@ $conn->close();
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i>
-                        Uložit záznam
+                        Přidat
                     </button>
                     <a href="kliste.php?person_id=<?php echo $person_id; ?>" class="btn btn-orange">
                         <i class="fas fa-bug"></i>

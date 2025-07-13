@@ -8,7 +8,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
     <meta charset='UTF-8'>
     <title>Přístup zamítnut</title>
     <link rel='stylesheet' href='style.css'>
-    <link href='https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css' rel='stylesheet'>
+    <link href='assets/css/all.min.css' rel='stylesheet'>
     <style>
         body {
             font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
@@ -294,42 +294,42 @@ $heart_rate = mt_rand(60, 100);        // 60 - 100 bpm
 // Aktuální datum
 $current_day = date('d.m.Y');
 
-// Nahrazení placeholderů skutečnými hodnotami, včetně {{note}}, {{author}} a {{current_day}}
-$report = str_replace(
-    ['{{name}}', '{{birth_date}}', '{{temperature}}', '{{oxygen_saturation}}', '{{heart_rate}}', '{{diagnosis}}', '{{note}}', '{{author}}', '{{current_date}}'],
-    [
-        htmlspecialchars($person['first_name'] . ' ' . $person['surname']),
-        htmlspecialchars($person['birth_date']),
-        $temperature,
-        $oxygen_saturation,
-        $heart_rate,
-        htmlspecialchars($diagnosis['diagnosis_name'] . " (Zaznamenáno: " . $assignedAt . ")"),
-        htmlspecialchars($noteText),
-        htmlspecialchars($authorName),
-        $current_day
-    ],
-    $template
-);
-
-// Načtení uložené zprávy z medical_reports podle diagnosis_note_id
-if ($diagnosisNoteId) {
-    $sqlReport = "SELECT * FROM medical_reports WHERE diagnosis_note_id = ?";
-    $stmtReport = $conn->prepare($sqlReport);
-    $stmtReport->bind_param("i", $diagnosisNoteId);
-    $stmtReport->execute();
-    $resultReport = $stmtReport->get_result();
-
-    if ($resultReport->num_rows > 0) {
-        $reportRow = $resultReport->fetch_assoc();
-        $report = $reportRow['report_text'];
-    }
-    $stmtReport->close();
+// Pokud už je report v medical_reports, použij ho. Jinak vygeneruj nový podle šablony a dat.
+$sqlReport = "SELECT report_text FROM medical_reports WHERE diagnosis_note_id = ?";
+$stmtReport = $conn->prepare($sqlReport);
+$stmtReport->bind_param("i", $diagnosisNoteId);
+$stmtReport->execute();
+$resultReport = $stmtReport->get_result();
+if ($resultReport->num_rows > 0) {
+    $reportRow = $resultReport->fetch_assoc();
+    $report = $reportRow['report_text'];
+} else {
+    // Nahrazení placeholderů skutečnými hodnotami, včetně {{note}}, {{author}} a {{current_day}}
+    $report = str_replace(
+        ['{{name}}', '{{birth_date}}', '{{temperature}}', '{{oxygen_saturation}}', '{{heart_rate}}', '{{diagnosis}}', '{{note}}', '{{author}}', '{{current_date}}'],
+        [
+            htmlspecialchars($person['first_name'] . ' ' . $person['surname']),
+            htmlspecialchars($person['birth_date']),
+            $temperature,
+            $oxygen_saturation,
+            $heart_rate,
+            htmlspecialchars($diagnosis['diagnosis_name'] . " (Zaznamenáno: " . $assignedAt . ")"),
+            htmlspecialchars($noteText),
+            htmlspecialchars($authorName),
+            $current_day
+        ],
+        $template
+    );
 }
+$stmtReport->close();
 
 // Uložení zprávy, pokud je formulář odeslán
 if ($_SERVER['REQUEST_METHOD'] === 'POST') {
     if (isset($_POST['updated_report']) && !empty(trim($_POST['updated_report']))) {
         $updatedReport = trim($_POST['updated_report']);
+
+        // Zjisti aktuálního uživatele
+        $currentUserId = isset($_SESSION['user_id']) ? intval($_SESSION['user_id']) : null;
 
         // Zjisti, jestli už report existuje pro tuto diagnosis_note_id
         $sqlCheck = "SELECT id FROM medical_reports WHERE diagnosis_note_id = ?";
@@ -340,9 +340,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
         if ($resultCheck->num_rows > 0) {
             // UPDATE existujícího reportu
-            $sqlUpdate = "UPDATE medical_reports SET report_text = ?, created_at = NOW() WHERE diagnosis_note_id = ?";
+            $sqlUpdate = "UPDATE medical_reports SET report_text = ?, created_at = NOW(), updated_by = ? WHERE diagnosis_note_id = ?";
             $stmtUpdate = $conn->prepare($sqlUpdate);
-            $stmtUpdate->bind_param("si", $updatedReport, $diagnosisNoteId);
+            $stmtUpdate->bind_param("sii", $updatedReport, $currentUserId, $diagnosisNoteId);
             if ($stmtUpdate->execute()) {
                 $message = "Lékařská zpráva byla úspěšně aktualizována.";
                 $message_type = "success";
@@ -353,14 +353,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmtUpdate->close();
         } else {
             // INSERT nového reportu
-            $sqlInsert = "INSERT INTO medical_reports (person_id, diagnosis_id, diagnosis_note_id, report_text, created_at) VALUES (?, ?, ?, ?, NOW())";
+            $sqlInsert = "INSERT INTO medical_reports (person_id, diagnosis_id, diagnosis_note_id, report_text, created_at, updated_by) VALUES (?, ?, ?, ?, NOW(), ?)";
             $stmtInsert = $conn->prepare($sqlInsert);
 
             if (!$stmtInsert) {
                 die("SQL Error: " . $conn->error);
             }
 
-            $stmtInsert->bind_param("iiis", $personId, $diagnosisId, $diagnosisNoteId, $updatedReport);
+            $stmtInsert->bind_param("iiisi", $personId, $diagnosisId, $diagnosisNoteId, $updatedReport, $currentUserId);
             if ($stmtInsert->execute()) {
                 $message = "Lékařská zpráva byla úspěšně uložena.";
                 $message_type = "success";
