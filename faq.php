@@ -127,7 +127,101 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
     </div>
     <div class="container">
         <div class="faq-title"><i class="fas fa-question-circle"></i> Často kladené otázky (FAQ)</div>
+        <ul class= faq-list>
+            <li class="faq-item">
+                <div class="faq-question">Jak funguje stránka přehled? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="faq-answer">
+                <ul>
+                        <li><b>Detaily osoby</b> slouží k zobrazení a správě zdravotních záznamů konkrétního pacienta. Najdete zde jméno pacienta, přehled všech diagnóz a nálezů, které byly pacientovi přiřazeny, včetně data, poznámky a uživatele, který záznam upravil.</li>
+                        <li><b>Přehled pacienta:</b> V horní části vidíte jméno a základní informace o pacient</li>
+                        <li><b>Přidání diagnózy a nálezu:</b> Pomocí formuláře po kliknutí na tlačítko detail, lze vybrat diagnózu a přidat k ní nález (popis ošetření, podaná medikace apod.).</li>
+                        <li><b>Diagnózy a nálezy:</b> V přehledu níže jsou všechny záznamy, které lze upravit nebo smazat pomocí tlačítek <i>Upravit</i> a <i>Smazat</i>.</li>
+                        <li><b>Medikace a alergie:</b> V pravé části jsou zobrazeny informace o medikaci a alergiích pacienta.</li>
+                        <li><b>Klíšťata:</b> Tlačítko <i>Klíšťata</i> vás přesměruje na stránku pro evidenci a mapování klíšťat.</li>
+                        <li><b>Navigace:</b> V horním menu lze přecházet na další části aplikace (přehled, nahrání dat, přidání diagnózy, zprávy, statistiky, FAQ).</li>
+                </ul>
+            </li>
         <ul class="faq-list">
+            <li class="faq-item">
+                <div class="faq-question">Jak zaznamenat a spravovat místa klíšťat u pacienta? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="faq-answer">
+                    <ul style="margin-left: 1.2em;">
+                        <li><b>Jak stránku otevřít?</b> V detailu pacienta klikněte na tlačítko Klíšťata.</li>
+                        <li><b>Zobrazení schématu:</b> Na stránce se zobrazí obrázek lidského těla a tabulka bodů.</li>
+                        <li><b>Přidání bodu:</b> Klikněte myší na místo na obrázku, kde pacienta píchlo klíště. Bod se uloží a zobrazí v tabulce vpravo.</li>
+                        <li><b>Očíslování bodů:</b> Každý bod je automaticky očíslován podle pořadí přidání.</li>
+                        <li><b>Odstranění bodu:</b> Pro odstranění bodu klikněte na červené tlačítko <i class="fas fa-trash"></i> v tabulce.</li>
+                        <li><b>Obnovení záznamů:</b> Všechny body se automaticky načítají při otevření stránky nebo po přidání/odstranění bodu.</li>
+                        <li><b>Návrat zpět:</b> Pro návrat na detail pacienta použijte tlačítko <em>Zpět na detail pacienta</em> dole na stránce.</li>
+                    </ul>
+                    <div style="color:#388e3c; font-size:0.98em; margin-top:0.7em;">
+                        Tato stránka slouží k přesnému zaznamenání a správě míst, kde bylo pacientovi odstraněno klíště. Data se využívají v exportech a statistikách.
+                    </div>
+                </div>
+            </li>
+            <li class="faq-item">
+                <div class="faq-question">Jak upravit poznámku k diagnóze? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="faq-answer">
+                    <ul style="margin-left: 1.2em;">
+                        <li><b>Otevření úpravy:</b> V detailu pacienta klikněte na tlačítko <em>Upravit</em> u vybrané poznámky.</li>
+                        <li><b>Úprava obsahu:</b> V zobrazeném formuláři upravte text poznámky podle potřeby. Pole je povinné a nesmí zůstat prázdné.</li>
+                        <li><b>Uložení změn:</b> Klikněte na <em>Uložit změny</em>. Poznámka se uloží a vrátíte se zpět na detail pacienta.</li>
+                        <li><b>Návrat zpět:</b> Pro návrat bez uložení klikněte na <em>Zpět</em>.</li>
+                        <li><b>Vazba na lékařskou zprávu:</b> U každé poznámky můžete přejít přímo na tvorbu nebo úpravu lékařské zprávy tlačítkem <em>Lékařská zpráva</em>.</li>
+                    </ul>
+                    <div style="color:#388e3c; font-size:0.98em; margin-top:0.7em;">
+                        Tato stránka slouží k úpravě zdravotních poznámek přiřazených k diagnóze pacienta.
+                    </div>
+                </div>
+            </li>
+            <li class="faq-item">
+                <div class="faq-question"> Jak funguje stránka Stáhnout zprávy? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="faq-answer">
+                    <ul style="margin-left: 1.2em;">
+                        <li><b>Hromadné stažení:</b> Klikněte na tlačítko <em>Stáhnout vše (ZIP)</em> pro stažení archivu se všemi pacienty, jejich zprávami a mapami klíšťat. Archiv obsahuje složky pro každého pacienta, včetně zpráv, mapy klíšťat a souhrnného souboru.</li>
+                        <li><b>Stažení jednoho pacienta:</b> Vyberte pacienta ze seznamu a klikněte na <em>Exportovat DOCX</em>. Stáhne se ZIP archiv s lékařskou zprávou, mapou klíšťat a informačním souborem.</li>
+                        <li><b>Obsah exportu:</b> Každý ZIP obsahuje:
+                            <ul style="margin-left: 1.5em; margin-top: 0.5em;">
+                                <li><b>lekarska_zprava.docx</b> – kompletní lékařská zpráva s formátovaným textem</li>
+                                <li><b>mapa_klistat.png</b> – vizuální mapa všech klíšťat na těle (pokud jsou zaznamenána)</li>
+                                <li><b>info.txt</b> – informace o pacientovi a obsahu archivu</li>
+                            </ul>
+                        </li>
+                        <li><b>Statistiky:</b> V horní části stránky vidíte souhrnné počty pacientů, pacientů s klíšťaty a celkový počet lékařských zpráv.</li>
+                        <li><b>Poznámka:</b> Pokud prohlížeč označí stažený ZIP jako nebezpečný, je to běžné při stahování z lokálního serveru. Soubor můžete bezpečně zachovat.</li>
+                    </ul>
+                    <div style="color:#388e3c; font-size:0.98em; margin-top:0.7em;">
+                        Tato stránka slouží k exportu všech lékařských zpráv a map klíšťat pro další zpracování nebo archivaci.
+                    </div>
+                </div>
+            </li>
+            <li class="faq-item">
+                <div class="faq-question">Jak funguje stránka přidat diagnózu? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="faq-answer">
+                    <ul style="margin-left: 1.2em;">
+                        <li><b>Výběr diagnózy:</b> Nejprve vyberte diagnózu ze seznamu. Pro každou diagnózu lze mít vlastní šablonu zprávy.</li>
+                        <li><b>Úprava textu šablony:</b> Do editoru zadejte nebo upravte text šablony. Můžete používat formátování (tučné, seznamy, tabulky) a <b>placeholdery</b> (např. <code>{{name}}</code>, <code>{{birth_date}}</code>).</li>
+                        <li><b>Uložení šablony:</b> Po dokončení úprav klikněte na <em>Uložit šablonu</em>. Šablona se uloží k vybrané diagnóze a bude použita při generování lékařských zpráv.</li>
+                        <li><b>Nápověda k placeholderům:</b> Klikněte na tlačítko <em>Nápověda k placeholderům</em> pro zobrazení seznamu dostupných zástupných výrazů.</li>
+                    </ul>
+                    <div style="color:#388e3c; font-size:0.98em; margin-top:0.7em;">
+                        Tato stránka slouží k úpravě šablon lékařských zpráv. Správně nastavená šablona urychlí a zjednoduší generování zpráv pro pacienty.
+                    </div>
+                </div>
+            </li>
+            <li class="faq-item">
+                <div class="faq-question">Jak funguje stránka Přidat diagnózu, a jak ji používat? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="faq-answer">
+                    <ul style="margin-left: 1.2em;">
+                        <li><b>Přidání nové diagnózy:</b> Vyplňte název nové diagnózy do formuláře a potvrďte tlačítkem <em>Přidat diagnózu</em>. K diagnóze se automaticky vytvoří výchozí šablona lékařské zprávy.</li>
+                        <li><b>Seznam diagnóz:</b> V tabulce vidíte všechny aktuální diagnózy. Diagnózy lze řadit kliknutím na záhlaví sloupců (ID, Název diagnózy). U každé diagnózy je uvedeno, kdo ji naposledy upravil.</li>
+                        <li><b>Odstranění diagnózy:</b> Diagnózu odstraníte kliknutím na červené tlačítko <em>Odstranit</em>. Systém se zeptá na potvrzení.</li>
+                    </ul>
+                    <div style="color:#388e3c; font-size:0.98em; margin-top:0.7em;">
+                        Diagnózy jsou využívány při vytváření lékařských zpráv a šablon. Odstraněné diagnózy se v systému dále nenabízejí, ale zůstávají v databázi pro případnou obnovu.
+                    </div>
+                </div>
+            </li>
             <li class="faq-item">
                 <div class="faq-question">Jak mohu upravit nebo smazat pacienta? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
                 <div class="faq-answer">V přehledu pacientů klikněte na tlačítko <b>Detail</b> u konkrétního pacienta. Zde můžete upravit údaje nebo použít tlačítko <b>Smazat</b>.</div>
@@ -159,25 +253,6 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                         <li>Pro vygenerování lékařské zprávy klikněte na ikonu nebo tlačítko <b>Vytvořit zprávu</b> (nebo <b>Report</b>) u konkrétní poznámky/diagnózy.</li>
                         <li>Zobrazí se předvyplněná šablona zprávy, kterou můžete upravit a uložit.</li>
                         <li>Hotovou zprávu lze stáhnout nebo vytisknout podle potřeby.</li>
-                    </ol>
-                </div>
-            </li>
-            <li class="faq-item">
-                <div class="faq-question">Jak zaznamenat klíšťata na těle pacienta a exportovat kompletní zprávu? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
-                <div class="faq-answer">
-                    <ol style="margin-left: 1.2em;">
-                        <li>V detailu pacienta klikněte na tlačítko <b>Klíšťata</b>.</li>
-                        <li>Zobrazí se obrázek lidského těla. Klikněte na místo, kde se klíště nachází.</li>
-                        <li>Každé klíště se automaticky očísluje podle pořadí přidání.</li>
-                        <li>Pro odstranění klíštěte klikněte na tlačítko <b>Odebrat klíště</b> a pak na klíště, které chcete smazat.</li>
-                        <li>Po dokončení mapování přejděte do sekce <b>Stáhnout zprávy</b>.</li>
-                        <li>Vyberte pacienta a klikněte na <b>Exportovat DOCX</b> - stáhne se ZIP archiv obsahující:</li>
-                        <ul style="margin-left: 1.5em; margin-top: 0.5em;">
-                            <li><b>lekarska_zprava.docx</b> - kompletní lékařská zpráva s formátovaným textem</li>
-                            <li><b>mapa_klistat.png</b> - vizuální mapa všech klíšťat na těle</li>
-                            <li><b>info.txt</b> - informace o pacientovi a obsahu archivu</li>
-                        </ul>
-                        <li>Můžete také exportovat data všech pacientů najednou pomocí tlačítka <b>Stáhnout vše (ZIP)</b>.</li>
                     </ol>
                 </div>
             </li>
