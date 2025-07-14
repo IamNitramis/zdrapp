@@ -118,9 +118,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_diagnosis'])) {
                     <p>&nbsp;</p>
                     <p><strong>Klinick&eacute; hodnoty</strong></p>
                     <ul>
-                    <li><strong>Tělesn&aacute; teplota:</strong> {{temperature}}</li>
-                    <li><strong>Saturace kysl&iacute;kem:</strong> {{oxygen_saturation}}</li>
-                    <li><strong>Srdečn&iacute; tep:</strong> {{heart_rate}}</li>
+                    <li><strong>Tělesn&aacute; teplota:</strong> {{temperature}}°</li>
+                    <li><strong>Saturace kysl&iacute;kem:</strong> {{oxygen_saturation}}%</li>
+                    <li><strong>Srdečn&iacute; tep:</strong> {{heart_rate}}bpm</li>
                     </ul>
                     <p><strong>Diagnostick&eacute; &uacute;daje</strong></p>
                     <p>&nbsp;</p>
