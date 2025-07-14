@@ -369,7 +369,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
                 </a>
                 <a href="add_report.php">
                     <i class="fas fa-file-medical"></i>
-                    Přidat lékařskou zprávu
+                    Upravit lékařskou zprávu
                 </a>
                 <a href="stats.php">
                     <i class="fas fa-chart-bar"></i>

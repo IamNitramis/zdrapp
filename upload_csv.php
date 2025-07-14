@@ -55,11 +55,6 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
         $error_message = "Soubor je příliš velký. Maximální velikost je 10MB.";
     } elseif ($file && is_uploaded_file($file)) {
         try {
-            // Před vložením nových dat uděláme zálohu tabulky
-            $timestamp = date('Y_m_d_H_i_s');
-            $backupSql = "CREATE TABLE IF NOT EXISTS persons_backup_$timestamp AS SELECT * FROM persons";
-            $conn->query($backupSql);
-            
             $csvData = file_get_contents($file);
             $lines = explode("\n", $csvData);
             $inserted_count = 0;
@@ -167,7 +162,7 @@ $conn->close();
                 </a>
                 <a href="add_report.php">
                     <i class="fas fa-file-medical"></i>
-                    Přidat lékařskou zprávu
+                    Upravit lékařskou zprávu
                 </a>
                 <a href="stats.php">
                     <i class="fas fa-chart-bar"></i>

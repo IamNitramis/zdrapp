@@ -391,7 +391,7 @@ document.addEventListener('click', function(event) {
                 </a>
                 <a href="add_report.php">
                     <i class="fas fa-file-medical"></i>
-                    Přidat lékařskou zprávu
+                    Upravit lékařskou zprávu
                 </a>
                 <a href="stats.php">
                     <i class="fas fa-chart-bar"></i>

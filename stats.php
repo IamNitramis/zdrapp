@@ -90,7 +90,7 @@ $conn->close();
                 </a>
                 <a href="add_report.php">
                     <i class="fas fa-file-medical"></i>
-                    Přidat lékařskou zprávu
+                    Upravit lékařskou zprávu
                 </a>
                 <a href="stats.php" class="active">
                     <i class="fas fa-chart-bar"></i>

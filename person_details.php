@@ -547,7 +547,7 @@ $conn->close();
                 </a>
                 <a href="add_report.php">
                     <i class="fas fa-file-medical"></i>
-                    Přidat lékařskou zprávu
+                    Upravit lékařskou zprávu
                 </a>
                 <a href="stats.php">
                     <i class="fas fa-chart-bar"></i>
@@ -597,7 +597,7 @@ $conn->close();
                     </a>
                     <a href="add_report.php" class="form-link">
                         <i class="fas fa-file-medical"></i>
-                        Přidat template lékařské zprávy
+                        Upravit template lékařské zprávy
                     </a>
                 </div>
                 <div class="form-group">

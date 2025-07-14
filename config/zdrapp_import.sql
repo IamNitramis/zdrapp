@@ -49,20 +49,6 @@ CREATE TABLE persons (
 -- --------------------------------------------------------
 
 --
--- Table structure for table persons_backup
---
-
-CREATE TABLE persons_backup (
-  id int(11) NOT NULL DEFAULT 0,
-  first_name varchar(100) DEFAULT NULL,
-  surname varchar(100) DEFAULT NULL,
-  birth_date date DEFAULT NULL,
-  ssn varchar(20) DEFAULT NULL
-) ;
-
--- --------------------------------------------------------
-
---
 -- Table structure for table person_diagnoses
 --
 
@@ -267,7 +253,6 @@ ALTER TABLE diagnoses ADD COLUMN updated_by INT NULL AFTER name;
 ALTER TABLE diagnosis_notes ADD COLUMN updated_by INT NULL AFTER created_at;
 ALTER TABLE medical_reports ADD COLUMN updated_by INT NULL AFTER created_at;
 ALTER TABLE persons ADD COLUMN updated_by INT NULL AFTER allergies;
-ALTER TABLE persons_backup ADD COLUMN updated_by INT NULL AFTER ssn;
 ALTER TABLE person_diagnoses ADD COLUMN updated_by INT NULL AFTER assigned_at;
 ALTER TABLE templates ADD COLUMN updated_by INT NULL AFTER created_at;
 ALTER TABLE tick_bites ADD COLUMN updated_by INT NULL AFTER created_at;
@@ -278,7 +263,6 @@ ALTER TABLE diagnoses ADD CONSTRAINT fk_diagnoses_updated_by FOREIGN KEY (update
 ALTER TABLE diagnosis_notes ADD CONSTRAINT fk_diagnosis_notes_updated_by FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL;
 ALTER TABLE medical_reports ADD CONSTRAINT fk_medical_reports_updated_by FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL;
 ALTER TABLE persons ADD CONSTRAINT fk_persons_updated_by FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL;
-ALTER TABLE persons_backup ADD CONSTRAINT fk_persons_backup_updated_by FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL;
 ALTER TABLE person_diagnoses ADD CONSTRAINT fk_person_diagnoses_updated_by FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL;
 ALTER TABLE templates ADD CONSTRAINT fk_templates_updated_by FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL;
 ALTER TABLE tick_bites ADD CONSTRAINT fk_tick_bites_updated_by FOREIGN KEY (updated_by) REFERENCES users(id) ON DELETE SET NULL;
@@ -293,7 +277,6 @@ ALTER TABLE diagnoses CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci;
 ALTER TABLE diagnosis_notes CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci;
 ALTER TABLE medical_reports CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci;
 ALTER TABLE persons CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci;
-ALTER TABLE persons_backup CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci;
 ALTER TABLE person_diagnoses CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci;
 ALTER TABLE templates CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci;
 ALTER TABLE tick_bites CONVERT TO CHARACTER SET utf8mb4 COLLATE utf8mb4_czech_ci;
