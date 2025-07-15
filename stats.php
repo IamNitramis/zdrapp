@@ -83,7 +83,7 @@ $conn->close();
             <div class="stat-card">
                 <i class="fas fa-notes-medical"></i>
                 <div class="stat-number"><?php echo $total_reports; ?></div>
-                <div class="stat-label">Lékařských zpráv</div>
+                <div class="stat-label">Zdravotnických zpráv</div>
             </div>
             <div class="stat-card">
                 <i class="fas fa-clipboard-list"></i>
@@ -103,7 +103,7 @@ $conn->close();
             <div class="stat-card">
                 <i class="fas fa-user-md"></i>
                 <div class="stat-number"><?php echo $patients_with_reports; ?></div>
-                <div class="stat-label">Pacientů s lékařskou zprávou</div>
+                <div class="stat-label">Pacientů se zdravotnickou zprávou</div>
             </div>
         </div>
     </div>

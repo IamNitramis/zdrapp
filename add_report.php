@@ -127,7 +127,7 @@ if ($selectedDiagnosisId) {
     <div class="container">
         <div class="page-header">
             <h1><i class="fas fa-file-medical-alt"></i> Přiřazení šablony k diagnóze</h1>
-            <div class="subtitle">Vytvořte nebo upravte šablonu pro generování zdravotních zpráv</div>
+            <div class="subtitle">Vytvořte nebo upravte šablonu pro generování zdravotnických zpráv</div>
         </div>
 
         <?php if (!empty($message)): ?>
@@ -203,6 +203,7 @@ if ($selectedDiagnosisId) {
                             <li><code>{{temperature}}</code> – Tělesná teplota (náhodně generována)</li>
                             <li><code>{{oxygen_saturation}}</code> – Saturace kyslíkem (náhodně generováno)</li>
                             <li><code>{{heart_rate}}</code> – Srdeční tep (náhodně generován)</li>
+                            <li><code>{{blood_pressure}}</code> – Krevní tlak (náhodně generován)</li>
                             <li><code>{{diagnosis}}</code> – Název diagnózy a datum přiřazení</li>
                             <li><code>{{note}}</code> – Poznámka k diagnóze</li>
                             <li><code>{{author}}</code> – Autor poslední změny zprávy. (doporučujeme používat na konci zprávy jako podpis)</li>

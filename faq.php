@@ -149,7 +149,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                         <li><b>Poznámka:</b> Pokud prohlížeč označí stažený ZIP jako nebezpečný, je to běžné při stahování z lokálního serveru. Soubor můžete bezpečně zachovat.</li>
                     </ul>
                     <div style="color:#388e3c; font-size:0.98em; margin-top:0.7em;">
-                        Tato stránka slouží k exportu všech lékařských zpráv a map klíšťat pro další zpracování nebo archivaci.
+                        Tato stránka slouží k exportu všech zdravotnických zpráv a map klíšťat pro další zpracování nebo archivaci.
                     </div>
                 </div>
             </li>
@@ -159,11 +159,11 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                     <ul style="margin-left: 1.2em;">
                         <li><b>Výběr diagnózy:</b> Nejprve vyberte diagnózu ze seznamu. Pro každou diagnózu lze mít vlastní šablonu zprávy.</li>
                         <li><b>Úprava textu šablony:</b> Do editoru zadejte nebo upravte text šablony. Můžete používat formátování (tučné, seznamy, tabulky) a <b>placeholdery</b> (např. <code>{{name}}</code>, <code>{{birth_date}}</code>).</li>
-                        <li><b>Uložení šablony:</b> Po dokončení úprav klikněte na <em>Uložit šablonu</em>. Šablona se uloží k vybrané diagnóze a bude použita při generování lékařských zpráv.</li>
+                        <li><b>Uložení šablony:</b> Po dokončení úprav klikněte na <em>Uložit šablonu</em>. Šablona se uloží k vybrané diagnóze a bude použita při generování zdravotnických zpráv.</li>
                         <li><b>Nápověda k placeholderům:</b> Klikněte na tlačítko <em>Nápověda k placeholderům</em> pro zobrazení seznamu dostupných zástupných výrazů.</li>
                     </ul>
                     <div style="color:#388e3c; font-size:0.98em; margin-top:0.7em;">
-                        Tato stránka slouží k úpravě šablon lékařských zpráv. Správně nastavená šablona urychlí a zjednoduší generování zpráv pro pacienty.
+                        Tato stránka slouží k úpravě šablon zdravotnických zpráv. Správně nastavená šablona urychlí a zjednoduší generování zpráv pro pacienty.
                     </div>
                 </div>
             </li>
@@ -171,12 +171,12 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                 <div class="faq-question">Jak funguje stránka Přidat diagnózu, a jak ji používat? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
                 <div class="faq-answer">
                     <ul style="margin-left: 1.2em;">
-                        <li><b>Přidání nové diagnózy:</b> Vyplňte název nové diagnózy do formuláře a potvrďte tlačítkem <em>Přidat diagnózu</em>. K diagnóze se automaticky vytvoří výchozí šablona lékařské zprávy.</li>
+                        <li><b>Přidání nové diagnózy:</b> Vyplňte název nové diagnózy do formuláře a potvrďte tlačítkem <em>Přidat diagnózu</em>. K diagnóze se automaticky vytvoří výchozí šablona zdravotnické zprávy.</li>
                         <li><b>Seznam diagnóz:</b> V tabulce vidíte všechny aktuální diagnózy. Diagnózy lze řadit kliknutím na záhlaví sloupců (ID, Název diagnózy). U každé diagnózy je uvedeno, kdo ji naposledy upravil.</li>
                         <li><b>Odstranění diagnózy:</b> Diagnózu odstraníte kliknutím na červené tlačítko <em>Odstranit</em>. Systém se zeptá na potvrzení.</li>
                     </ul>
                     <div style="color:#388e3c; font-size:0.98em; margin-top:0.7em;">
-                        Diagnózy jsou využívány při vytváření lékařských zpráv a šablon. Odstraněné diagnózy se v systému dále nenabízejí, ale zůstávají v databázi pro případnou obnovu.
+                        Diagnózy jsou využívány při vytváření zdravotnických zpráv a šablon. Odstraněné diagnózy se v systému dále nenabízejí, ale zůstávají v databázi pro případnou obnovu.
                     </div>
                 </div>
             </li>
@@ -201,24 +201,24 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                 <div class="faq-answer">V případě technických problémů kontaktujte správce systému na tel. čísle <b>+420 735 880 870</b> nebo napište na e-mail <b>gabriel@zgnetworks.eu</b>.</div>
             </li>
             <li class="faq-item">
-                <div class="faq-question">Jak přidám diagnózu a poznámku a vygeneruji lékařskou zprávu? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="faq-question">Jak přidám diagnózu a poznámku a vygeneruji zdravotnickou zprávu? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
                 <div class="faq-answer">
                     <ol style="margin-left: 1.2em;">
                         <li>Otevřete detail pacienta kliknutím na tlačítko <b>Detail</b> v přehledu pacientů.</li>
                         <li>V sekci <b>Přidat diagnózu a poznámku</b> vyberte diagnózu ze seznamu a napište poznámku k ošetření nebo průběhu.</li>
                         <li>Klikněte na tlačítko <b>Přidat záznam</b>. Diagnóza a poznámka se uloží.</li>
                         <li>Po přidání záznamu se v seznamu diagnóz a poznámek zobrazí nová položka.</li>
-                        <li>Pro vygenerování lékařské zprávy klikněte na ikonu nebo tlačítko <b>Vytvořit zprávu</b> (nebo <b>Report</b>) u konkrétní poznámky/diagnózy.</li>
+                        <li>Pro vygenerování zdravotnické zprávy klikněte na ikonu nebo tlačítko <b>Vytvořit zprávu</b> (nebo <b>Report</b>) u konkrétní poznámky/diagnózy.</li>
                         <li>Zobrazí se předvyplněná šablona zprávy, kterou můžete upravit a uložit.</li>
                         <li>Hotovou zprávu lze stáhnout nebo vytisknout podle potřeby.</li>
                     </ol>
                 </div>
             </li>
             <li class="faq-item">
-                <div class="faq-question">Jak vytvořit a spravovat šablony lékařských zpráv? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="faq-question">Jak vytvořit a spravovat šablony zdravotnických zpráv? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
                 <div class="faq-answer">
                     <ol style="margin-left: 1.2em;">
-                        <li>V horním menu klikněte na <b>Přidat lékařskou zprávu</b>.</li>
+                        <li>V horním menu klikněte na <b>Přidat zdravotnickou zprávu</b>.</li>
                         <li>Vyberte diagnózu ze seznamu.</li>
                         <li>V poli <b>Text zprávy</b> můžete použít bohatý textový editor pro formátování:</li>
                         <ul style="margin-left: 1.5em; margin-top: 0.5em;">
@@ -242,16 +242,16 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                         <li>Vyplňte formulář pro novou diagnózu:</li>
                         <li>Klikněte na tlačítko <b>Přidat diagnózu</b> pro uložení.</li>
                         <li>Nová diagnóza se automaticky zobrazí v seznamu dostupných diagnóz.</li>
-                        <li>Diagnózu pak můžete použít při vytváření lékařských zpráv a záznamů.</li>
+                        <li>Diagnózu pak můžete použít při vytváření zdravotnických zpráv a záznamů.</li>
                         <li><b>Správa diagnóz:</b> Přidané diagnózy můžete později upravit nebo smazat v seznamu diagnóz.</li>
                     </ol>
                 </div>
             </li>
             <li class="faq-item">
-                <div class="faq-question">Jak funguje upozornění na chybějící lékařské zprávy? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="faq-question">Jak funguje upozornění na chybějící zdravotnické zprávy? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
                 <div class="faq-answer">
                     <ol style="margin-left: 1.2em;">
-                        <li>Při načtení přehledu pacientů systém automaticky zkontroluje, zda některé diagnózy/poznámky nemají vygenerovanou lékařskou zprávu.</li>
+                        <li>Při načtení přehledu pacientů systém automaticky zkontroluje, zda některé diagnózy/poznámky nemají vygenerovanou zdravotnickou zprávu.</li>
                         <li>Pokud jsou nalezeny poznámky bez zprávy, zobrazí se v horní části stránky výrazné červené upozornění (alert).</li>
                         <li>Upozornění obsahuje seznam pacientů a konkrétních diagnóz/poznámek, které nemají zprávu, včetně data vytvoření.</li>
                         <li>U každé chybějící zprávy je červené tlačítko <b>Vygenerovat</b>, které vás přesměruje přímo na formulář pro vytvoření zprávy k dané poznámce.</li>
@@ -275,7 +275,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                         <li>Vyberte diagnózu ze seznamu (nebo přidejte novou v sekci <b>Přidat diagnózu</b> v hlavním menu).</li>
                         <li>Do pole poznámky napište popis, průběh nebo další informace k danému případu.</li>
                         <li>Klikněte na tlačítko <b>Přidat záznam</b>. Nová diagnóza a poznámka se uloží a zobrazí v seznamu záznamů pacienta.</li>
-                        <li>Ke každé diagnóze/poznámce je třeba následně vygenerovat lékařskou zprávu, jinak se při exportování zpráva neukáže.</li>
+                        <li>Ke každé diagnóze/poznámce je třeba následně vygenerovat zdravotnickou zprávu, jinak se při exportování zpráva neukáže.</li>
                     </ol>
                 </div>
             </li>
@@ -284,7 +284,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                 <div class="faq-answer">Nového pacienta lze přidat pouze přes <b>Nahrát data</b></div>
             </li>
             <li class="faq-item">
-                <div class="faq-question">Jaké jsou osvědčené postupy (best practices) pro tvorbu šablon lékařských zpráv? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
+                <div class="faq-question">Jaké jsou osvědčené postupy (best practices) pro tvorbu šablon zdravotnických zpráv? <span class="faq-icon"><i class="fas fa-chevron-right"></i></span></div>
                 <div class="faq-answer">
                     <ol style="margin-left: 1.2em;">
                         <li>Používejte <b>placeholdry</b> (zástupné texty) pro proměnné části zprávy, např. <code>{{name}}</code>, <code>{{birth_date}}</code>, <code>{{diagnosis}}</code> apod. Tyto hodnoty budou automaticky nahrazeny konkrétními údaji pacienta.</li>

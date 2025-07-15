@@ -194,7 +194,7 @@ $conn->close();
                         </h3>
                         <ul>
                             <li><strong>Formát:</strong> CSV soubor s kódováním UTF-8</li>
-                            <li><strong>Sloupce:</strong> Jméno, Příjmení, Datum narození, Rodné číslo, Léky, Alergie</li>
+                            <li><strong>Sloupce:</strong> Jméno, Příjmení, Datum narození, Rodné číslo, Léky, Alergie, Pojišťovna</li>
                             <li><strong>Oddělovač:</strong> Čárka (,)</li>
                             <li><strong>Maximální velikost:</strong> 10 MB</li>
                             <li><strong>Datum narození:</strong> Ve formátu YYYY-MM-DD</li>

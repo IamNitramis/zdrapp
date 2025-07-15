@@ -292,6 +292,7 @@ if ($updatedBy) {
 $temperature = mt_rand(360, 370) / 10; // 36.0 - 38.0 °C
 $oxygen_saturation = mt_rand(98, 100); // 98 - 100 %
 $heart_rate = mt_rand(60, 100);        // 60 - 100 bpm
+$blood_pressure = mt_rand(110, 140) . '/' . mt_rand(70, 90); // 110-140/70-90 mmHg
 
 // Aktuální datum
 $current_day = date('d.m.Y');
@@ -308,13 +309,14 @@ if ($resultReport->num_rows > 0) {
 } else {
     // Nahrazení placeholderů skutečnými hodnotami, včetně {{note}}, {{author}} a {{current_day}}
     $report = str_replace(
-        ['{{name}}', '{{birth_date}}', '{{temperature}}', '{{oxygen_saturation}}', '{{heart_rate}}', '{{diagnosis}}', '{{note}}', '{{author}}', '{{current_date}}'],
+        ['{{name}}', '{{birth_date}}', '{{temperature}}', '{{oxygen_saturation}}', '{{heart_rate}}', '{{blood_pressure}}', '{{diagnosis}}', '{{note}}', '{{author}}', '{{current_date}}'],
         [
             htmlspecialchars($person['first_name'] . ' ' . $person['surname']),
             htmlspecialchars($person['birth_date']),
             $temperature,
             $oxygen_saturation,
             $heart_rate,
+            $blood_pressure,
             htmlspecialchars($diagnosis['diagnosis_name'] . " (Zaznamenáno: " . $assignedAt . ")"),
             htmlspecialchars($noteText),
             htmlspecialchars($authorName),
