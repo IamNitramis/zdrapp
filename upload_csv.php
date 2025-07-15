@@ -66,17 +66,19 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
                 if (empty($line)) continue; // Přeskočit prázdné řádky
                 
                 $fields = str_getcsv($line);
-                if (count($fields) >= 6) { // Očekáváme minimálně 6 sloupců: Jméno, Příjmení, Datum narození, Rodné číslo, Léky, Alergie
+                if (count($fields) >= 7) { // Očekáváme minimálně 7 sloupců: Jméno, Příjmení, Datum narození, Rodné číslo, Léky, Alergie, Pojišťovna
                     $firstName = $conn->real_escape_string(trim($fields[0]));
                     $surname = $conn->real_escape_string(trim($fields[1]));
                     $dob = $conn->real_escape_string(trim($fields[2]));
                     $idNumber = $conn->real_escape_string(trim($fields[3]));
                     $medications = $conn->real_escape_string(trim($fields[4]));
                     $allergies = $conn->real_escape_string(trim($fields[5]));
+                    $insurance = $conn->real_escape_string(trim($fields[6]));
 
                     // Pokud je prázdné, nastav na NULL
                     $medications_sql = ($medications === '') ? 'NULL' : "'$medications'";
                     $allergies_sql = ($allergies === '') ? 'NULL' : "'$allergies'";
+                    $insurance_sql = ($insurance === '') ? 'NULL' : "'$insurance'";
 
                     // Validace dat
                     if (!empty($firstName) && !empty($surname) && !empty($dob) && !empty($idNumber)) {
@@ -86,8 +88,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
                         
                         if ($check_result->num_rows == 0) {
                             // Vložení dat do tabulky
-                            $sql = "INSERT INTO persons (first_name, surname, birth_date, ssn, medications, allergies) 
-                                   VALUES ('$firstName', '$surname', '$dob', '$idNumber', $medications_sql, $allergies_sql)";
+                            $sql = "INSERT INTO persons (first_name, surname, birth_date, ssn, medications, allergies, insurance) 
+                                   VALUES ('$firstName', '$surname', '$dob', '$idNumber', $medications_sql, $allergies_sql, $insurance_sql)";
                             if ($conn->query($sql)) {
                                 $inserted_count++;
                             }
@@ -202,22 +204,8 @@ $conn->close();
                         </ul>
                     </div>
                 </div>
-                <div class="info-card-container">
-                    <div class="info-card">
-                        <h3>
-                            <i class="fas fa-lightbulb"></i>
-                            Příklad CSV souboru
-                        </h3>
-                        <div style="background: #f8f9fa; border-radius: 8px; padding: 15px; font-family: monospace; font-size: 0.9rem;">
-                            Jan,Novák,1985-03-15,8503150123,Paralen,Alergie na pyl<br>
-                            Marie,Svobodová,1990-07-22,9007220456,,Penicilin<br>
-                            Petr,Dvořák,1978-11-08,7811080789,Ibuprofen,
-                        </div>
-                    </div>
-                </div>
             </div>
         </div>
-    </div>
 
     <script>
         function toggleMenu() {
@@ -365,8 +353,6 @@ $conn->close();
         width: 100%;
         padding: 0 8px;
         box-sizing: border-box;
-        display: flex;
-        justify-content: center;
     }
     .info-card {
         flex: 1 1 320px;

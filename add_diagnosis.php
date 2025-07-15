@@ -112,7 +112,7 @@ try {
 if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_diagnosis'])) {
     $newDiagnosis = $conn->real_escape_string($_POST['new_diagnosis']);
     // Přednastavený text šablony
-    $templateText ="<p><span style='font-size: 14pt;'><strong>L&Eacute;KAŘSK&Aacute; ZPR&Aacute;VA</strong></span></p>
+    $templateText ="<p><span style='font-size: 14pt;'><strong>ZDRAVOTNICK&Aacute; ZPR&Aacute;VA</strong></span></p>
                     <p><strong>Pacient:</strong> {{name}}</p>
                     <p><strong>Datum narozen&iacute;:</strong> {{birth_date}}</p>
                     <p>&nbsp;</p>
