@@ -98,8 +98,8 @@ if (!empty($missing)) {
             </div>
             <div class="feature-card">
                 <i class="fas fa-file-medical feature-icon"></i>
-                <h2>Lékařské zprávy</h2>
-                <p>Systém pro přidávání lékařských zpráv a diagnóz. Kompletní dokumentace pro lepší péči o pacienty a sledování zdravotního stavu.</p>
+                <h2>Zdravotnické zprávy</h2>
+                <p>Systém pro přidávání zdravotnických zpráv a diagnóz. Kompletní dokumentace pro lepší péči o pacienty a sledování zdravotního stavu.</p>
             </div>
             <div class="feature-card">
                 <i class="fas fa-database feature-icon"></i>

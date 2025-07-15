@@ -219,7 +219,7 @@ if ($resultTemplate->num_rows === 0) {
             <h2>Chybí šablona pro tuto diagnózu</h2>
             <p>
                 Bohužel nebyla nalezena žádná šablona pro tuto diagnózu.<br>
-                Bez šablony není možné automaticky vygenerovat lékařskou zprávu.<br>
+                Bez šablony není možné automaticky vygenerovat zdravotnickou zprávu.<br>
                 <strong>Přidejte šablonu pro tuto diagnózu v sekci níže.</strong>
             </p>
             <a href="add_report.php">
@@ -346,10 +346,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
             $stmtUpdate = $conn->prepare($sqlUpdate);
             $stmtUpdate->bind_param("sii", $updatedReport, $currentUserId, $diagnosisNoteId);
             if ($stmtUpdate->execute()) {
-                $message = "Lékařská zpráva byla úspěšně aktualizována.";
+                $message = "Zdravotnická zpráva byla úspěšně aktualizována.";
                 $message_type = "success";
             } else {
-                $message = "Chyba při aktualizaci lékařské zprávy: " . $conn->error;
+                $message = "Chyba při aktualizaci zdravotnické zprávy: " . $conn->error;
                 $message_type = "error";
             }
             $stmtUpdate->close();
@@ -364,10 +364,10 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
 
             $stmtInsert->bind_param("iiisi", $personId, $diagnosisId, $diagnosisNoteId, $updatedReport, $currentUserId);
             if ($stmtInsert->execute()) {
-                $message = "Lékařská zpráva byla úspěšně uložena.";
+                $message = "Zdravotnická zpráva byla úspěšně uložena.";
                 $message_type = "success";
             } else {
-                $message = "Chyba při ukládání lékařské zprávy: " . $conn->error;
+                $message = "Chyba při ukládání zdravotnické zprávy: " . $conn->error;
                 $message_type = "error";
             }
             $stmtInsert->close();
@@ -394,7 +394,7 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Editace lékařské zprávy - ZDRAPP</title>
+    <title>Editace zdravotnické zprávy - ZDRAPP</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="logo.png">
     <link rel="stylesheet" href="assets/css/all.min.css">    
@@ -413,56 +413,12 @@ $conn->close();
 </head>
 
 <body>
-    <div class="header">
-        <div class="header-container">
-            <a href="show_data.php" class="logo">
-                <img src="logo.png" alt="ZDRAPP Logo">
-                <span>ZDRAPP</span>
-            </a>
-            <div class="menu-icon" onclick="toggleMenu()">
-                <i class="fas fa-bars"></i>
-            </div>
-            <div class="navbar" id="navbar">
-                <a href="show_data.php">
-                    <i class="fas fa-users"></i>
-                    Přehled
-                </a>
-                <a href="upload_csv.php">
-                    <i class="fas fa-upload"></i>
-                    Nahrát data
-                </a>
-                <a href="add_diagnosis.php">
-                    <i class="fas fa-plus-circle"></i>
-                    Přidat diagnózu
-                </a>
-                <a href="download_reports.php">
-                    <i class="fas fa-download"></i>
-                    Stáhnout zprávy
-                </a>
-                <a href="add_report.php">
-                    <i class="fas fa-file-medical"></i>
-                    Upravit lékařskou zprávu
-                </a>
-                <a href="stats.php">
-                    <i class="fas fa-chart-bar"></i>
-                    Statistiky
-                </a>
-                <a href="faq.php">
-                    <i class="fas fa-question-circle"></i>
-                    FAQ
-                </a>
-                <a href="logout.php">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Logout
-                </a>
-            </div>
-        </div>
-    </div>
+    <?php include 'header.php'; ?>
 
     <div class="container">
         <div class="page-header">
-            <h1><i class="fas fa-edit"></i> Editace lékařské zprávy</h1>
-            <div class="subtitle">Úprava lékařské zprávy pro pacienta</div>
+            <h1><i class="fas fa-edit"></i> Editace zdravotnické zprávy</h1>
+            <div class="subtitle">Úprava zdravotnické zprávy pro pacienta</div>
         </div>
 
         <?php if (isset($message)): ?>
@@ -502,13 +458,13 @@ $conn->close();
                 <div class="form-group">
                     <label for="updated_report" class="form-label">
                         <i class="fas fa-file-medical"></i>
-                        Obsah lékařské zprávy
+                        Obsah zdravotnické zprávy
                     </label>
                     <textarea 
                         name="updated_report" 
                         id="updated_report"
                         class="form-textarea"
-                        placeholder="Zadejte obsah lékařské zprávy..."
+                        placeholder="Zadejte obsah zdravotnické zprávy..."
                         required
                     ><?php echo $report; ?></textarea>
                 </div>

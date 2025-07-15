@@ -29,6 +29,8 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
 </html>
 <?php exit; endif; ?>
 
+<?php include 'header.php'; ?>
+
 <!DOCTYPE html>
 <html lang="cs">
 <head>
@@ -80,51 +82,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
     </script>
 </head>
 <body>
-    <div class="header">
-        <div class="header-container">
-            <a href="show_data.php" class="logo">
-                <img src="logo.png" alt="ZDRAPP Logo">
-                <span>ZDRAPP</span>
-            </a>
-            <div class="menu-icon" onclick="toggleMenu()">
-                <i class="fas fa-bars"></i>
-            </div>
-            <div class="navbar" id="navbar">
-                <a href="show_data.php">
-                    <i class="fas fa-users"></i>
-                    Přehled
-                </a>
-                <a href="upload_csv.php">
-                    <i class="fas fa-upload"></i>
-                    Nahrát data
-                </a>
-                <a href="add_diagnosis.php">
-                    <i class="fas fa-plus-circle"></i>
-                    Přidat diagnózu
-                </a>
-                <a href="download_reports.php">
-                    <i class="fas fa-download"></i>
-                    Stáhnout zprávy
-                </a>
-                <a href="add_report.php">
-                    <i class="fas fa-file-medical"></i>
-                    Upravit lékařskou zprávu
-                </a>
-                <a href="stats.php">
-                    <i class="fas fa-chart-bar"></i>
-                    Statistiky
-                </a>
-                <a href="faq.php" class="active">
-                    <i class="fas fa-question-circle"></i>
-                    FAQ
-                </a>
-                <a href="logout.php">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Logout
-                </a>
-            </div>
-        </div>
-    </div>
+    
     <div class="container">
         <div class="faq-title"><i class="fas fa-question-circle"></i> Často kladené otázky (FAQ)</div>
         <ul class= faq-list>
@@ -167,7 +125,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                         <li><b>Úprava obsahu:</b> V zobrazeném formuláři upravte text poznámky podle potřeby. Pole je povinné a nesmí zůstat prázdné.</li>
                         <li><b>Uložení změn:</b> Klikněte na <em>Uložit změny</em>. Poznámka se uloží a vrátíte se zpět na detail pacienta.</li>
                         <li><b>Návrat zpět:</b> Pro návrat bez uložení klikněte na <em>Zpět</em>.</li>
-                        <li><b>Vazba na lékařskou zprávu:</b> U každé poznámky můžete přejít přímo na tvorbu nebo úpravu lékařské zprávy tlačítkem <em>Lékařská zpráva</em>.</li>
+                        <li><b>Vazba na zdravotnickou zprávu:</b> U každé poznámky můžete přejít přímo na tvorbu nebo úpravu zdravotnické zprávy tlačítkem <em>Zdravotnická zpráva</em>.</li>
                     </ul>
                     <div style="color:#388e3c; font-size:0.98em; margin-top:0.7em;">
                         Tato stránka slouží k úpravě zdravotních poznámek přiřazených k diagnóze pacienta.
@@ -179,15 +137,15 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                 <div class="faq-answer">
                     <ul style="margin-left: 1.2em;">
                         <li><b>Hromadné stažení:</b> Klikněte na tlačítko <em>Stáhnout vše (ZIP)</em> pro stažení archivu se všemi pacienty, jejich zprávami a mapami klíšťat. Archiv obsahuje složky pro každého pacienta, včetně zpráv, mapy klíšťat a souhrnného souboru.</li>
-                        <li><b>Stažení jednoho pacienta:</b> Vyberte pacienta ze seznamu a klikněte na <em>Exportovat DOCX</em>. Stáhne se ZIP archiv s lékařskou zprávou, mapou klíšťat a informačním souborem.</li>
+                        <li><b>Stažení jednoho pacienta:</b> Vyberte pacienta ze seznamu a klikněte na <em>Exportovat DOCX</em>. Stáhne se ZIP archiv se zdravotnickou zprávou, mapou klíšťat a informačním souborem.</li>
                         <li><b>Obsah exportu:</b> Každý ZIP obsahuje:
                             <ul style="margin-left: 1.5em; margin-top: 0.5em;">
-                                <li><b>lekarska_zprava.docx</b> – kompletní lékařská zpráva s formátovaným textem</li>
+                                <li><b>lekarska_zprava.docx</b> – kompletní zdravotnická zpráva s formátovaným textem</li>
                                 <li><b>mapa_klistat.png</b> – vizuální mapa všech klíšťat na těle (pokud jsou zaznamenána)</li>
                                 <li><b>info.txt</b> – informace o pacientovi a obsahu archivu</li>
                             </ul>
                         </li>
-                        <li><b>Statistiky:</b> V horní části stránky vidíte souhrnné počty pacientů, pacientů s klíšťaty a celkový počet lékařských zpráv.</li>
+                        <li><b>Statistiky:</b> V horní části stránky vidíte souhrnné počty pacientů, pacientů s klíšťaty a celkový počet zdravotnických zpráv.</li>
                         <li><b>Poznámka:</b> Pokud prohlížeč označí stažený ZIP jako nebezpečný, je to běžné při stahování z lokálního serveru. Soubor můžete bezpečně zachovat.</li>
                     </ul>
                     <div style="color:#388e3c; font-size:0.98em; margin-top:0.7em;">

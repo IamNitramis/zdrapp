@@ -128,6 +128,7 @@ $result_reports = $stmt_reports->get_result();
 $stmt->close();
 $conn->close();
 ?>
+<?php include 'header.php'; ?>
 
 <!DOCTYPE html>
 <html lang="en">
@@ -519,52 +520,7 @@ $conn->close();
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="header-container">
-            <a href="show_data.php" class="logo">
-                <img src="logo.png" alt="ZDRAPP Logo">
-                <span>ZDRAPP</span>
-            </a>
-            <div class="menu-icon" onclick="toggleMenu()">
-                <i class="fas fa-bars"></i>
-            </div>
-            <div class="navbar" id="navbar">
-                <a href="show_data.php">
-                    <i class="fas fa-users"></i>
-                    Přehled
-                </a>
-                <a href="upload_csv.php">
-                    <i class="fas fa-upload"></i>
-                    Nahrát data
-                </a>
-                <a href="add_diagnosis.php">
-                    <i class="fas fa-plus-circle"></i>
-                    Přidat diagnózu
-                </a>
-                <a href="download_reports.php">
-                    <i class="fas fa-download"></i>
-                    Stáhnout zprávy
-                </a>
-                <a href="add_report.php">
-                    <i class="fas fa-file-medical"></i>
-                    Upravit lékařskou zprávu
-                </a>
-                <a href="stats.php">
-                    <i class="fas fa-chart-bar"></i>
-                    Statistiky
-                </a>
-                <a href="faq.php">
-                    <i class="fas fa-question-circle"></i>
-                    FAQ
-                </a>
-                <a href="logout.php">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Logout
-                </a>
-            </div>
-        </div>
-    </div>
-
+    
     <div class="container">
         <div class="person-header">
             <h1><i class="fas fa-user-circle"></i> <?php echo htmlspecialchars($person['first_name'] . ' ' . $person['surname']); ?></h1>
@@ -572,7 +528,6 @@ $conn->close();
         </div>
                 <div class="section-card section-add-note">
             <h2 class="section-title">
-                <i class="fas fa-plus-circle"></i>
                 Přidat diagnózu a nález
             </h2>
             <form action="" method="POST" class="form-container">
@@ -593,11 +548,11 @@ $conn->close();
                 <div class="form-links">
                     <a href="add_diagnosis.php" class="form-link">
                         <i class="fas fa-plus"></i>
-                        Přidat diagnózu
+                        Chybí vám diagnóza? (Přidat diagnózu)
                     </a>
                     <a href="add_report.php" class="form-link">
                         <i class="fas fa-file-medical"></i>
-                        Upravit template lékařské zprávy
+                        Upravit template zdravotnické zprávy
                     </a>
                 </div>
                 <div class="form-group">

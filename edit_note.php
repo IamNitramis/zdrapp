@@ -78,6 +78,8 @@ $stmt->close();
 $conn->close();
 ?>
 
+<?php include 'header.php'; ?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
@@ -110,48 +112,6 @@ $conn->close();
     </style>
 </head>
 <body>
-    <div class="header">
-        <div class="header-container">
-            <a href="show_data.php" class="logo">
-                <img src="logo.png" alt="ZDRAPP Logo">
-                <span>ZDRAPP</span>
-            </a>
-            <div class="menu-icon" onclick="toggleMenu()">
-                <i class="fas fa-bars"></i>
-            </div>
-            <div class="navbar" id="navbar">
-                <a href="show_data.php">
-                    <i class="fas fa-users"></i>
-                    Přehled
-                </a>
-                <a href="upload_csv.php">
-                    <i class="fas fa-upload"></i>
-                    Nahrát data
-                </a>
-                <a href="add_diagnosis.php">
-                    <i class="fas fa-plus-circle"></i>
-                    Přidat diagnózu
-                </a>
-                <a href="download_reports.php">
-                    <i class="fas fa-download"></i>
-                    Stáhnout zprávy
-                </a>
-                <a href="add_report.php">
-                    <i class="fas fa-file-medical"></i>
-                    Přidat lékařskou zprávu
-                </a>
-                <a href="stats.php">
-                    <i class="fas fa-chart-bar"></i>
-                    Statistiky
-                </a>
-                <a href="logout.php">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Logout
-                </a>
-            </div>
-        </div>
-    </div>
-
     <div class="container">
         <div class="page-header">
             <h1><i class="fas fa-edit"></i> Upravit poznámku</h1>
@@ -200,7 +160,7 @@ $conn->close();
                     </a>
                     <a href="report.php?diagnosis_note_id=<?php echo htmlspecialchars($noteId); ?>&diagnosis_id=<?php echo htmlspecialchars($note['diagnosis_id']); ?>&person_id=<?php echo htmlspecialchars($note['person_id']); ?>&surname=<?php echo htmlspecialchars($_GET['surname'] ?? ''); ?>" class="btn btn-success">
                         <i class="fas fa-file-medical"></i>
-                        Lékařská zpráva
+                        Zdravotnická zpráva
                     </a>
                 </div>
             </form>

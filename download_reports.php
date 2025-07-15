@@ -221,11 +221,11 @@ function generateReportContent($person_id, $conn) {
     $stmt->close();
 
     // Začátek obsahu
-    $content = "LÉKAŘSKÉ ZPRÁVY - " . strtoupper($person['first_name'] . " " . $person['surname']) . "\n";
+    $content = "ZDRAVOTNICKÉ ZPRÁVY - " . strtoupper($person['first_name'] . " " . $person['surname']) . "\n";
     $content .= str_repeat("=", 60) . "\n\n";
     
-    // Lékařské zprávy
-    $content .= "LÉKAŘSKÉ ZPRÁVY:\n";
+    // zdravotnické zprávy
+    $content .= "ZDRAVOTNICKÉ ZPRÁVY:\n";
     $content .= str_repeat("-", 60) . "\n";
     
     if (count($reports) > 0) {
@@ -238,7 +238,7 @@ function generateReportContent($person_id, $conn) {
             $content .= str_repeat("-", 60) . "\n\n";
         }
     } else {
-        $content .= "Žádné lékařské zprávy nebyly nalezeny.\n\n";
+        $content .= "Žádné zdravotnické zprávy nebyly nalezeny.\n\n";
     }
 
     // Tabulka klíšťat - OPRAVENÝ DOTAZ
@@ -299,7 +299,7 @@ function generateReportContent($person_id, $conn) {
     // Statistiky
     $content .= "STATISTIKY:\n";
     $content .= str_repeat("-", 30) . "\n";
-    $content .= "Počet lékařských zpráv: " . count($reports) . "\n";
+    $content .= "Počet zdravotnických zpráv: " . count($reports) . "\n";
     
     // Opravený počet klíšťat
     $tickCountSql = "SELECT COUNT(*) as tick_count FROM tick_bites WHERE person_id = ?";
@@ -339,7 +339,7 @@ function generateDocxReport($person_id, $conn, $phpWord) {
     
     // Nadpis
     $section->addText(
-        'LÉKAŘSKÉ ZPRÁVY - ' . mb_strtoupper($person['first_name'] . ' ' . $person['surname'], 'UTF-8'),
+        'ZDRAVOTNICKÉ ZPRÁVY - ' . mb_strtoupper($person['first_name'] . ' ' . $person['surname'], 'UTF-8'),
         ['bold' => true, 'size' => 16]
     );
     $section->addTextBreak();
@@ -425,7 +425,7 @@ function generateDocxReport($person_id, $conn, $phpWord) {
     $stmt->close();
 
     if ($reportCount === 0) {
-        $section->addText('Pro tohoto pacienta nebyly nalezeny žádné lékařské zprávy.', ['italic' => true]);
+        $section->addText('Pro tohoto pacienta nebyly nalezeny žádné zdravotnické zprávy.', ['italic' => true]);
     }
 
     // Přidání obrázku klíšťat
@@ -670,7 +670,7 @@ if (isset($_GET['person_id']) && is_numeric($_GET['person_id'])) {
     $infoContent .= "Datum exportu: " . date('Y-m-d H:i:s') . "\n";
     $infoContent .= str_repeat("=", 30) . "\n\n";
     $infoContent .= "OBSAH SLOŽKY:\n";
-    $infoContent .= "- lekarska_zprava.docx - kompletní lékařská zpráva\n";
+    $infoContent .= "- zdravotnicka_zprava.docx - kompletní zdravotnická zpráva\n";
     if ($hasImage) {
         $infoContent .= "- mapa_klistat.png - vizuální mapa klíšťat na těle\n";
     }
@@ -719,65 +719,21 @@ $conn->close();
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Stáhnout lékařské zprávy</title>
+    <title>Stáhnout zdravotnické zprávy</title>
     <link rel="stylesheet" href="style.css">
     <link rel="icon" type="image/png" href="logo.png">
     <link href="assets/css/all.min.css" rel="stylesheet">
 </head>
 <body>
-    <div class="header">
-        <div class="header-container">
-            <a href="show_data.php" class="logo">
-                <img src="logo.png" alt="ZDRAPP Logo">
-                <span>ZDRAPP</span>
-            </a>
-            <div class="menu-icon" onclick="toggleMenu()">
-                <i class="fas fa-bars"></i>
-            </div>
-            <div class="navbar" id="navbar">
-                <a href="show_data.php">
-                    <i class="fas fa-users"></i>
-                    Přehled
-                </a>
-                <a href="upload_csv.php">
-                    <i class="fas fa-upload"></i>
-                    Nahrát data
-                </a>
-                <a href="add_diagnosis.php">
-                    <i class="fas fa-plus-circle"></i>
-                    Přidat diagnózu
-                </a>
-                <a href="download_reports.php" class="active">
-                    <i class="fas fa-download"></i>
-                    Stáhnout zprávy
-                </a>
-                <a href="add_report.php">
-                    <i class="fas fa-file-medical"></i>
-                    Upravit lékařskou zprávu
-                </a>
-                <a href="stats.php">
-                    <i class="fas fa-chart-bar"></i>
-                    Statistiky
-                </a>
-                <a href="faq.php">
-                    <i class="fas fa-question-circle"></i>
-                    FAQ
-                </a>
-                <a href="logout.php">
-                    <i class="fas fa-sign-out-alt"></i>
-                    Logout
-                </a>
-            </div>
-        </div>
-    </div>
+    <?php include 'header.php'; ?>
     <div class="container">
         <div class="page-header">
-            <h1><i class="fas fa-download"></i> Stáhnout lékařské zprávy</h1>
-            <div class="subtitle">Exportujte kompletní lékařské zprávy a mapy klíšťat všech pacientů včetně statistik.</div>
+            <h1><i class="fas fa-download"></i> Stáhnout zdravotnické zprávy</h1>
+            <div class="subtitle">Exportujte kompletní zdravotnické zprávy a mapy klíšťat všech pacientů včetně statistik.</div>
             <div class="patient-count">
                 Celkem pacientů: <?php echo $total_patients; ?> | 
                 S klíšťaty: <?php echo $patients_with_ticks; ?> | 
-                Lékařských zpráv: <?php echo $total_reports; ?>
+                Zdravotnických zpráv: <?php echo $total_reports; ?>
             </div>
         </div>
 

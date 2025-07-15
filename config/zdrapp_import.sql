@@ -44,6 +44,7 @@ CREATE TABLE persons (
   ssn varchar(20) DEFAULT NULL,
   medications varchar(255) DEFAULT NULL,
   allergies varchar(255) DEFAULT NULL
+  insurace int(11) DEFAULT NULL,
 ) ;
 
 -- --------------------------------------------------------
