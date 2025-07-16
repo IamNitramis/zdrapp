@@ -65,8 +65,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
                 $line = trim($line);
                 if (empty($line)) continue; // Přeskočit prázdné řádky
                 
-                $fields = str_getcsv($line);
-                if (count($fields) >= 7) { // Očekáváme minimálně 7 sloupců: Jméno, Příjmení, Datum narození, Rodné číslo, Léky, Alergie, Pojišťovna
+                // Použij středník jako oddělovač
+                $fields = str_getcsv($line, ';');
+                if (count($fields) >= 9) { // Očekáváme minimálně 9 sloupců: Jméno, Příjmení, Datum narození, Rodné číslo, Léky, Alergie, Pojišťovna, Other, Swimmer
                     $firstName = $conn->real_escape_string(trim($fields[0]));
                     $surname = $conn->real_escape_string(trim($fields[1]));
                     $dob = $conn->real_escape_string(trim($fields[2]));
@@ -74,11 +75,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
                     $medications = $conn->real_escape_string(trim($fields[4]));
                     $allergies = $conn->real_escape_string(trim($fields[5]));
                     $insurance = $conn->real_escape_string(trim($fields[6]));
+                    $other = $conn->real_escape_string(trim($fields[7]));
+                    $swimmer = $conn->real_escape_string(trim($fields[8]));
 
-                    // Pokud je prázdné, nastav na NULL
                     $medications_sql = ($medications === '') ? 'NULL' : "'$medications'";
                     $allergies_sql = ($allergies === '') ? 'NULL' : "'$allergies'";
                     $insurance_sql = ($insurance === '') ? 'NULL' : "'$insurance'";
+                    $other_sql = ($other === '') ? 'NULL' : "'$other'";
+                    $swimmer_sql = ($swimmer === '') ? 'NULL' : "'$swimmer'";
 
                     // Validace dat
                     if (!empty($firstName) && !empty($surname) && !empty($dob) && !empty($idNumber)) {
@@ -88,8 +92,8 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
                         
                         if ($check_result->num_rows == 0) {
                             // Vložení dat do tabulky
-                            $sql = "INSERT INTO persons (first_name, surname, birth_date, ssn, medications, allergies, insurance) 
-                                   VALUES ('$firstName', '$surname', '$dob', '$idNumber', $medications_sql, $allergies_sql, $insurance_sql)";
+                            $sql = "INSERT INTO persons (first_name, surname, birth_date, ssn, medications, allergies, insurance, other, swimmer) 
+                                   VALUES ('$firstName', '$surname', '$dob', '$idNumber', $medications_sql, $allergies_sql, $insurance_sql, $other_sql, $swimmer_sql)";
                             if ($conn->query($sql)) {
                                 $inserted_count++;
                             }
@@ -196,8 +200,8 @@ $conn->close();
                         </h3>
                         <ul>
                             <li><strong>Formát:</strong> CSV soubor s kódováním UTF-8</li>
-                            <li><strong>Sloupce:</strong> Jméno, Příjmení, Datum narození, Rodné číslo, Léky, Alergie, Pojišťovna</li>
-                            <li><strong>Oddělovač:</strong> Čárka (,)</li>
+                            <li><strong>Sloupce:</strong> Jméno, Příjmení, Datum narození, Rodné číslo, Léky, Alergie, Pojišťovna, Other, Swimmer</li>
+                            <li><strong>Oddělovač:</strong> Středník (;)</li>
                             <li><strong>Maximální velikost:</strong> 10 MB</li>
                             <li><strong>Datum narození:</strong> Ve formátu YYYY-MM-DD</li>
                             <li><strong>Duplicita:</strong> Záznamy s existujícím rodným číslem budou přeskočeny</li>

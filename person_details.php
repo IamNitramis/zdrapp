@@ -648,6 +648,13 @@ $conn->close();
                         </label>
                         <input type="text" name="allergies" id="allergies" class="form-select" value="<?php echo htmlspecialchars($person['allergies'] ?? ''); ?>" disabled>
                     </div>
+                    <div class="form-group">
+                        <label for="other" class="form-label">
+                            <i class="fas fa-ellipsis-h"></i>
+                            Další:
+                        </label>
+                        <textarea name="other" id="other" class="form-select" style="resize:vertical;min-height:60px;" disabled><?php echo htmlspecialchars($person['other'] ?? ''); ?></textarea>
+                    </div>
             </div>
         </div>
     </div>

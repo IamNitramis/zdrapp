@@ -98,22 +98,21 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
         margin-top: 30px;
         background: #fff;
         border-radius: 15px;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.15);
+        box-shadow: 0 8px 25px rgba(0,0,0,0.30);
         padding: 20px;
-        overflow-x: auto;
-        max-width: 1200px;
+        max-width: 2000px;
         width: 100%;
     }
     #dataTable {
         width: 100%;
-        border-collapse: separate;
-        border-spacing: 0;
+        min-width: 0;
         background: #fff;
         border-radius: 10px;
         overflow: hidden;
         box-shadow: 0 4px 15px rgba(0,0,0,0.05);
         font-size: 1.04em;
-        min-width: 800px;
+        /*border-collapse: separate;*/
+        /*border-spacing: 0;*/
     }
     #dataTable thead th {
         background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
@@ -197,6 +196,21 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
     }
     #dataTable .btn-danger {
         background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
+        padding: 0 0;
+        min-width: 38px;
+        min-height: 38px;
+        width: 38px;
+        height: 38px;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        font-size: 1.2em;
+        border-radius: 50%;
+        box-shadow: 0 2px 8px rgba(255,107,107,0.10);
+    }
+    #dataTable .btn-danger i {
+        margin: 0;
+        font-size: 1.3em;
     }
     #dataTable .btn:hover {
         filter: brightness(1.08);
@@ -370,6 +384,11 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
             padding: 3px 6px;
         }
     }
+    .container {
+        max-width: 2100px;
+        margin: 0 auto;
+        width: 100%;
+    }
     </style>
 </head>
 
@@ -520,6 +539,8 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                         <th onclick="sortTable(4)"><i class="fas fa-id-card"></i> Rodné číslo</th>
                         <th onclick="sortTable(5)"><i class="fas fa-pills"></i> Léky</th>
                         <th onclick="sortTable(6)"><i class="fas fa-exclamation-triangle"></i> Alergie</th>
+                        <th onclick="sortTable(7)"><i class="fas fa-shield-alt"></i> Pojišťovna</th>
+                        <th onclick="sortTable(8)"><i class="fas fa-ellipsis-h"></i> Další</th>
                         <th><i class="fas fa-cogs"></i> Akce</th>
                     </tr>
                 </thead>
@@ -537,7 +558,14 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                             echo "<td><strong>" . htmlspecialchars($row['id']) . "</strong></td>";
                             echo "<td>" . htmlspecialchars($row['first_name']) . "</td>";
                             echo "<td>" . htmlspecialchars($row['surname']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['birth_date']) . "</td>";
+                // Format birth_date as dd.mm.yyyy
+                $birth_date = $row['birth_date'];
+                if (!empty($birth_date) && preg_match('/^\d{4}-\d{2}-\d{2}/', $birth_date)) {
+                    $formatted_date = date('d.m.Y', strtotime($birth_date));
+                } else {
+                    $formatted_date = htmlspecialchars($birth_date);
+                }
+                echo "<td>" . $formatted_date . "</td>";
                             echo "<td>" . htmlspecialchars($row['ssn']) . "</td>";
                             echo "<td>";
                             if (!empty($row['medications'])) {
@@ -553,14 +581,27 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
                                 echo "<span class='no-data-pill'>Žádné</span>";
                             }
                             echo "</td>";
+                            echo "<td>";
+                            if (!empty($row['insurance'])) {
+                                echo htmlspecialchars($row['insurance']);
+                            } else {
+                                echo "<span class='no-data-pill'>Žádné</span>";
+                            }
+                            echo "</td>";
+                            echo "<td>";
+                            if (!empty($row['other'])) {
+                                echo htmlspecialchars($row['other']);
+                            } else {
+                                echo "<span class='no-data-pill'>Žádné</span>";
+                            }
+                            echo "</td>";
                             echo "<td class='buttons'>";
                             echo "<a href='person_details.php?id=" . urlencode($row['id']) . "' class='btn btn-detail'><i class='fas fa-eye'></i> Detail</a>";
-                            echo "<a href='delete_person.php?id=" . urlencode($row['id']) . "' class='btn btn-danger' onclick=\"return confirm('Opravdu chcete smazat tohoto pacienta?');\"><i class='fas fa-trash'></i> Smazat</a>";
                             echo "</td>";
                             echo "</tr>";
                         }
                     } else {
-                        echo "<tr><td colspan='8' class='empty-state'><i class='fas fa-user-slash'></i><h3>Žádní pacienti nebyli nalezeni.</h3></td></tr>";
+                        echo "<tr><td colspan='10' class='empty-state'><i class='fas fa-user-slash'></i><h3>Žádní pacienti nebyli nalezeni.</h3></td></tr>";
                     }
                     ?>
                 </tbody>
