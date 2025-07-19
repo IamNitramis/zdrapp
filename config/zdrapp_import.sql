@@ -1,6 +1,7 @@
 CREATE TABLE diagnoses (
   id int(11) NOT NULL,
-  name varchar(255) NOT NULL
+  name varchar(255) NOT NULL,
+  deleted tinyint(1) NOT NULL DEFAULT '0'
 ) ;
 
 -- --------------------------------------------------------
@@ -43,8 +44,8 @@ CREATE TABLE persons (
   birth_date date DEFAULT NULL,
   ssn varchar(20) DEFAULT NULL,
   medications varchar(255) DEFAULT NULL,
-  allergies varchar(255) DEFAULT NULL
-  insurace int(11) DEFAULT NULL,
+  allergies varchar(255) DEFAULT NULL,
+  insurance int(11) DEFAULT NULL
 ) ;
 
 -- --------------------------------------------------------
