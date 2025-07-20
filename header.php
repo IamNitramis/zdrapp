@@ -26,7 +26,7 @@
             </a>
             <a href="add_report.php">
                 <i class="fas fa-file-medical"></i>
-                Upravit zdravotnickou zprávu
+                Upravit šablonu
             </a>
             <a href="stats.php">
                 <i class="fas fa-chart-bar"></i>
