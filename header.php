@@ -8,31 +8,39 @@
             <i class="fas fa-bars"></i>
         </div>
         <div class="navbar" id="navbar">
-            <a href="show_data.php">
+            <?php
+            $current = basename(parse_url($_SERVER['REQUEST_URI'], PHP_URL_PATH));
+            function navActive($file) {
+                global $current;
+                // Zvýrazní i pokud je v URL parametr (např. add_diagnosis.php?id=1)
+                return strpos($current, $file) === 0 ? 'active' : '';
+            }
+            ?>
+            <a href="show_data.php" class="<?php echo navActive('show_data.php'); ?>">
                 <i class="fas fa-users"></i>
                 Přehled
             </a>
-            <a href="upload_csv.php">
+            <a href="upload_csv.php" class="<?php echo navActive('upload_csv.php'); ?>">
                 <i class="fas fa-upload"></i>
                 Nahrát data
             </a>
-            <a href="add_diagnosis.php">
+            <a href="add_diagnosis.php" class="<?php echo navActive('add_diagnosis.php'); ?>">
                 <i class="fas fa-plus-circle"></i>
                 Přidat diagnózu
             </a>
-            <a href="download_reports.php">
+            <a href="download_reports.php" class="<?php echo navActive('download_reports.php'); ?>">
                 <i class="fas fa-download"></i>
                 Stáhnout zprávy
             </a>
-            <a href="add_report.php">
+            <a href="add_report.php" class="<?php echo navActive('add_report.php'); ?>">
                 <i class="fas fa-file-medical"></i>
                 Upravit šablonu
             </a>
-            <a href="stats.php">
+            <a href="stats.php" class="<?php echo navActive('stats.php'); ?>">
                 <i class="fas fa-chart-bar"></i>
                 Statistiky
             </a>
-            <a href="faq.php">
+            <a href="faq.php" class="<?php echo navActive('faq.php'); ?>">
                 <i class="fas fa-question-circle"></i>
                 FAQ
             </a>

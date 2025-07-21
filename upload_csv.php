@@ -8,6 +8,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
 <head>
     <meta charset="UTF-8">
     <title>Přístup zamítnut</title>
+    <link rel="icon" type="image/png" href="logo.png">
     <link rel="stylesheet" href="style.css">
     <link rel="stylesheet" href="assets/css/all.min.css">
 </head>

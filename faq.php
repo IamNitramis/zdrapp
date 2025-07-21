@@ -7,7 +7,7 @@ if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
     <meta charset="UTF-8">
     <title>Přístup zamítnut</title>
     <link rel="stylesheet" href="style.css">
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="assets/css/all.min.css" rel="stylesheet">
     <style>
         body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #4facfe, #00f2fe); }
         .login-warning { max-width: 450px; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); padding: 50px 40px; text-align: center; }
