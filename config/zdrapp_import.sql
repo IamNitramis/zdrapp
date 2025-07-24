@@ -1,3 +1,13 @@
+CREATE TABLE `person_body_points` (
+  `id` int(11) NOT NULL,
+  `person_id` int(11) NOT NULL,
+  `diagnosis_note_id` int(11) NOT NULL,
+  `x` decimal(5,2) NOT NULL,
+  `y` decimal(5,2) NOT NULL,
+  `description` varchar(255) DEFAULT NULL,
+  `order` int(11) NOT NULL,
+  `created_at` datetime DEFAULT current_timestamp()
+);
 CREATE TABLE diagnoses (
   id int(11) NOT NULL,
   name varchar(255) NOT NULL,

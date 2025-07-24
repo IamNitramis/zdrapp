@@ -51,11 +51,19 @@ while ($row = $result->fetch_assoc()) {
     $noteQ->close();
 
     $personQ = $conn->prepare("SELECT first_name, surname, birth_date FROM persons WHERE id = ?");
+    $personQ = $conn->prepare("SELECT first_name, surname, birth_date, insurance FROM persons WHERE id = ?");
     $personQ->bind_param('i', $person_id);
     $personQ->execute();
-    $personQ->bind_result($first_name, $surname, $birth_date);
+    $personQ->bind_result($first_name, $surname, $birth_date, $insurance);
     $personQ->fetch();
     $personQ->close();
+
+    // Pokud blood_pressure není vyplněno, vygeneruj automaticky
+    if (empty($blood_pressure)) {
+        $sys = mt_rand(110, 140); // systolický tlak
+        $dia = mt_rand(70, 90);   // diastolický tlak
+        $blood_pressure = $sys . "/" . $dia . " mmHg";
+    }
 
     // Další data pro placeholdery podle report.php
     // Náhodná data
@@ -90,10 +98,12 @@ while ($row = $result->fetch_assoc()) {
 
     // Placeholdery podle report.php
     $report_text = str_replace(
-        ['{{name}}', '{{birth_date}}', '{{temperature}}', '{{oxygen_saturation}}', '{{heart_rate}}', '{{diagnosis}}', '{{note}}', '{{author}}', '{{current_date}}'],
+        ['{{name}}', '{{birth_date}}', '{{insurance}}', '{{blood_pressure}}', '{{temperature}}', '{{oxygen_saturation}}', '{{heart_rate}}', '{{diagnosis}}', '{{note}}', '{{author}}', '{{current_date}}'],
         [
             htmlspecialchars($first_name . ' ' . $surname),
             htmlspecialchars($birth_date),
+            htmlspecialchars($insurance),
+            htmlspecialchars($blood_pressure),
             $temperature,
             $oxygen_saturation,
             $heart_rate,

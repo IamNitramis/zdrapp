@@ -108,7 +108,7 @@ $diagnosisNoteId = intval($_GET['diagnosis_note_id']);
 $personId = intval($_GET['person_id']);
 $diagnosisId = intval($_GET['diagnosis_id']);
 
-$sqlPerson = "SELECT first_name, surname, birth_date FROM persons WHERE id = ?";
+$sqlPerson = "SELECT first_name, surname, birth_date, insurance FROM persons WHERE id = ?";
 $stmtPerson = $conn->prepare($sqlPerson);
 $stmtPerson->bind_param("i", $personId);
 $stmtPerson->execute();
@@ -307,12 +307,14 @@ if ($resultReport->num_rows > 0) {
     $reportRow = $resultReport->fetch_assoc();
     $report = $reportRow['report_text'];
 } else {
-    // Nahrazení placeholderů skutečnými hodnotami, včetně {{note}}, {{author}} a {{current_day}}
+    // Nahrazení placeholderů skutečnými hodnotami, včetně {{note}}, {{author}}, {{insurance}} a {{current_day}}
+    $insuranceValue = !empty($person['insurance']) ? htmlspecialchars($person['insurance']) : 'Neuvedeno';
     $report = str_replace(
-        ['{{name}}', '{{birth_date}}', '{{temperature}}', '{{oxygen_saturation}}', '{{heart_rate}}', '{{blood_pressure}}', '{{diagnosis}}', '{{note}}', '{{author}}', '{{current_date}}'],
+        ['{{name}}', '{{birth_date}}', '{{insurance}}', '{{temperature}}', '{{oxygen_saturation}}', '{{heart_rate}}', '{{blood_pressure}}', '{{diagnosis}}', '{{note}}', '{{author}}', '{{current_date}}'],
         [
             htmlspecialchars($person['first_name'] . ' ' . $person['surname']),
             htmlspecialchars($person['birth_date']),
+            $insuranceValue,
             $temperature,
             $oxygen_saturation,
             $heart_rate,
@@ -441,6 +443,11 @@ $conn->close();
                     <i class="fas fa-calendar"></i>
                     <span class="info-label">Datum narození:</span>
                     <span class="info-value"><?php echo htmlspecialchars(date('d.m.Y', strtotime($person['birth_date']))); ?></span>
+                </div>
+                <div class="info-item">
+                    <i class="fas fa-shield-alt"></i>
+                    <span class="info-label">Pojišťovna:</span>
+                    <span class="info-value"><?php echo !empty($person['insurance']) ? htmlspecialchars($person['insurance']) : '<span style="color:#aaa;">Neuvedeno</span>'; ?></span>
                 </div>
                 <div class="info-item">
                     <i class="fas fa-stethoscope"></i>

@@ -115,6 +115,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['new_diagnosis'])) {
     $templateText ="<p><span style='font-size: 14pt;'><strong>ZDRAVOTNICK&Aacute; ZPR&Aacute;VA</strong></span></p>
                     <p><strong>Pacient:</strong> {{name}}</p>
                     <p><strong>Datum narozen&iacute;:</strong> {{birth_date}}</p>
+                    <p><strong>Pojišťovna:</strong> {{insurance}}</p>
                     <p>&nbsp;</p>
                     <p><strong>Klinick&eacute; hodnoty</strong></p>
                     <ul>

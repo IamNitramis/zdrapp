@@ -64,16 +64,43 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $updateStmt->bind_param("si", $updatedNote, $noteId);
 
         if ($updateStmt->execute()) {
+            // Uložení bodů na těle, pokud byly přidány (přes body_points_json)
+            if (!empty($_POST['body_points_json'])) {
+                $body_points = json_decode($_POST['body_points_json'], true);
+                if (is_array($body_points)) {
+                    // Smaž staré body pro tuto poznámku
+                    $conn->query("DELETE FROM person_body_points WHERE diagnosis_note_id = " . intval($noteId));
+                    $sql_point = "INSERT INTO person_body_points (person_id, diagnosis_note_id, x, y, description, `order`) VALUES (?, ?, ?, ?, ?, ?)";
+                    $stmt_point = $conn->prepare($sql_point);
+                    foreach ($body_points as $idx => $point) {
+                        $desc = isset($point['description']) ? $point['description'] : '';
+                        $order = $idx + 1;
+                        $stmt_point->bind_param("iiddsi", $note['person_id'], $noteId, $point['x'], $point['y'], $desc, $order);
+                        $stmt_point->execute();
+                    }
+                    $stmt_point->close();
+                }
+            }
             header("Location: person_details.php?id=" . htmlspecialchars($note['person_id']));
             exit;
         } else {
             echo "<p class='alert-error'>Chyba při aktualizaci poznámky: " . $conn->error . "</p>";
         }
-
         $updateStmt->close();
     }
 }
 
+// Načtení bodů na těle navázaných na tuto poznámku
+$sql_points = "SELECT id, x, y, description, created_at, `order` FROM person_body_points WHERE diagnosis_note_id = ? ORDER BY `order` ASC";
+$stmt_points = $conn->prepare($sql_points);
+$stmt_points->bind_param("i", $noteId);
+$stmt_points->execute();
+$result_points = $stmt_points->get_result();
+$body_points = [];
+while ($row = $result_points->fetch_assoc()) {
+    $body_points[] = $row;
+}
+$stmt_points->close();
 $stmt->close();
 $conn->close();
 ?>
@@ -138,7 +165,60 @@ $conn->close();
                 <i class="fas fa-edit"></i>
                 Úprava poznámky
             </h2>
-            
+            <!-- Schéma těla s body navázanými na tuto poznámku -->
+            <div class="form-group" style="display:flex;flex-direction:column;align-items:center;">
+                <label class="form-label" style="align-self:center;">
+                    <i class="fas fa-user"></i>
+                    Body na schématu těla (klíšťata, vpichy, atd.)
+                </label>
+                <div class="body-img-container" style="position:relative;max-width:400px;margin:0 auto;">
+                    <img src="body.jpg" alt="Schéma těla" style="width:100%;max-width:400px;display:block;">
+                    <?php foreach ($body_points as $point): ?>
+                        <div class="pinpoint" style="position:absolute;left:<?php echo $point['x']; ?>%;top:<?php echo $point['y']; ?>%;width:20px;height:20px;background:#388e3c;border-radius:50%;border:2px solid #fff;box-shadow:0 2px 8px rgba(56,142,60,0.2);display:flex;align-items:center;justify-content:center;color:#fff;font-size:13px;cursor:pointer;" title="<?php echo htmlspecialchars($point['description'] ?? ''); ?>">
+                            <span><?php echo $point['order']; ?></span>
+                        </div>
+                    <?php endforeach; ?>
+                </div>
+                <div style="margin-top:10px;text-align:center;">
+                    <?php if (count($body_points) === 0): ?>
+                        <span style="color:#aaa;">Žádné body nejsou zaznamenány.</span>
+                    <?php else: ?>
+                        <strong>Přidané body:</strong>
+                        <table class="body-points-table" style="width:100%;max-width:500px;margin:10px auto;border-collapse:collapse;">
+                            <thead>
+                                <tr style="background:#f5f5f5;">
+                                    <th style="padding:6px;border-bottom:1px solid #ddd;">#</th>
+                                    <th style="padding:6px;border-bottom:1px solid #ddd;">Pozice</th>
+                                    <th style="padding:6px;border-bottom:1px solid #ddd;">Poznámka</th>
+                                    <th style="padding:6px;border-bottom:1px solid #ddd;width:32px;"></th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            <?php foreach ($body_points as $idx => $p): ?>
+                                <tr style="border-bottom:1px solid #eee;">
+                                    <td style="text-align:center;padding:6px;font-weight:bold;color:#388e3c;">
+                                        <i class="fas fa-map-pin"></i> <?php echo isset($p['order']) ? $p['order'] : $p['id']; ?>
+                                    </td>
+                                    <td style="text-align:center;padding:6px;">
+                                        <span title="Souřadnice">
+                                            <i class="fas fa-crosshairs"></i> X=<?php echo $p['x']; ?>%, Y=<?php echo $p['y']; ?>%
+                                        </span>
+                                    </td>
+                                    <td style="padding:6px;">
+                                        <span class="desc-text" id="desc-<?php echo $idx; ?>" onclick="startInlineEditDesc(<?php echo $idx; ?>)" style="cursor:pointer;display:inline-block;min-width:80px;">
+                                            <?php echo $p['description'] ? htmlspecialchars($p['description']) : '<span style=\'color:#aaa;\'>Bez poznámky</span>'; ?>
+                                        </span>
+                                    </td>
+                                    <td style="text-align:center;padding:6px;">
+                                        <button type="button" class="btn btn-xs btn-delete-point" style="background:none;color:#d32f2f;border:none;padding:0 4px;font-size:18px;line-height:1;cursor:pointer;" title="Smazat bod" onclick="deletePoint(<?php echo $idx; ?>)"><i class="fas fa-times"></i></button>
+                                    </td>
+                                </tr>
+                            <?php endforeach; ?>
+                            </tbody>
+                        </table>
+                    <?php endif; ?>
+                </div>
+            </div>
             <form action="" method="POST" class="form-container">
                 <div class="form-group">
                     <label for="updated_note" class="form-label">
@@ -148,7 +228,6 @@ $conn->close();
                     <textarea name="updated_note" id="updated_note" class="form-textarea" style="min-height:60px;max-height:400px;" 
                               placeholder="Upravte obsah poznámky..." required><?php echo htmlspecialchars($note['note']); ?></textarea>
                 </div>
-
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i>
@@ -168,6 +247,89 @@ $conn->close();
     </div>
 
     <script>
+        // Body points JS (edit/delete)
+        let bodyPoints = <?php echo json_encode($body_points); ?>;
+
+        function editDesc(idx) {
+            const descSpan = document.getElementById('desc-' + idx);
+            const currentDesc = bodyPoints[idx].description || '';
+            const newDesc = prompt('Upravte poznámku bodu:', currentDesc);
+            if (newDesc !== null) {
+                bodyPoints[idx].description = newDesc;
+                descSpan.textContent = newDesc ? '(' + newDesc + ')' : '';
+                updateHiddenInput();
+            }
+        }
+
+        function deletePoint(idx) {
+            if (confirm('Opravdu chcete tento bod smazat?')) {
+                bodyPoints.splice(idx, 1);
+                updateHiddenInput();
+                location.reload(); // reload to update list visually
+            }
+        }
+
+        function updateHiddenInput() {
+            // update hidden input for body_points_json
+            let input = document.getElementById('body_points_json');
+            if (!input) {
+                input = document.createElement('input');
+                input.type = 'hidden';
+                input.name = 'body_points_json';
+                input.id = 'body_points_json';
+                document.querySelector('form.form-container').appendChild(input);
+            }
+            input.value = JSON.stringify(bodyPoints);
+        }
+
+        // In-line edit for description
+        function startInlineEditDesc(idx) {
+            const descSpan = document.getElementById('desc-' + idx);
+            if (!descSpan) return;
+            // If already editing, do nothing
+            if (descSpan.querySelector('input')) return;
+            const currentDesc = bodyPoints[idx].description || '';
+            const input = document.createElement('input');
+            input.type = 'text';
+            input.value = currentDesc;
+            input.style.minWidth = '80px';
+            input.style.fontSize = '1em';
+            input.style.padding = '2px 6px';
+            input.style.borderRadius = '4px';
+            input.style.border = '1px solid #bbb';
+            input.onblur = function() { finishInlineEditDesc(idx, input.value); };
+            input.onkeydown = function(e) {
+                if (e.key === 'Enter') {
+                    input.blur();
+                } else if (e.key === 'Escape') {
+                    descSpan.textContent = currentDesc ? currentDesc : 'Bez poznámky';
+                }
+            };
+            descSpan.textContent = '';
+            descSpan.appendChild(input);
+            input.focus();
+        }
+
+        function finishInlineEditDesc(idx, newDesc) {
+            const descSpan = document.getElementById('desc-' + idx);
+            bodyPoints[idx].description = newDesc;
+            descSpan.innerHTML = newDesc ? escapeHtml(newDesc) : '<span style="color:#aaa;">Bez poznámky</span>';
+            updateHiddenInput();
+        }
+
+        function escapeHtml(text) {
+            var map = {
+                '&': '&amp;',
+                '<': '&lt;',
+                '>': '&gt;',
+                '"': '&quot;',
+                "'": '&#039;'
+            };
+            return text.replace(/[&<>"']/g, function(m) { return map[m]; });
+        }
+
+        // On page load, set hidden input
+        document.addEventListener('DOMContentLoaded', updateHiddenInput);
         function toggleMenu() {
             const navbar = document.getElementById('navbar');
             navbar.classList.toggle('active');

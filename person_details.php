@@ -68,14 +68,29 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $diagnosis_id = intval($_POST['diagnosis_id']);
         $note = trim($_POST['note']);
         $user_id = $_SESSION['user_id'] ?? null;
-        $sql = "INSERT INTO diagnosis_notes (person_id, diagnosis_id, note, updated_by) 
-                VALUES (?, ?, ?, ?)";
+        $sql = "INSERT INTO diagnosis_notes (person_id, diagnosis_id, note, updated_by) VALUES (?, ?, ?, ?)";
         $stmt = $conn->prepare($sql);
         if ($stmt === false) {
             echo "<p style='color: red;'>Chyba při přípravě dotazu: " . $conn->error . "</p>";
         } else {
             $stmt->bind_param("iisi", $person_id, $diagnosis_id, $note, $user_id);
             if ($stmt->execute()) {
+                $diagnosis_note_id = $stmt->insert_id;
+                // Uložení bodů na těle, pokud byly přidány
+                if (!empty($_POST['body_points_json'])) {
+                    $body_points = json_decode($_POST['body_points_json'], true);
+                    if (is_array($body_points)) {
+                        $sql_point = "INSERT INTO person_body_points (person_id, diagnosis_note_id, x, y, description, `order`) VALUES (?, ?, ?, ?, ?, ?)";
+                        $stmt_point = $conn->prepare($sql_point);
+                        foreach ($body_points as $idx => $point) {
+                            $desc = isset($point['description']) ? $point['description'] : '';
+                            $order = $idx + 1;
+                            $stmt_point->bind_param("iiddsi", $person_id, $diagnosis_note_id, $point['x'], $point['y'], $desc, $order);
+                            $stmt_point->execute();
+                        }
+                        $stmt_point->close();
+                    }
+                }
                 header("Location: " . $_SERVER['PHP_SELF'] . "?id=" . $person_id);
                 exit;
             } else {
@@ -124,10 +139,22 @@ $stmt_reports = $conn->prepare($sql_reports);
 $stmt_reports->bind_param("i", $person_id);
 $stmt_reports->execute();
 $result_reports = $stmt_reports->get_result();
+// Načtení bodů na těle navázaných na jednotlivé diagnosis_note
+$sql_points = "SELECT pb.id, pb.x, pb.y, pb.created_at, pb.description, pb.diagnosis_note_id FROM person_body_points pb WHERE pb.person_id = ? ORDER BY pb.created_at ASC";
+$stmt_points = $conn->prepare($sql_points);
+$stmt_points->bind_param("i", $person_id);
+$stmt_points->execute();
+$result_points = $stmt_points->get_result();
+$body_points_by_note = [];
+while ($row = $result_points->fetch_assoc()) {
+    $body_points_by_note[$row['diagnosis_note_id']][] = $row;
+}
+$stmt_points->close();
 
 $stmt->close();
 $conn->close();
 ?>
+
 <?php include 'header.php'; ?>
 
 <!DOCTYPE html>
@@ -522,11 +549,12 @@ $conn->close();
 <body>
     
     <div class="container">
+        <!-- Schéma těla bude zobrazeno u každé poznámky/diagnózy v sekci poznámek -->
         <div class="person-header">
             <h1><i class="fas fa-user-circle"></i> <?php echo htmlspecialchars($person['first_name'] . ' ' . $person['surname']); ?></h1>
             <div class="subtitle">Detail pacienta a zdravotní záznamy</div>
         </div>
-                <div class="section-card section-add-note">
+        <div class="section-card section-add-note">
             <h2 class="section-title">
                 Přidat diagnózu a nález
             </h2>
@@ -563,6 +591,19 @@ $conn->close();
                     <textarea name="note" id="note" class="form-textarea" 
                               placeholder="Napište, jak probíhalo ošetření, co jste podali za medikaci..." required></textarea>
                 </div>
+                <!-- Schéma těla pro nově přidávanou poznámku (body points budou navázány na nově vzniklou diagnosis_note) -->
+                <div class="form-group" style="display:flex;flex-direction:column;align-items:center;">
+                    <label class="form-label" style="align-self:center;">
+                        <i class="fas fa-user"></i>
+                        Přidat body na schéma těla (klíšťata, vpichy, atd.)
+                    </label>
+                    <div class="body-img-container" id="body-img-new" style="position:relative;max-width:400px;margin:0 auto;">
+                        <img src="body.jpg" alt="Schéma těla" style="width:100%;max-width:400px;display:block;cursor:pointer;">
+                        <!-- Body points budou přidávány kliknutím, JS doplní souřadnice do hidden inputů -->
+                    </div>
+                    <div id="new-body-points-list" style="margin-top:10px;text-align:center;"></div>
+                </div>
+                <input type="hidden" name="body_points_json" id="body_points_json">
                 <div class="form-actions">
                     <button type="submit" class="btn btn-primary">
                         <i class="fas fa-save"></i>
@@ -597,6 +638,23 @@ $conn->close();
                             </div>
                             <div class="diagnosis-preview">
                                 <?php echo htmlspecialchars(substr($row['note'], 0, 150)) . (strlen($row['note']) > 150 ? '...' : ''); ?>
+                                <?php
+                                // Zobraz body na schématu těla pro tuto poznámku/diagnózu
+                                $note_id = $row['note_id'];
+                                if (!empty($body_points_by_note[$note_id])) {
+                                    echo '<div class="body-points-list" style="margin-top:10px;text-align:left;">';
+                                    echo '<strong>Body na schématu těla:</strong><br>';
+                                    foreach ($body_points_by_note[$note_id] as $idx => $point) {
+                                        $num = $idx + 1;
+                                        echo "#{$num}: X={$point['x']}%, Y={$point['y']}%";
+                                        if (!empty($point['description'])) {
+                                            echo " <span style='color:#388e3c;'>({$point['description']})</span>";
+                                        }
+                                        echo '<br>';
+                                    }
+                                    echo '</div>';
+                                }
+                                ?>
                             </div>
                             <div style="color:#4a5568; font-size:0.95rem; margin-bottom:8px;">
                                 <i class="fas fa-user-edit"></i> Upravil: <?php echo $row['updated_by_username'] ? htmlspecialchars($row['updated_by_username']) : '<span style=\"color:#aaa;\">-</span>'; ?>
@@ -713,6 +771,85 @@ $conn->close();
             card.style.transition = 'opacity 0.6s ease, transform 0.6s ease';
             observer.observe(card);
         });
+
+        // JS pro přidávání bodů na schéma těla
+        const bodyImg = document.getElementById('body-img-new');
+        const img = bodyImg ? bodyImg.querySelector('img') : null;
+        let newBodyPoints = [];
+
+        if (img) {
+            img.addEventListener('click', function(e) {
+                const rect = img.getBoundingClientRect();
+                const x = ((e.clientX - rect.left) / rect.width) * 100;
+                const y = ((e.clientY - rect.top) / rect.height) * 100;
+                const pointId = newBodyPoints.length + 1;
+                const point = { id: pointId, x: x.toFixed(1), y: y.toFixed(1), description: '' };
+                newBodyPoints.push(point);
+                renderNewBodyPoints();
+            });
+        }
+
+        function renderNewBodyPoints() {
+            // Remove old points
+            const container = document.getElementById('body-img-new');
+            container.querySelectorAll('.pinpoint').forEach(el => el.remove());
+            // Add new points
+            newBodyPoints.forEach((point, idx) => {
+                const div = document.createElement('div');
+                div.className = 'pinpoint';
+                div.style.position = 'absolute';
+                div.style.left = point.x + '%';
+                div.style.top = point.y + '%';
+                div.style.width = '20px';
+                div.style.height = '20px';
+                div.style.background = '#388e3c';
+                div.style.borderRadius = '50%';
+                div.style.border = '2px solid #fff';
+                div.style.boxShadow = '0 2px 8px rgba(56,142,60,0.2)';
+                div.style.display = 'flex';
+                div.style.alignItems = 'center';
+                div.style.justifyContent = 'center';
+                div.style.color = '#fff';
+                div.style.fontSize = '13px';
+                div.style.cursor = 'pointer';
+                div.title = point.description || '';
+                div.innerHTML = `<span>${point.id}</span>`;
+                // možnost odebrání bodu kliknutím pravým tlačítkem
+                div.addEventListener('contextmenu', function(ev) {
+                    ev.preventDefault();
+                    newBodyPoints.splice(idx, 1);
+                    renderNewBodyPoints();
+                });
+                container.appendChild(div);
+            });
+            // Zobrazit seznam bodů pod obrázkem
+            const list = document.getElementById('new-body-points-list');
+            if (newBodyPoints.length === 0) {
+                list.innerHTML = '<span style="color:#aaa;">Žádné body nejsou přidány.</span>';
+            } else {
+                list.innerHTML = '<strong>Přidané body:</strong><br>' + newBodyPoints.map((p, i) =>
+                    `#${p.id}: X=${p.x}%, Y=${p.y}% <input type='text' placeholder='Popis' value='${p.description}' style='width:120px;' onchange='window.updateBodyPointDesc(${i}, this.value)'> <span style='color:#d00;cursor:pointer;' onclick='window.removeBodyPoint(${i})'>✖</span>`
+                ).join('<br>');
+            }
+            document.getElementById('body_points_json').value = JSON.stringify(newBodyPoints);
+        }
+
+        window.updateBodyPointDesc = function(idx, val) {
+            newBodyPoints[idx].description = val;
+            renderNewBodyPoints();
+        }
+        window.removeBodyPoint = function(idx) {
+            newBodyPoints.splice(idx, 1);
+            renderNewBodyPoints();
+        }
+
+        // Body se uloží pouze při submitu formuláře
+        const form = document.querySelector('.section-add-note form');
+        if (form) {
+            form.addEventListener('submit', function() {
+                document.getElementById('body_points_json').value = JSON.stringify(newBodyPoints);
+            });
+        }
     </script>
 </body>
 </html>

@@ -100,6 +100,44 @@ while ($row = $result->fetch_assoc()) {
 }
 
 // Funkce pro generování obrázku s klíšťaty
+// Funkce pro generování obrázku schématu těla s body
+function generateBodyPointsImage($diagnosis_note_id, $conn, $outputPath) {
+    $baseImagePath = __DIR__ . '/body.jpg';
+    if (!file_exists($baseImagePath)) return false;
+
+    $im = imagecreatefromjpeg($baseImagePath);
+    if (!$im) return false;
+
+    $sql = "SELECT x, y, `order` FROM person_body_points WHERE diagnosis_note_id = ? ORDER BY `order` ASC";
+    $stmt = $conn->prepare($sql);
+    if ($stmt === false) return false;
+    $stmt->bind_param("i", $diagnosis_note_id);
+    $stmt->execute();
+    $result = $stmt->get_result();
+    $width = imagesx($im);
+    $height = imagesy($im);
+    $green = imagecolorallocate($im, 56, 142, 60);
+    $white = imagecolorallocate($im, 255, 255, 255);
+    $black = imagecolorallocate($im, 0, 0, 0);
+    $hasPoints = false;
+    while ($row = $result->fetch_assoc()) {
+        $px = intval($row['x'] * $width / 100);
+        $py = intval($row['y'] * $height / 100);
+        imagefilledellipse($im, $px, $py, 20, 20, $green);
+        $order = isset($row['order']) ? $row['order'] : '';
+        imagestring($im, 5, $px-6, $py-8, $order, $black);
+        imagestring($im, 5, $px-7, $py-9, $order, $white);
+        $hasPoints = true;
+    }
+    $stmt->close();
+    if (!$hasPoints) {
+        imagedestroy($im);
+        return false;
+    }
+    $success = imagepng($im, $outputPath);
+    imagedestroy($im);
+    return $success;
+}
 function generateKlisteImage($person_id, $conn, $outputPath) {
     $baseImagePath = __DIR__ . '/body.jpg'; // základní obrázek těla
     if (!file_exists($baseImagePath)) return false;
@@ -345,12 +383,12 @@ function generateDocxReport($person_id, $conn, $phpWord) {
     $section->addTextBreak();
 
     // Získání lékařských zpráv
-    $sql = "SELECT mr.created_at, mr.report_text, d.name AS diagnosis 
+    $sql = "SELECT mr.created_at, mr.report_text, d.name AS diagnosis, mr.diagnosis_note_id 
             FROM medical_reports mr
             LEFT JOIN diagnoses d ON mr.diagnosis_id = d.id
             WHERE mr.person_id = ?
             ORDER BY mr.created_at ASC";
-    
+
     $stmt = $conn->prepare($sql);
     $stmt->bind_param("i", $person_id);
     $stmt->execute();
@@ -362,16 +400,12 @@ function generateDocxReport($person_id, $conn, $phpWord) {
         if ($reportCount > 1) {
             $section->addPageBreak();
         }
-        
         $section->addTextBreak();
 
         if (!empty($row['report_text'])) {
-            // Potlačení varování a chyb při zpracování HTML
             $oldErrorReporting = error_reporting(E_ERROR | E_PARSE);
             libxml_use_internal_errors(true);
-            
             try {
-                // Konfigurace pro lepší zachování formátování
                 $htmlOptions = [
                     'encoding' => 'UTF-8',
                     'stylesheet' => true,
@@ -380,17 +414,13 @@ function generateDocxReport($person_id, $conn, $phpWord) {
                         'borderColor' => '000000'
                     ]
                 ];
-                
-                // Nejdříve zkusíme přidat HTML přímo s maximálním zachováním formátování
                 \PhpOffice\PhpWord\Shared\Html::addHtml($section, $row['report_text'], false, false);
             } catch (Exception $e) {
                 try {
-                    // Pokud selže, zkusíme s vylepšenou čistící funkcí
-                    $betterHtml = improveHtmlForPhpWord($row['report_text']);
+                    $betterHtml = cleanHtmlForPhpWord($row['report_text']);
                     if (!empty($betterHtml)) {
                         \PhpOffice\PhpWord\Shared\Html::addHtml($section, $betterHtml, false, false);
                     } else {
-                        // Fallback na prostý text se zachováním řádků a základního formátování
                         $plainText = strip_tags($row['report_text']);
                         $lines = explode("\n", $plainText);
                         foreach ($lines as $line) {
@@ -402,7 +432,6 @@ function generateDocxReport($person_id, $conn, $phpWord) {
                         }
                     }
                 } catch (Exception $e2) {
-                    // Finální fallback na prostý text
                     $plainText = strip_tags($row['report_text']);
                     $lines = explode("\n", $plainText);
                     foreach ($lines as $line) {
@@ -421,6 +450,60 @@ function generateDocxReport($person_id, $conn, $phpWord) {
             $section->addText('Žádný text zprávy.', ['italic' => true]);
         }
         $section->addTextBreak();
+
+        // --- GENEROVÁNÍ OBRÁZKU + TABULKY Z person_body_points pro tuto lékařskou zprávu ---
+        if (isset($row['diagnosis_note_id']) && !empty($row['diagnosis_note_id'])) {
+            $current_diagnosis_note_id = $row['diagnosis_note_id'];
+            $imgPath = sys_get_temp_dir() . "/body_points_" . $current_diagnosis_note_id . ".png";
+            
+            // Získáme název diagnózy
+            $diagnosisSql = "SELECT d.name FROM diagnosis_notes dn LEFT JOIN diagnoses d ON dn.diagnosis_id = d.id WHERE dn.id = ?";
+            $diagnosisStmt = $conn->prepare($diagnosisSql);
+            $diagnosisStmt->bind_param("i", $current_diagnosis_note_id);
+            $diagnosisStmt->execute();
+            $diagnosisResult = $diagnosisStmt->get_result();
+            $diagnosisName = 'Neznámá diagnóza';
+            if ($diagnosisRow = $diagnosisResult->fetch_assoc()) {
+                $diagnosisName = $diagnosisRow['name'] ? $diagnosisRow['name'] : 'Neznámá diagnóza';
+            }
+            $diagnosisStmt->close();
+            
+            $bpSql = "SELECT x, y, `order`, description FROM person_body_points WHERE diagnosis_note_id = ? ORDER BY `order` ASC";
+            $bpStmt = $conn->prepare($bpSql);
+            $bpStmt->bind_param("i", $current_diagnosis_note_id);
+            $bpStmt->execute();
+            $bpResult = $bpStmt->get_result();
+            $bodyPoints = [];
+            while ($bp = $bpResult->fetch_assoc()) {
+                $bodyPoints[] = $bp;
+            }
+            $bpStmt->close();
+            
+            if (count($bodyPoints) > 0) {
+                if (generateBodyPointsImage($current_diagnosis_note_id, $conn, $imgPath)) {
+                    $section->addText('Schéma těla s body (' . $diagnosisName . '):', ['bold' => true]);
+                    $section->addImage($imgPath, ['width' => 400]);
+                    register_shutdown_function(function() use ($imgPath) {
+                        if (file_exists($imgPath)) unlink($imgPath);
+                    });
+                }
+                $section->addText('Tabulka bodnutí a poznámek (' . $diagnosisName . '):', ['bold' => true]);
+                $table = $section->addTable(['borderSize' => 1]);
+                $table->addRow();
+                $table->addCell(800)->addText('Pořadí', ['bold' => true]);
+                $table->addCell(800)->addText('X (%)', ['bold' => true]);
+                $table->addCell(800)->addText('Y (%)', ['bold' => true]);
+                $table->addCell(3000)->addText('Poznámka', ['bold' => true]);
+                foreach ($bodyPoints as $bp) {
+                    $table->addRow();
+                    $table->addCell(800)->addText($bp['order']);
+                    $table->addCell(800)->addText($bp['x']);
+                    $table->addCell(800)->addText($bp['y']);
+                    $table->addCell(3000)->addText($bp['description']);
+                }
+                $section->addTextBreak(2);
+            }
+        }
     }
     $stmt->close();
 
@@ -526,28 +609,30 @@ if (isset($_GET['download_all']) && $_GET['download_all'] == '1') {
         $phpWord = new PhpWord();
         $reportData = generateDocxReport($person_id, $conn, $phpWord);
         if (!$reportData) continue;
-        
+
         // Ulož DOCX
         $docxPath = sys_get_temp_dir() . "/report_" . $p['id'] . ".docx";
         $objWriter = IOFactory::createWriter($phpWord, 'Word2007');
         $objWriter->save($docxPath);
-        
+
         // Přidej DOCX do ZIPu
         $zip->addFile($docxPath, $folderName . "lekarska_zprava.docx");
-        
+
         // Generuj a přidej obrázek klíšťat
         $imgPath = sys_get_temp_dir() . "/kliste_" . $person_id . ".png";
         $hasImage = generateKlisteImage($person_id, $conn, $imgPath);
         if ($hasImage && file_exists($imgPath)) {
             $zip->addFile($imgPath, $folderName . "mapa_klistat.png");
         }
-        
+
+        // ...žádné generování obrázků bodů do ZIPu...
+
         // Registruj smazání dočasných souborů
         register_shutdown_function(function() use ($docxPath, $imgPath) {
             if (file_exists($docxPath)) unlink($docxPath);
             if (file_exists($imgPath)) unlink($imgPath);
         });
-        
+
         // Přidej do pole pro souhrnný DOCX
         $summaryPatients[] = array(
             'surname' => $p['surname'],
