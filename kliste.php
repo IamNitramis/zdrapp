@@ -74,6 +74,35 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
     echo "OK";
     exit;
 }
+
+// Uložení poznámky k bodu (AJAX inline poznámka)
+if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['id'], $_POST['note'])) {
+    $id = intval($_POST['id']);
+    $note = trim($_POST['note']);
+    try {
+        $conn = getDatabase();
+    } catch (Exception $e) {
+        http_response_code(500);
+        echo 'Chyba připojení k databázi';
+        exit;
+    }
+    $stmt = $conn->prepare("UPDATE tick_bites SET note = ? WHERE id = ?");
+    if (!$stmt) {
+        http_response_code(500);
+        echo 'Chyba při přípravě dotazu';
+        exit;
+    }
+    $stmt->bind_param("si", $note, $id);
+    if ($stmt->execute()) {
+        echo 'OK';
+    } else {
+        http_response_code(500);
+        echo 'Chyba při ukládání poznámky';
+    }
+    $stmt->close();
+    $conn->close();
+    exit;
+}
 ?>
 <!DOCTYPE html>
 <html lang="cs">
@@ -386,6 +415,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
                                 <th><i class="fas fa-hashtag"></i></th>
                                 <th><i class="fas fa-calendar"></i> Datum</th>
                                 <th><i class="fas fa-user-edit"></i> Přidal</th>
+                                <th><i class="fas fa-sticky-note"></i> Poznámka</th>
                                 <th><i class="fas fa-cogs"></i> Akce</th>
                             </tr>
                         </thead>
@@ -431,7 +461,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
     });
 
     // Přidání bodu na obrázek
-    function addPinpoint(x, y, id = null, created_at = null, order = null, updated_by_name = null) {
+    function addPinpoint(x, y, id = null, created_at = null, order = null, updated_by_name = null, note = "") {
         const pin = document.createElement('div');
         pin.className = 'pinpoint';
         pin.style.left = (x * 100) + '%';
@@ -447,12 +477,12 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
 
         // Přidej do tabulky
         if (id) {
-            addPointToTable(id, created_at, order, updated_by_name);
+            addPointToTable(id, created_at, order, updated_by_name, note);
         }
     }
 
     // Přidání řádku do tabulky
-    function addPointToTable(id, created_at, order, updated_by_name) {
+    function addPointToTable(id, created_at, order, updated_by_name, note = "") {
         const tbody = document.getElementById('pointsTable').querySelector('tbody');
         const emptyState = document.getElementById('emptyState');
         if (emptyState) {
@@ -466,11 +496,31 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
             <td>${created_at ? new Date(created_at).toLocaleDateString('cs-CZ') + ' ' + new Date(created_at).toLocaleTimeString('cs-CZ', {hour: '2-digit', minute: '2-digit'}) : ''}</td>
             <td>${updated_by_name ? updated_by_name : ''}</td>
             <td>
+                <input type="text" class="note-input" value="${note ? note.replace(/&quot;/g, '"').replace(/&amp;/g, '&').replace(/&lt;/g, '<').replace(/&gt;/g, '>') : ''}" data-id="${id}" placeholder="Přidejte poznámku..." style="width:98%;padding:4px 8px;">
+            </td>
+            <td>
                 <button class="btn btn-danger" onclick="removePointById(${id})">
                     <i class="fas fa-trash"></i>
                 </button>
             </td>`;
         tbody.appendChild(tr);
+        // Inline poznámka - AJAX update
+        const noteInput = tr.querySelector('.note-input');
+        noteInput.addEventListener('change', function() {
+            const newNote = this.value;
+            fetch('kliste.php', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/x-www-form-urlencoded' },
+                body: 'id=' + encodeURIComponent(id) + '&note=' + encodeURIComponent(newNote)
+            })
+            .then(resp => resp.text())
+            .then(txt => {
+                if (txt.trim() !== 'OK') {
+                    alert('Chyba při ukládání poznámky: ' + txt);
+                }
+            })
+            .catch(() => alert('Chyba při ukládání poznámky.'));
+        });
     }
 
     // Odebrání řádku z tabulky
@@ -565,7 +615,7 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_POST['x'], $_POST['y'])) {
                     if (emptyState) emptyState.style.display = 'table-row';
                 } else {
                     points.forEach(point => {
-                        addPinpoint(point.x, point.y, point.id, point.created_at, point.bite_order, point.updated_by_name);
+                        addPinpoint(point.x, point.y, point.id, point.created_at, point.bite_order, point.updated_by_name, point.note);
                     });
                 }
             })

@@ -98,8 +98,9 @@ CREATE TABLE tick_bites (
   x double NOT NULL,
   y double NOT NULL,
   created_at datetime NOT NULL,
-  bite_order INT DEFAULT 1 
-  ) ;
+  bite_order INT DEFAULT 1,
+  note text DEFAULT NULL
+) ;
 
 -- --------------------------------------------------------
 
