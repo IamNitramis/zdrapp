@@ -33,6 +33,14 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
     } elseif ($file && is_uploaded_file($file)) {
         try {
             $csvData = file_get_contents($file);
+
+// 1. Zkontroluje, jestli je text v UTF-8. Pokud není (typický český Excel), převede ho z Windows-1250 do UTF-8.
+if (!mb_check_encoding($csvData, 'UTF-8')) {
+    $csvData = iconv('CP1250', 'UTF-8//IGNORE', $csvData);
+}
+
+// 2. Odstranění UTF-8 BOM hlavičky (pokud tam je)
+$csvData = preg_replace('/^\xEF\xBB\xBF/', '', $csvData);
             
             // 2. DŮLEŽITÉ: Odstranění UTF-8 BOM hlavičky, pokud v souboru je (způsobovalo ď»ż na začátku)
             $csvData = preg_replace('/^\xEF\xBB\xBF/', '', $csvData);
