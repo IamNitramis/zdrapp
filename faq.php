@@ -1,35 +1,7 @@
 <?php
-session_start();
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
-<!DOCTYPE html>
-<html lang="cs">
-<head>
-    <meta charset="UTF-8">
-    <title>Přístup zamítnut</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="assets/css/all.min.css" rel="stylesheet">
-    <style>
-        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; align-items: center; justify-content: center; min-height: 100vh; background: linear-gradient(135deg, #4facfe, #00f2fe); }
-        .login-warning { max-width: 450px; background: white; border-radius: 20px; box-shadow: 0 20px 60px rgba(0,0,0,0.2); padding: 50px 40px; text-align: center; }
-        .login-warning i { font-size: 4rem; color: #e67e22; margin-bottom: 20px; }
-        .login-warning h2 { color: #2d3748; margin-bottom: 15px; font-size: 1.8rem; font-weight: 600; }
-        .login-warning p { color: #718096; font-size: 1.1rem; margin-bottom: 30px; }
-        .login-warning a { display: inline-block; padding: 15px 35px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); color: #fff; border-radius: 50px; text-decoration: none; font-weight: 600; font-size: 1.1rem; transition: all 0.3s ease; }
-        .login-warning a:hover { transform: translateY(-3px); }
-    </style>
-</head>
-<body>
-    <div class="login-warning">
-        <i class="fas fa-lock"></i>
-        <h2>Přístup zamítnut</h2>
-        <p>Pro zobrazení této stránky se musíte přihlásit.</p>
-        <a href="login.php"><i class="fas fa-sign-in-alt"></i> Přihlásit se</a>
-    </div>
-</body>
-</html>
-<?php exit; endif; ?>
-
-<?php include 'header.php'; ?>
+require_once __DIR__ . '/includes/auth.php';
+include 'header.php';
+?>
 
 <!DOCTYPE html>
 <html lang="cs">

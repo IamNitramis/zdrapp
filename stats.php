@@ -1,33 +1,8 @@
 <?php
-session_start();
+require_once __DIR__ . '/includes/auth.php';
 
 // Načtení databázové konfigurace
 require_once __DIR__ . '/config/database.php';
-
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
-<!DOCTYPE html>
-<html lang="cs">
-<head>
-    <meta charset="UTF-8">
-    <title>Přístup zamítnut</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="stylesheet" href="assets/css/all.min.css">
-</head>
-<body>
-    <div class="login-warning">
-        <i class="fas fa-lock"></i>
-        <h2>Přístup zamítnut</h2>
-        <p>Pro zobrazení této stránky se musíte přihlásit.</p>
-        <a href="login.php">
-            <i class="fas fa-sign-in-alt"></i>
-            Přihlásit se
-        </a>
-    </div>
-</body>
-</html>
-<?php exit; endif; ?>
-
-<?php
 // Připojení k databázi
 try {
     $conn = getDatabase();

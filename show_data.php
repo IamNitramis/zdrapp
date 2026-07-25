@@ -1,700 +1,76 @@
 <?php
-session_start(); // Spustí session, aby bylo možné kontrolovat přihlášení
 
-// Kontrola, zda je uživatel přihlášen
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true): ?>
-<!DOCTYPE html>
-<html lang="cs">
-<head>
-    <meta charset="UTF-8">
-    <title>Přístup zamítnut</title>
-    <link rel="stylesheet" href="style.css">
-    <link href="assets/css/all.min.css" rel="stylesheet">
-    <style>
-        
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            margin: 0;
-            padding: 0;
-            display: flex;
-            flex-direction: column;
-            align-items: center;
-            justify-content: center;
-            min-height: 100vh;
-            background: linear-gradient(135deg, #4facfe, #00f2fe);
-            color: #333;
+
+require_once __DIR__ . '/includes/auth.php';
+require_once __DIR__ . '/config/database.php';
+
+try {
+    $conn = getDatabase();
+} catch (Exception $e) {
+    die("Chyba připojení k databázi: " . $e->getMessage());
+}
+
+// Počet pacientů
+$total_patients = $conn->query("SELECT COUNT(*) as count FROM persons")->fetch_assoc()['count'];
+
+// Počet s medikací
+$with_medication = $conn->query("SELECT COUNT(*) as count FROM persons WHERE medications IS NOT NULL AND medications != ''")->fetch_assoc()['count'];
+
+// Počet s alergiemi
+$with_allergies = $conn->query("SELECT COUNT(*) as count FROM persons WHERE allergies IS NOT NULL AND allergies != ''")->fetch_assoc()['count'];
+
+// Kontrola poznámek bez vygenerované zprávy
+$sql_missing_reports = "
+    SELECT p.id AS person_id, p.first_name, p.surname, n.id AS note_id, n.note, n.diagnosis_id, d.name AS diagnosis_text, n.created_at
+    FROM persons p
+    INNER JOIN diagnosis_notes n ON p.id = n.person_id
+    LEFT JOIN diagnoses d ON n.diagnosis_id = d.id AND d.deleted = 0
+    LEFT JOIN medical_reports r ON n.id = r.diagnosis_note_id
+    WHERE r.diagnosis_note_id IS NULL
+    ORDER BY p.surname, p.first_name, n.created_at
+";
+
+$result_missing = $conn->query($sql_missing_reports);
+$patients_without_reports = [];
+$total_notes_without_reports = 0;
+$sql_error = '';
+
+if ($result_missing === false) {
+    $sql_error = $conn->error;
+} elseif ($result_missing->num_rows > 0) {
+    while ($row = $result_missing->fetch_assoc()) {
+        $pid = $row['person_id'];
+        if (!isset($patients_without_reports[$pid])) {
+            $patients_without_reports[$pid] = [
+                'pid' => $pid,
+                'first_name' => $row['first_name'],
+                'surname' => $row['surname'],
+                'notes' => []
+            ];
         }
-        .login-warning {
-            max-width: 450px;
-            background: white;
-            border-radius: 20px;
-            box-shadow: 0 20px 60px rgba(0, 0, 0, 0.2);
-            padding: 50px 40px;
-            text-align: center;
-            backdrop-filter: blur(10px);
-            border: 1px solid rgba(255, 255, 255, 0.2);
-        }
-        .login-warning i {
-            font-size: 4rem;
-            color: #e67e22;
-            margin-bottom: 20px;
-        }
-        .login-warning h2 { 
-            color: #2d3748; 
-            margin-bottom: 15px; 
-            font-size: 1.8rem;
-            font-weight: 600;
-        }
-        .login-warning p {
-            color: #718096;
-            font-size: 1.1rem;
-            margin-bottom: 30px;
-            line-height: 1.5;
-        }
-        .login-warning a {
-            display: inline-block;
-            padding: 15px 35px;
-            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
-            color: #fff;
-            border-radius: 50px;
-            text-decoration: none;
-            font-weight: 600;
-            font-size: 1.1rem;
-            transition: all 0.3s ease;
-            box-shadow: 0 8px 25px rgba(102, 126, 234, 0.3);
-        }
-        .login-warning a:hover { 
-            transform: translateY(-3px);
-            box-shadow: 0 15px 35px rgba(102, 126, 234, 0.4);
-        }
-    </style>
-</head>
-<body>
-    <div class="login-warning">
-        <i class="fas fa-lock"></i>
-        <h2>Přístup zamítnut</h2>
-        <p>Pro zobrazení této stránky se musíte přihlásit.</p>
-        <a href="login.php">
-            <i class="fas fa-sign-in-alt"></i>
-            Přihlásit se
-        </a>
-    </div>
-</body>
-</html>
-<?php exit; endif; ?>
+        $patients_without_reports[$pid]['notes'][] = [
+            'note_id' => $row['note_id'],
+            'note_text' => $row['note'],
+            'diagnosis' => $row['diagnosis_text'],
+            'diagnosis_id' => $row['diagnosis_id'],
+            'created_at' => $row['created_at']
+        ];
+        $total_notes_without_reports++;
+    }
+}
 
-<!DOCTYPE html>
-<html lang="cs">
-<head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Seznam pacientů - ZDRAPP</title>
-    <link rel="stylesheet" href="style.css">
-    <link rel="icon" type="image/png" href="logo.png">
-    <link rel="stylesheet" href="assets/css/all.min.css">    
-    <style>
-    /* Lokální styl pro tabulku pacientů – barvy z style.css */
-    .table-container {
-        margin-top: 30px;
-        background: #fff;
-        border-radius: 15px;
-        box-shadow: 0 8px 25px rgba(0,0,0,0.30);
-        padding: 20px;
-        max-width: 2000px;
-        width: 100%;
+// Načtení všech osob
+$sql = "SELECT * FROM persons ORDER BY id ASC";
+$result = $conn->query($sql);
+$persons = [];
+if ($result && $result->num_rows > 0) {
+    while ($row = $result->fetch_assoc()) {
+        $persons[] = $row;
     }
-    #dataTable {
-        width: 100%;
-        min-width: 0;
-        background: #fff;
-        border-radius: 10px;
-        overflow: hidden;
-        box-shadow: 0 4px 15px rgba(0,0,0,0.05);
-        font-size: 1.04em;
-        /*border-collapse: separate;*/
-        /*border-spacing: 0;*/
-    }
-    #dataTable thead th {
-        background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
-        color: #fff;
-        font-weight: 700;
-        padding: 14px 10px;
-        border-bottom: 2px solid #e8f5e9;
-        cursor: pointer;
-        text-align: left;
-        position: sticky;
-        top: 0;
-        z-index: 2;
-        letter-spacing: 0.03em;
-        font-size: 1em;
-        text-shadow: 1px 1px 2px rgba(0,0,0,0.12);
-    }
-    #dataTable tbody td {
-        padding: 12px 10px;
-        border-bottom: 1px solid #e8f5e9;
-        background: #fff;
-        vertical-align: middle;
-        color: #4a5568;
-    }
-    #dataTable tbody tr:last-child td {
-        border-bottom: none;
-    }
-    #dataTable .medication-pill {
-        display: inline-block;
-        padding: 4px 12px;
-        border-radius: 16px;
-        font-size: 0.98em;
-        font-weight: 500;
-        background: #e8f5e9;
-        color: #2e7d32;
-        margin-right: 2px;
-        border: 1px solid #c8e6c9;
-    }
-    #dataTable .allergy-pill {
-        display: inline-block;
-        padding: 4px 12px;
-        border-radius: 16px;
-        font-size: 0.98em;
-        font-weight: 500;
-        background: #fffde7;
-        color: #b71c1c;
-        margin-right: 2px;
-        border: 1px solid #ffe082;
-    }
-    #dataTable .no-data-pill {
-        display: inline-block;
-        padding: 4px 12px;
-        border-radius: 16px;
-        font-size: 0.98em;
-        font-weight: 500;
-        background: #ececec;
-        color: #888;
-        margin-right: 2px;
-        border: 1px solid #e0e0e0;
-    }
-    #dataTable .buttons {
-        display: flex;
-        gap: 8px;
-    }
-    #dataTable .btn {
-        padding: 6px 16px;
-        border-radius: 8px;
-        font-size: 0.98em;
-        font-weight: 600;
-        text-decoration: none;
-        color: #fff;
-        background: linear-gradient(135deg, #388e3c 0%, #2e7d32 100%);
-        border: none;
-        box-shadow: 0 2px 8px rgba(56,142,60,0.10);
-        transition: background 0.18s, box-shadow 0.18s, transform 0.18s;
-        display: inline-flex;
-        align-items: center;
-        gap: 6px;
-    }
-    #dataTable .btn-detail {
-        background: linear-gradient(135deg, #388e3c 0%, #43a047 100%);
-    }
-    #dataTable .btn-danger {
-        background: linear-gradient(135deg, #ff6b6b 0%, #ee5a52 100%);
-        padding: 0 0;
-        min-width: 38px;
-        min-height: 38px;
-        width: 38px;
-        height: 38px;
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        font-size: 1.2em;
-        border-radius: 50%;
-        box-shadow: 0 2px 8px rgba(255,107,107,0.10);
-    }
-    #dataTable .btn-danger i {
-        margin: 0;
-        font-size: 1.3em;
-    }
-    #dataTable .btn:hover {
-        filter: brightness(1.08);
-        transform: translateY(-2px) scale(1.03);
-        box-shadow: 0 4px 16px rgba(56,142,60,0.13);
-    }
-    #dataTable .empty-state {
-        text-align: center;
-        color: #4a5568;
-        font-size: 1.1em;
-        padding: 32px 0;
-        background: #f8fafc;
-        border-radius: 0 0 10px 10px;
-    }
-    #dataTable .empty-state i {
-        font-size: 2.2em;
-        margin-bottom: 8px;
-        color: #a5d6a7;
-    }
-    #dataTable .empty-state h3 {
-        margin: 0;
-        font-size: 1.1em;
-        font-weight: 500;
-    }
-    @media (max-width: 900px) {
-        .table-container {
-            padding: 10px 2px;
-        }
-        #dataTable thead th, #dataTable tbody td {
-            padding: 8px 4px;
-            font-size: 0.97em;
-        }
-    }
-    /* Rozšíření sloupce Datum narození */
-    #dataTable th:nth-child(4),
-    #dataTable td:nth-child(4) {
-        min-width: 140px;
-        width: 160px;
-        max-width: 200px;
-        white-space: nowrap;
-    }
-    .stats-container {
-        display: flex;
-        gap: 15px;
-        flex-wrap: wrap;
-        justify-content: center;
-        width: 100%;
-        margin-bottom: 20px;
-        max-width: 1200px;
-    }
-    .stat-card {
-        background: white;
-        border-radius: 15px;
-        padding: 20px;
-        flex: 1 1 220px;
-        min-width: 200px;
-        max-width: 320px;
-        box-shadow: 0 8px 25px rgba(0, 0, 0, 0.3);
-        text-align: center;
-        transition: transform 0.3s ease;
-        margin-bottom: 0;
-    }
-    .stat-card:hover {
-        transform: translateY(-5px);
-    }
-    /* Alert styles - kompaktní verze a zarovnání */
-    .alert-diagnosis {
-        background: linear-gradient(135deg, #ff8a80 0%, #ff5722 100%);
-        color: white;
-        padding: 14px 18px 16px 18px;
-        border-radius: 10px;
-        margin: 18px auto 16px auto;
-        box-shadow: 0 2px 8px rgba(255, 87, 34, 0.13);
-        border-left: 4px solid #d32f2f;
-        font-size: 1em;
-        max-width: 600px;
-        width: 100%;
-        min-width: 0;
-    }
-    .alert-header {
-        display: flex;
-        align-items: center;
-        justify-content: center;
-        gap: 10px;
-        margin-bottom: 10px;
-        text-align: center;
-    }
-    .alert-header i {
-        font-size: 1.2rem;
-        color: #ffeb3b;
-    }
-    .alert-header h3 {
-        margin: 0;
-        font-size: 1.13rem;
-        font-weight: 600;
-        letter-spacing: 0.01em;
-    }
-    .alert-content {
-        background: rgba(255, 255, 255, 0.08);
-        border-radius: 7px;
-        padding: 10px 12px 12px 12px;
-        margin-top: 5px;
-    }
-    .alert-summary {
-        font-size: 1.07em;
-        margin-bottom: 8px;
-        font-weight: 500;
-        text-align: center;
-    }
-    .alert-content > div:not(.alert-summary) {
-        text-align: center;
-    }
-    .alert-patients {
-        display: flex;
-        flex-wrap: wrap;
-        gap: 7px;
-        margin-top: 8px;
-        justify-content: center;
-    }
-    .patient-tag {
-        background: rgba(255, 255, 255, 0.18);
-        padding: 4px 12px 4px 12px;
-        border-radius: 13px;
-        font-size: 0.97em;
-        font-weight: 500;
-        border: 1px solid rgba(255, 255, 255, 0.18);
-        margin-bottom: 2px;
-        text-align: left;
-        min-width: 120px;
-        max-width: 95vw;
-    }
-    .patient-tag strong {
-        display: block;
-        text-align: center;
-        margin-bottom: 2px;
-        font-weight: 600;
-    }
-    .patient-tag ul {
-        margin: 4px 0 0 0;
-        padding-left: 14px;
-        text-align: left;
-    }
-    .patient-tag li {
-        margin-bottom: 4px;
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.97em;
-    }
-    .patient-tag li span {
-        color: #fffde7;
-    }
-    .patient-tag li .fa-calendar-alt {
-        color: #ffeb3b;
-        margin-right: 2px;
-    }
-    @media (max-width: 700px) {
-        .alert-diagnosis {
-            max-width: 98vw;
-            padding: 8px 2vw 10px 2vw;
-        }
-        .alert-content {
-            padding: 7px 2vw 10px 2vw;
-        }
-        .alert-patients {
-            gap: 4px;
-        }
-        .patient-tag {
-            min-width: 90px;
-            font-size: 0.93em;
-            padding: 3px 6px;
-        }
-    }
-    .container {
-        max-width: 2100px;
-        margin: 0 auto;
-        width: 100%;
-    }
-    </style>
-</head>
+}
 
-<body>
-    <?php include 'header.php'; ?>
+$conn->close();
 
-    <div class="container">
-        <div class="hero-section">
-            <div class="hero-content">
-                <h1><i class="fas fa-users"></i> Seznam pacientů</h1>
-                <div class="subtitle">Přehled všech registrovaných pacientů v systému</div>
-            </div>
-        </div>
-
-        <?php
-        // Načtení databázové konfigurace
-        require_once __DIR__ . '/config/database.php';
-        
-        // Připojení k databázi pro statistiky
-        try {
-            $conn = getDatabase();
-        } catch (Exception $e) {
-            die("Chyba připojení k databázi: " . $e->getMessage());
-        }
-
-        // Počet pacientů
-        $total_patients = $conn->query("SELECT COUNT(*) as count FROM persons")->fetch_assoc()['count'];
-        
-        // Počet s medikací
-        $with_medication = $conn->query("SELECT COUNT(*) as count FROM persons WHERE medications IS NOT NULL AND medications != ''")->fetch_assoc()['count'];
-        
-        // Počet s alergiemi
-        $with_allergies = $conn->query("SELECT COUNT(*) as count FROM persons WHERE allergies IS NOT NULL AND allergies != ''")->fetch_assoc()['count'];
-
-        // Kontrola poznámek bez vygenerované zprávy
-        $sql_missing_reports = "
-            SELECT p.id AS person_id, p.first_name, p.surname, n.id AS note_id, n.note, n.diagnosis_id, d.name AS diagnosis_text, n.created_at
-            FROM persons p
-            INNER JOIN diagnosis_notes n ON p.id = n.person_id
-            LEFT JOIN diagnoses d ON n.diagnosis_id = d.id AND d.deleted = 0
-            LEFT JOIN medical_reports r ON n.id = r.diagnosis_note_id
-            WHERE r.diagnosis_note_id IS NULL
-            ORDER BY p.surname, p.first_name, n.created_at
-        ";
-
-        $result_missing = $conn->query($sql_missing_reports);
-        $patients_without_reports = [];
-        $total_notes_without_reports = 0;
-
-        if ($result_missing === false) {
-            echo '<div class="alert" style="background: #ffebee; color: #b71c1c; border-left: 5px solid #b71c1c;">';
-            echo '<b>Chyba SQL při kontrole chybějících zpráv:</b><br>';
-            echo htmlspecialchars($conn->error);
-            echo '<br><small>Dotaz: ' . htmlspecialchars($sql_missing_reports) . '</small>';
-            echo '</div>';
-        } elseif ($result_missing->num_rows > 0) {
-            while ($row = $result_missing->fetch_assoc()) {
-                $pid = $row['person_id'];
-                if (!isset($patients_without_reports[$pid])) {
-                    $patients_without_reports[$pid] = [
-                        'first_name' => $row['first_name'],
-                        'surname' => $row['surname'],
-                        'notes' => []
-                    ];
-                }
-                $patients_without_reports[$pid]['notes'][] = [
-                    'note_id' => $row['note_id'],
-                    'note_text' => $row['note'],
-                    'diagnosis' => $row['diagnosis_text'],
-                    'diagnosis_id' => $row['diagnosis_id'], // <-- add this line to ensure diagnosis_id is available
-                    'created_at' => $row['created_at']
-                ];
-                $total_notes_without_reports++;
-            }
-        }
-        ?>
-
-        <?php if (!empty($patients_without_reports)): ?>
-        <div class="alert-diagnosis">
-            <div class="alert-header">
-                <i class="fas fa-exclamation-triangle"></i>
-                <h3>Upozornění - Chybějící zprávy</h3>
-            </div>
-            <div class="alert-content">
-                <div class="alert-summary">
-                    <strong><?php echo $total_notes_without_reports; ?></strong> poznámek u <strong><?php echo count($patients_without_reports); ?></strong> pacientů nemá vygenerovanou zprávu.
-                </div>
-                <div style="text-align:center;margin-bottom:10px;">
-                    <form action="batch_generate_reports.php" method="post" style="display:inline;">
-                        <button type="submit" class="btn btn-success" style="background:linear-gradient(135deg,#43a047 0%,#388e3c 100%);color:#fff;padding:8px 22px;font-size:1.08em;border-radius:8px;font-weight:700;box-shadow:0 2px 8px rgba(56,142,60,0.18);margin-bottom:6px;">
-                            <i class="fas fa-magic"></i> Automaticky vygenerovat vše
-                        </button>
-                    </form>
-                </div>
-                <div>Pacienti s chybějícími zprávami:</div>
-                <div class="alert-patients">
-                    <?php foreach ($patients_without_reports as $patient): ?>
-                        <div class="patient-tag">
-                            <strong><?php echo htmlspecialchars($patient['first_name'] . ' ' . $patient['surname']); ?></strong>
-                            <ul style="margin:8px 0 0 0;padding-left:18px;">
-                                <?php foreach ($patient['notes'] as $note): ?>
-                                    <li style="margin-bottom:6px;display:flex;align-items:center;gap:8px;">
-                                        <span style="font-size:0.97em;"><b>Diagnóza:</b> <?php echo htmlspecialchars(mb_strimwidth(strip_tags($note['diagnosis']), 0, 80, '…')); ?></span>
-                                        <span style="font-size:0.92em;color:#ffe082;"><i class="far fa-calendar-alt"></i> <?php echo htmlspecialchars(date('d.m.Y H:i', strtotime($note['created_at']))); ?></span>
-                                        <a href="report.php?note_id=<?php echo urlencode($note['note_id']); ?>&person_id=<?php echo urlencode($patient['person_id'] ?? $pid); ?>&diagnosis_id=<?php echo urlencode($note['diagnosis_id'] ?? ''); ?>&diagnosis_note_id=<?php echo urlencode($note['note_id']); ?>" title="Vygenerovat zprávu" style="display:inline-flex;align-items:center;justify-content:center;margin-left:4px;padding:2px 14px;font-size:1em;border-radius:6px;background:linear-gradient(135deg,#ff3d00 0%,#d32f2f 100%);color:#fff;border:2px solid #fff;text-decoration:none;box-shadow:0 2px 8px rgba(255,87,34,0.18);font-weight:700;letter-spacing:0.5px;transition:background 0.2s,color 0.2s,box-shadow 0.2s;min-width:22px;min-height:28px;line-height:1.2;box-shadow:0 2px 8px rgba(255,87,34,0.18);">
-                                            <i class="fas fa-file-medical-alt" style="margin-right:6px;color:#fff;"></i>Vygenerovat
-                                        </a>
-                                    </li>
-                                <?php endforeach; ?>
-                            </ul>
-                        </div>
-                    <?php endforeach; ?>
-                </div>
-            </div>
-        </div>
-        <?php endif; ?>
-
-        <div class="stats-container">
-            <div class="stat-card">
-                <i class="fas fa-user-friends"></i>
-                <div class="stat-number"><?php echo $total_patients; ?></div>
-                <div class="stat-label">Celkem pacientů</div>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-pills"></i>
-                <div class="stat-number"><?php echo $with_medication; ?></div>
-                <div class="stat-label">S medikací</div>
-            </div>
-            <div class="stat-card">
-                <i class="fas fa-exclamation-triangle"></i>
-                <div class="stat-number"><?php echo $with_allergies; ?></div>
-                <div class="stat-label">S alergiemi</div>
-            </div>
-        </div>
-
-        <div class="search-container">
-            <input type="text" id="searchInput" onkeyup="searchTable()" placeholder="🔍 Vyhledat pacienta..." class="search-box">
-        </div>
-
-        <div class="table-container">
-            <table id="dataTable">
-                <thead>
-                    <tr>
-                        <th onclick="sortTable(0)"><i class="fas fa-hashtag"></i> ID</th>
-                        <th onclick="sortTable(1)"><i class="fas fa-user"></i> Jméno</th>
-                        <th onclick="sortTable(2)"><i class="fas fa-user"></i> Příjmení</th>
-                        <th onclick="sortTable(3)"><i class="fas fa-calendar"></i> Datum narození</th>
-                        <th onclick="sortTable(4)"><i class="fas fa-id-card"></i> Rodné číslo</th>
-                        <th onclick="sortTable(5)"><i class="fas fa-pills"></i> Léky</th>
-                        <th onclick="sortTable(6)"><i class="fas fa-exclamation-triangle"></i> Alergie</th>
-                        <th onclick="sortTable(7)"><i class="fas fa-shield-alt"></i> Pojišťovna</th>
-                        <th onclick="sortTable(8)"><i class="fas fa-ellipsis-h"></i> Další</th>
-                        <th><i class="fas fa-cogs"></i> Akce</th>
-                    </tr>
-                </thead>
-                <tbody>
-                    <?php
-                    // Načtení všech osob
-                    $sql = "SELECT * FROM persons ORDER BY id ASC";
-                    $result = $conn->query($sql);
-
-                    $conn->close();
-
-                    if ($result->num_rows > 0) {
-                        while ($row = $result->fetch_assoc()) {
-                            echo "<tr>";
-                            echo "<td><strong>" . htmlspecialchars($row['id']) . "</strong></td>";
-                            echo "<td>" . htmlspecialchars($row['first_name']) . "</td>";
-                            echo "<td>" . htmlspecialchars($row['surname']) . "</td>";
-                // Format birth_date as dd.mm.yyyy
-                $birth_date = $row['birth_date'];
-                if (!empty($birth_date) && preg_match('/^\d{4}-\d{2}-\d{2}/', $birth_date)) {
-                    $formatted_date = date('d.m.Y', strtotime($birth_date));
-                } else {
-                    $formatted_date = htmlspecialchars($birth_date);
-                }
-                echo "<td>" . $formatted_date . "</td>";
-                            echo "<td>" . htmlspecialchars($row['ssn']) . "</td>";
-                            echo "<td>";
-                            if (!empty($row['medications'])) {
-                                echo "<span class='medication-pill'>" . htmlspecialchars($row['medications']) . "</span>";
-                            } else {
-                                echo "<span class='no-data-pill'>Žádné</span>";
-                            }
-                            echo "</td>";
-                            echo "<td>";
-                            if (!empty($row['allergies'])) {
-                                echo "<span class='allergy-pill'>" . htmlspecialchars($row['allergies']) . "</span>";
-                            } else {
-                                echo "<span class='no-data-pill'>Žádné</span>";
-                            }
-                            echo "</td>";
-                            echo "<td>";
-                            if (!empty($row['insurance'])) {
-                                echo htmlspecialchars($row['insurance']);
-                            } else {
-                                echo "<span class='no-data-pill'>Žádné</span>";
-                            }
-                            echo "</td>";
-                            echo "<td>";
-                            if (!empty($row['other'])) {
-                                echo htmlspecialchars($row['other']);
-                            } else {
-                                echo "<span class='no-data-pill'>Žádné</span>";
-                            }
-                            echo "</td>";
-                            echo "<td class='buttons'>";
-                            echo "<a href='person_details.php?id=" . urlencode($row['id']) . "' class='btn btn-detail'><i class='fas fa-eye'></i> Detail</a>";
-                            echo "</td>";
-                            echo "</tr>";
-                        }
-                    } else {
-                        echo "<tr><td colspan='10' class='empty-state'><i class='fas fa-user-slash'></i><h3>Žádní pacienti nebyli nalezeni.</h3></td></tr>";
-                    }
-                    ?>
-                </tbody>
-            </table>
-        </div>
-    </div>
-
-    <script>
-        function toggleMenu() {
-            const navbar = document.getElementById('navbar');
-            navbar.classList.toggle('active');
-            navbar.classList.toggle('open');
-        }
-
-        function sortTable(n) {
-            var table, rows, switching, i, x, y, shouldSwitch, dir, switchcount = 0;
-            table = document.getElementById("dataTable");
-            switching = true;
-            dir = "asc";
-            while (switching) {
-                switching = false;
-                rows = table.rows;
-                for (i = 1; i < (rows.length - 1); i++) {
-                    shouldSwitch = false;
-                    x = rows[i].getElementsByTagName("TD")[n];
-                    y = rows[i + 1].getElementsByTagName("TD")[n];
-                    if (dir == "asc") {
-                        if (x.innerHTML.toLowerCase() > y.innerHTML.toLowerCase()) {
-                            shouldSwitch = true;
-                            break;
-                        }
-                    } else if (dir == "desc") {
-                        if (x.innerHTML.toLowerCase() < y.innerHTML.toLowerCase()) {
-                            shouldSwitch = true;
-                            break;
-                        }
-                    }
-                }
-                if (shouldSwitch) {
-                    rows[i].parentNode.insertBefore(rows[i + 1], rows[i]);
-                    switching = true;
-                    switchcount++;
-                } else {
-                    if (switchcount == 0 && dir == "asc") {
-                        dir = "desc";
-                        switching = true;
-                    }
-                }
-            }
-        }
-
-        function searchTable() {
-            var input, filter, table, tr, td, i, txtValue;
-            input = document.getElementById("searchInput");
-            filter = input.value.toUpperCase();
-            table = document.getElementById("dataTable");
-            tr = table.getElementsByTagName("tr");
-            for (i = 0; i < tr.length; i++) {
-                td = tr[i].getElementsByTagName("td")[1];
-                if (td) {
-                    txtValue = td.textContent || td.innerText;
-                    if (txtValue.toUpperCase().indexOf(filter) > -1) {
-                        tr[i].style.display = "";
-                    } else {
-                        tr[i].style.display = "none";
-                    }
-                }
-            }
-        }
-
-        // Mobile menu functionality
-        document.addEventListener('DOMContentLoaded', function() {
-            const navbarLinks = document.querySelectorAll('.navbar a');
-            const navbar = document.getElementById('navbar');
-            
-            navbarLinks.forEach(link => {
-                link.addEventListener('click', function() {
-                    navbar.classList.remove('active');
-                    navbar.classList.remove('open');
-                });
-            });
-        });
-
-        // Close menu when clicking outside
-        document.addEventListener('click', function(event) {
-            const navbar = document.getElementById('navbar');
-            const menuIcon = document.querySelector('.menu-icon');
-            
-            if (!navbar.contains(event.target) && !menuIcon.contains(event.target)) {
-                navbar.classList.remove('active');
-                navbar.classList.remove('open');
-            }
-        });
-    </script>
-</body>
-</html>
+// Vykreslení prezentační vrstvy
+require __DIR__ . '/views/show_data.view.php';
+?>

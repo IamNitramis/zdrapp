@@ -1,11 +1,6 @@
 <?php
 // batch_generate_reports.php
-session_start();
-
-if (!isset($_SESSION['logged_in']) || $_SESSION['logged_in'] !== true) {
-    header('Location: login.php');
-    exit;
-}
+require_once __DIR__ . '/includes/auth.php';
 
 require_once __DIR__ . '/config/database.php';
 $conn = getDatabase();
