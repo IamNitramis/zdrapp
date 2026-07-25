@@ -5,6 +5,8 @@ require_once __DIR__ . '/includes/auth.php';
 require_once __DIR__ . '/config/database.php';
 try {
     $conn = getDatabase();
+    // 1. DŮLEŽITÉ: Vynutit UTF-8 pro spojení s DB
+    $conn->set_charset("utf8mb4");
 } catch (Exception $e) {
     die("Chyba připojení k databázi: " . $e->getMessage());
 }
@@ -31,9 +33,17 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
     } elseif ($file && is_uploaded_file($file)) {
         try {
             $csvData = file_get_contents($file);
+            
+            // 2. DŮLEŽITÉ: Odstranění UTF-8 BOM hlavičky, pokud v souboru je (způsobovalo ď»ż na začátku)
+            $csvData = preg_replace('/^\xEF\xBB\xBF/', '', $csvData);
+            
             $lines = explode("\n", $csvData);
             $inserted_count = 0;
             $skipped_count = 0;
+            
+            // Připravené dotazy (Prepared Statements)
+            $check_stmt = $conn->prepare("SELECT id FROM persons WHERE ssn = ?");
+            $insert_stmt = $conn->prepare("INSERT INTO persons (first_name, surname, birth_date, ssn, medications, allergies, insurance, other, swimmer) VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?)");
             
             // Načítání a vkládání dat z CSV do databáze
             foreach ($lines as $line_number => $line) {
@@ -42,34 +52,46 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
                 
                 // Použij středník jako oddělovač
                 $fields = str_getcsv($line, ';');
-                if (count($fields) >= 9) { // Očekáváme minimálně 9 sloupců: Jméno, Příjmení, Datum narození, Rodné číslo, Léky, Alergie, Pojišťovna, Other, Swimmer
-                    $firstName = $conn->real_escape_string(trim($fields[0]));
-                    $surname = $conn->real_escape_string(trim($fields[1]));
-                    $dob = $conn->real_escape_string(trim($fields[2]));
-                    $idNumber = $conn->real_escape_string(trim($fields[3]));
-                    $medications = $conn->real_escape_string(trim($fields[4]));
-                    $allergies = $conn->real_escape_string(trim($fields[5]));
-                    $insurance = $conn->real_escape_string(trim($fields[6]));
-                    $other = $conn->real_escape_string(trim($fields[7]));
-                    $swimmer = $conn->real_escape_string(trim($fields[8]));
+                
+                // Přeskočit hlavičku, pokud první řádek obsahuje název sloupce 'first_name' nebo 'Jméno'
+                if ($line_number === 0 && (strtolower($fields[0]) === 'first_name' || strtolower($fields[0]) === 'jméno')) {
+                    continue;
+                }
 
-                    $medications_sql = ($medications === '') ? 'NULL' : "'$medications'";
-                    $allergies_sql = ($allergies === '') ? 'NULL' : "'$allergies'";
-                    $insurance_sql = ($insurance === '') ? 'NULL' : "'$insurance'";
-                    $other_sql = ($other === '') ? 'NULL' : "'$other'";
-                    $swimmer_sql = ($swimmer === '') ? 'NULL' : "'$swimmer'";
+                if (count($fields) >= 9) {
+                    $firstName = trim($fields[0]);
+                    $surname   = trim($fields[1]);
+                    $dob       = trim($fields[2]);
+                    $idNumber  = trim($fields[3]);
+                    
+                    $medications = trim($fields[4]) === '' ? null : trim($fields[4]);
+                    $allergies   = trim($fields[5]) === '' ? null : trim($fields[5]);
+                    $insurance   = trim($fields[6]) === '' ? null : trim($fields[6]);
+                    $other       = trim($fields[7]) === '' ? null : trim($fields[7]);
+                    $swimmer     = trim($fields[8]) === '' ? null : trim($fields[8]);
 
-                    // Validace dat
+                    // Validace povinných polí
                     if (!empty($firstName) && !empty($surname) && !empty($dob) && !empty($idNumber)) {
-                        // Kontrola, zda osoba již neexistuje
-                        $check_sql = "SELECT id FROM persons WHERE ssn = '$idNumber'";
-                        $check_result = $conn->query($check_sql);
+                        // Kontrola duplicity
+                        $check_stmt->bind_param("s", $idNumber);
+                        $check_stmt->execute();
+                        $check_result = $check_stmt->get_result();
                         
                         if ($check_result->num_rows == 0) {
-                            // Vložení dat do tabulky
-                            $sql = "INSERT INTO persons (first_name, surname, birth_date, ssn, medications, allergies, insurance, other, swimmer) 
-                                   VALUES ('$firstName', '$surname', '$dob', '$idNumber', $medications_sql, $allergies_sql, $insurance_sql, $other_sql, $swimmer_sql)";
-                            if ($conn->query($sql)) {
+                            // Vložení záznamu
+                            $insert_stmt->bind_param("sssssssss", 
+                                $firstName, 
+                                $surname, 
+                                $dob, 
+                                $idNumber, 
+                                $medications, 
+                                $allergies, 
+                                $insurance, 
+                                $other, 
+                                $swimmer
+                            );
+                            
+                            if ($insert_stmt->execute()) {
                                 $inserted_count++;
                             }
                         } else {
@@ -82,6 +104,9 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST' && isset($_FILES['csv_file'])) {
                     $skipped_count++;
                 }
             }
+            
+            $check_stmt->close();
+            $insert_stmt->close();
             
             if ($inserted_count > 0) {
                 $success_message = "Úspěšně nahráno $inserted_count záznamů.";
